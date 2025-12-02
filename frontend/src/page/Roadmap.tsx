@@ -54,7 +54,7 @@ export const Roadmap: React.FC = () => {
     });
 
     return (
-        <div style={{ backgroundColor: '#1a202c'}}>
+        <div className="pt-6" style={{ backgroundColor: '#1a202c'}}>
         <div className="fixed top-16 left-10 pt-5">
                 <RoadmapSidebar visibleSections={visibleSidebarItems} />
             </div>

@@ -17,7 +17,7 @@ export const TYPE_COLORS: { [key in Tag['type']]: string } = {
     // Difficulty color is handled by DIFFICULTY_COLORS for more specific color names
 };
 
-export const TagPill: React.FC<{ tag: Tag }> = ({ tag }) => {
+const TagPill: React.FC<{ tag: Tag }> = ({ tag }) => {
   let colorClass = '';
 
   if (tag.type === 'Difficulty') {
@@ -38,3 +38,5 @@ export const TagPill: React.FC<{ tag: Tag }> = ({ tag }) => {
     </span>
   );
 };
+
+export default TagPill;

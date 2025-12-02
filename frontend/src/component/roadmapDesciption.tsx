@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TagPill } from "../constant";
+import { TagPill } from "./tag";
 import type { RoadmapItemCardProps } from "./cardDetail";
 import { Heart, X } from 'lucide-react';
 
