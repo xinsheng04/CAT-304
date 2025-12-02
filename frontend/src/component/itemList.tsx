@@ -30,8 +30,11 @@ export const RoadmapItemList: React.FC<RoadmapItemListProps> = ({ items, filterT
       {visibleItems.map((item, index) => (
         <RoadmapItemCard
           key={index}
+          id={item.id}
+          slug={item.slug}
           imageSrc={item.imageSrc}
           title={item.title}
+          description={item.description}
           date={item.date}
           tags={item.tags}
         />
