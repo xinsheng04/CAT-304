@@ -11,7 +11,7 @@ const SectionBlock: React.FC<SectionBlockProps> = ({ id, title, children }) => {
     // Use normal JS if-statement before return
     if (id === "your-design") {
         return (
-            <section id={id} className="pt-20">
+            <section id={id} className="pt-18">
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-2xl font-semibold text-white text-left">{title}</h2>
 
@@ -27,7 +27,7 @@ const SectionBlock: React.FC<SectionBlockProps> = ({ id, title, children }) => {
 
     // Default section
     return (
-        <section id={id} className="pt-20">
+        <section id={id} className="pt-18">
             <h2 className="text-2xl font-semibold text-white text-left">{title}</h2>
             {children}
         </section>
