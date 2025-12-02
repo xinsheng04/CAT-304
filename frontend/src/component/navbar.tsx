@@ -20,7 +20,7 @@ return (
         {navItems.map((item) => (
         <Link 
             key={item} 
-            to={`/${item}`} 
+            to={item === "Overview" ? "/" : `/${item}`}
             // onClick={() => handleItemClick(item)}
             className={`py-1 px-3 rounded-md transition duration-200 
                       ${item === currentPath ? 'bg-indigo-600 font-semibold' : 'hover:bg-blue-500'}`}
