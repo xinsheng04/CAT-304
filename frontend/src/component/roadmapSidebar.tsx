@@ -46,7 +46,7 @@ const RoadmapSidebar: React.FC = () => {
                             }}
                             className={`
                                 py-2 px-4 rounded-md transition duration-200 
-                                text-lg font-medium cursor-pointer
+                                text-base font-medium cursor-pointer
                                 text-right
                                 ${activeId === item.id
                                     ? 'bg-opacity-50 border-t border-b border-white border-opacity-50 shadow-lg' // Active look
