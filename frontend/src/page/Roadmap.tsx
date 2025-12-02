@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from "../component/navbar";
 import RoadmapSidebar from "../component/roadmapSidebar";
 import RoadmapItemList from "../component/itemList";
 import SectionBlock from "../component/sectionBlock";
@@ -56,8 +55,7 @@ export const Roadmap: React.FC = () => {
 
     return (
         <div style={{ backgroundColor: '#1a202c'}}>
-            <Navbar />
-            <div className="fixed top-0 left-10 pt-5">
+        <div className="fixed top-16 left-10 pt-5">
                 <RoadmapSidebar visibleSections={visibleSidebarItems} />
             </div>
             <div className="pl-78 p-10 flex-grow overflow-y-auto h-screen"> 

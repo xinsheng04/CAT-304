@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from "../component/navbar";
 import RoadmapDescription, { type FeaturedRoadmapCardProps } from "../component/roadmapDesciption";
 import javaImage from "../assets/image/java_intro.jpg";
 
@@ -27,8 +26,7 @@ const sampleRoadmapData: FeaturedRoadmapCardProps = {
 
 export const RoadmapDetails: React.FC = () => {
     return (
-        <div className="pt-15" style={{ backgroundColor: '#1a202c', minHeight: '100vh' }}>
-            <Navbar />
+        <div className="pt-6" style={{ backgroundColor: '#1a202c', minHeight: '100vh' }}>
                 <RoadmapDescription
                     {...sampleRoadmapData}
                     isFavourite={sampleRoadmapData.isFavourite}

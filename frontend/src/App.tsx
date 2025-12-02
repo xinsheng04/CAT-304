@@ -6,6 +6,7 @@ import { RoadmapDetails } from "./page/RoadmapDetails";
 import { Project } from "./page/Project";
 import { Career } from "./page/Career";
 import { Profile } from "./page/Profile";
+import RootLayout from './layouts/RootLayout';
 
 
 function App() {
@@ -13,13 +14,14 @@ function App() {
     <>
     <Router>
       <Routes>
-        <Route path="/" element={<Overview />} />
-        <Route path="/Overview" element={<Overview />} />
-        <Route path="/Roadmap" element={<Roadmap />} />
-        <Route path="/Roadmap/:id/:slug" element={<RoadmapDetails />} />
-        <Route path="/Project" element={<Project />} />
-        <Route path="/Career" element={<Career />} />
-        <Route path="/Profile" element={<Profile />} />
+        <Route path="/" element={<RootLayout />}>
+          <Route index element={<Overview />} />
+          <Route path="Roadmap" element={<Roadmap />} />
+          <Route path="Roadmap/:id/:slug" element={<RoadmapDetails />} />
+          <Route path="Project" element={<Project />} />
+          <Route path="Career" element={<Career />} />
+          <Route path="Profile" element={<Profile />} />
+        </Route>
       </Routes>
     </Router>
     </>
