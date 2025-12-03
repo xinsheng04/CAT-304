@@ -1,8 +1,9 @@
 import React from "react";
-import RoadmapSidebar from "../component/roadmapSidebar";
-import RoadmapItemList from "../component/itemList";
-import SectionBlock from "../component/sectionBlock";
+import RoadmapSidebar from "../component/roadmaps/roadmapSidebar";
+import RoadmapItemList from "../component/roadmaps/itemList";
+import SectionBlock from "../component/roadmaps/sectionBlock";
 import SearchBar from "../component/searchBar";
+import { useState } from "react";
 import { roadmapData } from "../dummy";
 
 type Section = {
@@ -26,16 +27,16 @@ const sections: Section[] = [
 ];
 
 export const Roadmap: React.FC = () => {
-    const [query, setQuery] = React.useState("");
+    const [query, setQuery] = useState("");
 
     const availableSections = sections.filter((section) => {
         if (!section.tag) return true; // show "What's New" / "Recently Viewed" even if tag undefined
         // show section only if there is at least one roadmap item with matching tag label
         return roadmapData.some((item) => {
-            const matchesTag = item.tags.some((t) => t.label === section.tag);
+            const matchesTag = item.tags.some((t: any) => t.label === section.tag);
             const matchesQuery =
               item.title.toLowerCase().includes(query.toLowerCase()) ||
-              item.tags.some((t) => t.label.toLowerCase().includes(query.toLowerCase()));
+              item.tags.some((t: any) => t.label.toLowerCase().includes(query.toLowerCase()));
             return matchesTag && matchesQuery;
   });
     });
@@ -49,7 +50,7 @@ export const Roadmap: React.FC = () => {
       const q = query.toLowerCase();
       return (
         item.title.toLowerCase().includes(q) ||
-        item.tags.some((t) => t.label.toLowerCase().includes(q))
+        item.tags.some((t: any) => t.label.toLowerCase().includes(q))
       );
     });
 
