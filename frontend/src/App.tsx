@@ -6,6 +6,7 @@ import { RoadmapDetails } from "./page/RoadmapDetails.tsx";
 import { Project } from "./page/Project.tsx";
 import { Career } from "./page/Career.tsx";
 import { Profile } from "./page/Profile.tsx";
+import { Login } from "./page/Login.tsx";
 import RootLayout from './layouts/RootLayout.tsx';
 import { RoadmapChapter } from "./page/RoadmapChapter.tsx";
 
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<RootLayout />}>
           <Route index element={<Overview />} />
+          <Route path="login" element={<Login />} />
           <Route path="roadmap" element={<Roadmap />} />
           <Route path="roadmap/:roadmapID/:roadmapSlug" element={<RoadmapDetails />} />
           <Route path="roadmap/:roadmapID/:roadmapSlug/:chapterID/:chapterSlug" element={<RoadmapChapter />} />

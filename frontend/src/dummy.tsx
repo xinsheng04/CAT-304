@@ -8,7 +8,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
   {
     roadmapID: 100001,
     roadmapSlug: "java-fundamentals",
-    creator: 1,
+    creator: 100001,
     imageSrc: javaImage,
     title: "Java Fundamentals",
     description: "The Java Fundamentals roadmap is designed to build a strong foundation in the Java programming language. It starts with essential topics such as data types, control flow, arrays, and Object-Oriented Programming (OOP) concepts like classes, objects, inheritance, and polymorphism. You will also learn how to work with the Java Collections Framework, handle exceptions, and use Java’s functional features like lambda expressions and the Stream API. This roadmap prepares learners for real-world development and serves as a prerequisite for more advanced Java frameworks like Spring Boot.",
@@ -27,7 +27,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
   {
     roadmapID: 100002,
     roadmapSlug: "python-basics",
-    creator: 2,
+    creator: 100002,
     imageSrc: pythonImage,
     title: "Python Basics",
     description: "Python Basics introduces new learners to one of the most popular and beginner-friendly programming languages. This roadmap covers variables, loops, conditions, functions, and basic data structures such as lists and dictionaries. You will also explore simple file handling, modules, and basic problem-solving techniques. The goal is to help beginners write clean and readable Python scripts while building confidence to continue toward intermediate Python topics or apply Python in fields like data analytics, automation, and AI.",
@@ -43,7 +43,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
   {
     roadmapID: 100003,
     roadmapSlug: "javascript-essentials",
-    creator: 3,
+    creator: 100002,
     imageSrc: pythonImage,
     title: "JavaScript Essentials",
     description: "JavaScript Essentials provides a clear path for mastering the core features of JavaScript, the language of the web. This roadmap includes topics such as variables, functions, loops, arrays, objects, and basic DOM manipulation. You will also learn how JavaScript runs in the browser, how events work, and how to interact with HTML and CSS. These fundamentals form the base required for front-end frameworks like React, Angular, and Vue.",
@@ -59,7 +59,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
   {
     roadmapID: 100004,
     roadmapSlug: "react-for-beginners",
-    creator: 4,
+    creator: 100003,
     imageSrc: pythonImage,
     title: "React for Beginners",
     description: "This roadmap introduces the basics of React, one of the most in-demand front-end frameworks. You will learn how to create components, manage state, handle props, and work with React Hooks such as useState and useEffect. The roadmap also covers JSX, component trees, and simple API fetching. By the end, you will understand how to build interactive and reusable UI components — an essential skill for modern web development.",
@@ -75,7 +75,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
   {
     roadmapID: 100005,
     roadmapSlug: "nodejs-fundamentals",
-    creator: 5,
+    creator: 100001,
     imageSrc: pythonImage,
     title: "Node.js Fundamentals",
     description: "Node.js Fundamentals guides you into the world of backend JavaScript development. You will learn how Node.js works, how to use built-in modules, and how to create simple servers. The roadmap also covers asynchronous programming, callbacks, promises, and using npm packages. By understanding the Node.js runtime environment and event loop, you will be prepared to build APIs or move into full-stack development using frameworks like Express.js.",
@@ -91,7 +91,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
   {
     roadmapID: 100006,
     roadmapSlug: "sql-basics",
-    creator: 6,
+    creator: 100007,
     imageSrc: pythonImage,
     title: "SQL Basics",
     description: "SQL Basics provides a foundational understanding of relational databases and the SQL language. You will learn how to create, read, update, and delete data using SQL queries. The roadmap covers essential concepts such as database design, normalization, joins, and indexing. By mastering SQL, you will be equipped to work with popular database systems like MySQL, PostgreSQL, and SQLite, which are crucial for backend development and data management.",
@@ -107,7 +107,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
   {
     roadmapID: 100007,
     roadmapSlug: "html-css-fundamentals",
-    creator: 7,
+    creator: 100007,
     imageSrc: javaImage,
     title: "HTML & CSS Fundamentals",
     description:  "HTML & CSS Fundamentals teaches the core building blocks of web development. You will learn how to structure webpages using HTML elements such as headings, paragraphs, lists, and forms. Then, you will work with CSS to style layouts, apply colors, spacing, and responsive design. This roadmap helps beginners create clean and attractive webpages and builds the foundation needed for JavaScript and front-end frameworks.",
@@ -123,7 +123,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
   {
     roadmapID: 100008,
     roadmapSlug: "typescript-basics",
-    creator: 8,
+    creator: 100001,
     imageSrc: javaImage,
     title: "TypeScript Basics",
     description: "TypeScript Basics introduces the strongly typed superset of JavaScript that adds static types. You will learn about type annotations, interfaces, classes, and generics. The roadmap covers how TypeScript improves code quality and developer experience by catching errors early and enabling better tooling. By mastering TypeScript basics, you will be prepared to work on large-scale JavaScript applications and frameworks like Angular.",
@@ -139,7 +139,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
   {
     roadmapID: 100009,
     roadmapSlug: "angular-fundamentals",
-    creator: 9,
+    creator: 100002,
     imageSrc: javaImage,
     title: "Angular Fundamentals",
     description: "Angular Fundamentals covers the core concepts of the Angular framework. You will learn about components, templates, data binding, directives, services, and dependency injection. The roadmap also introduces Angular CLI, routing, and forms. By mastering these fundamentals, you will be able to build dynamic single-page applications and understand the architecture of modern front-end development with Angular.",
@@ -155,7 +155,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
   {
     roadmapID: 100010,
     roadmapSlug: "python-advanced-concepts",
-    creator: 10,
+    creator: 100004,
     imageSrc: pythonImage,
     title: "Python Advanced Concepts",
     description: "Explore advanced concepts in Python programming, including decorators, generators, context managers, metaclasses, and concurrency. This roadmap helps you deepen your understanding of Python's capabilities and prepares you for complex application development and optimization.",
@@ -171,7 +171,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
   {
     roadmapID: 100011,
     roadmapSlug: "java-advanced-topics",
-    creator: 11,
+    creator: 100001,
     imageSrc: javaImage,
     title: "Java Advanced Topics",
     description: "Explore advanced topics in Java programming, including concurrency, JVM internals, garbage collection, and performance tuning. This roadmap helps you deepen your understanding of Java's capabilities and prepares you for building high-performance, scalable applications.",
@@ -187,7 +187,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
   {
     roadmapID: 100012,
     roadmapSlug: "react-advanced-patterns",
-    creator: 12,
+    creator: 100002,
     imageSrc: javaImage,
     title: "React Advanced Patterns",
     description: "Explore advanced patterns in React development, including higher-order components, render props, context API, hooks, and performance optimization techniques. This roadmap helps you build scalable and maintainable React applications by mastering design patterns and best practices.",
@@ -312,6 +312,118 @@ export const pillarsData: PillarCardProps[] = [
         tags: [],
         order: 5,
         isViewed: false
+      },
+      {
+        chapterID: 100011,
+        chapterSlug: "java-stream-api",
+        roadmapID: 100001,
+        title: "Java Stream API",
+        description: "Learn how to use Java Stream API for functional-style operations on collections.",
+        modifiedDate: "2023-10-25",
+        tags: [
+          { type: "Difficulty", label: "Intermediate" },
+          { type: "Category", label: "Java" },
+        ],
+        order: 6,
+        isViewed: false
+      },
+      {
+        chapterID: 100012,
+        chapterSlug: "java-lambda-expressions",
+        roadmapID: 100001,
+        title: "Lambda Expressions",
+        description: "Understand lambda expressions and how they introduce functional programming in Java.",
+        modifiedDate: "2023-10-30",
+        tags: [
+          { type: "Difficulty", label: "Intermediate" },
+          { type: "Category", label: "Java" },
+        ],
+        order: 7,
+        isViewed: false
+      },
+      {
+        chapterID: 100013,
+        chapterSlug: "python-data-structures",
+        roadmapID: 100002,
+        title: "Python Data Structures",
+        description: "Learn about Python lists, dictionaries, tuples, and sets in depth.",
+        modifiedDate: "2023-11-25",
+        tags: [
+          { type: "Difficulty", label: "Beginner" },
+          { type: "Category", label: "Python" }
+        ],
+        order: 6,
+        isViewed: false
+      },
+      {
+        chapterID: 100014,
+        chapterSlug: "python-functions-deep-dive",
+        roadmapID: 100002,
+        title: "Functions Deep Dive",
+        description: "Master Python functions, including scope, arguments, recursion, and best practices.",
+        modifiedDate: "2023-11-28",
+        tags: [
+          { type: "Difficulty", label: "Intermediate" },
+          { type: "Category", label: "Python" }
+        ],
+        order: 7,
+        isViewed: false
+      },
+      {
+        chapterID: 100015,
+        chapterSlug: "dom-manipulation",
+        roadmapID: 100003,
+        title: "DOM Manipulation",
+        description: "Learn how JavaScript interacts with the Document Object Model (DOM).",
+        modifiedDate: "2023-08-25",
+        tags: [
+          { type: "Difficulty", label: "Beginner" },
+          { type: "Category", label: "JavaScript" }
+        ],
+        order: 1,
+        isViewed: false
+      },
+      {
+        chapterID: 100016,
+        chapterSlug: "javascript-es6-features",
+        roadmapID: 100003,
+        title: "ES6 Modern JavaScript Features",
+        description: "Learn ES6 features including let/const, arrow functions, classes, and modules.",
+        modifiedDate: "2023-09-10",
+        tags: [
+          { type: "Difficulty", label: "Intermediate" },
+          { type: "Category", label: "JavaScript" }
+        ],
+        order: 2,
+        isViewed: false
+      },
+      {
+        chapterID: 100017,
+        chapterSlug: "react-hooks-basics",
+        roadmapID: 100004,
+        title: "React Hooks Basics",
+        description: "Learn essential React hooks such as useState and useEffect.",
+        modifiedDate: "2023-10-12",
+        tags: [
+          { type: "Difficulty", label: "Intermediate" },
+          { type: "Category", label: "React" }
+        ],
+        order: 1,
+        isViewed: false
+      },
+      {
+        chapterID: 100018,
+        chapterSlug: "react-component-lifecycle",
+        roadmapID: 100004,
+        title: "Component Lifecycle",
+        description: "Understand how React components render and update throughout their lifecycle.",
+        modifiedDate: "2023-10-20",
+        tags: [
+          { type: "Difficulty", label: "Intermediate" },
+          { type: "Category", label: "React" }
+        ],
+        order: 2,
+        isViewed: false
       }
 ];
 
@@ -324,5 +436,78 @@ export const linksData: LinkCardProps[] = [
     order: 1,
     link: "https://www.geeksforgeeks.org/java/exceptions-in-java/",
     isViewed: true
+  },
+  {
+    nodeID: 100002,
+    chapterID: 100011,
+    title: "Java Stream API Guide",
+    modifiedDate: "2023-11-22",
+    order: 1,
+    link: "https://www.baeldung.com/java-8-streams",
+    isViewed: false
+  },
+  {
+    nodeID: 100003,
+    chapterID: 100012,
+    title: "Java Lambda Expressions Tutorial",
+    modifiedDate: "2023-11-22",
+    order: 2,
+    link: "https://www.geeksforgeeks.org/lambda-expressions-java-8/",
+    isViewed: false
+  },
+  {
+    nodeID: 100004,
+    chapterID: 100013,
+    title: "Python Data Structures Overview",
+    modifiedDate: "2023-11-30",
+    order: 1,
+    link: "https://docs.python.org/3/tutorial/datastructures.html",
+    isViewed: false
+  },
+  {
+    nodeID: 100005,
+    chapterID: 100014,
+    title: "Python Functions Explained",
+    modifiedDate: "2023-12-01",
+    order: 2,
+    link: "https://realpython.com/defining-your-own-python-function/",
+    isViewed: false
+  },
+  {
+    nodeID: 100006,
+    chapterID: 100015,
+    title: "DOM Manipulation Basics",
+    modifiedDate: "2023-08-30",
+    order: 1,
+    link: "https://www.w3schools.com/js/js_htmldom.asp",
+    isViewed: false
+  },
+  {
+    nodeID: 100007,
+    chapterID: 100016,
+    title: "ES6 Features Overview",
+    modifiedDate: "2023-09-12",
+    order: 2,
+    link: "https://www.javascripttutorial.net/es6/",
+    isViewed: false
+  },
+  {
+    nodeID: 100008,
+    chapterID: 100017,
+    title: "React Hooks Documentation",
+    modifiedDate: "2023-10-15",
+    order: 1,
+    link: "https://react.dev/reference/react",
+    isViewed: false
+  },
+  {
+    nodeID: 100009,
+    chapterID: 100018,
+    title: "React Lifecycle Patterns",
+    modifiedDate: "2023-10-25",
+    order: 2,
+    link: "https://blog.logrocket.com/understanding-react-component-lifecycle-methods/",
+    isViewed: false
   }
+
 ]
