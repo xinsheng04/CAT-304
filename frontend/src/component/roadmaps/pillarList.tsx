@@ -15,7 +15,7 @@ const roadmapTitle = roadmapData.find(r => r.roadmapID === selectedRoadmapId)?.t
 filteredPillars.sort((a, b) => a.order - b.order);
 
     return (
-        <div className="p-4 sm:p-8 w-full mx-auto">
+        <div className="w-full mx-auto">
             <h3 className="text-3xl font-semibold text-white mb-6 border-b border-gray-700 pb-2 text-left">
                 Chapters for {roadmapTitle}
             </h3>

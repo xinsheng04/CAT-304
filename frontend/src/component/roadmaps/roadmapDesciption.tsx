@@ -12,7 +12,7 @@ const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({
     const navigate = useNavigate();
 
     return (
-        <div className="p-6 bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-2xl max-w-5xl mx-auto text-white border border-white/10">
+        <div className=" max-w-5xl mx-auto text-white">
             {/* Top Right Icon */}
             <div className="flex justify-end">
                 <button

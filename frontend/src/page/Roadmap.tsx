@@ -56,10 +56,10 @@ export const Roadmap: React.FC = () => {
 
   return (
     <div>
-      <div className="fixed pt-5">
+      <div className="fixed">
         <RoadmapSidebar visibleSections={visibleSidebarItems} />
       </div>
-      <div className="pl-78 p-10 flex-grow overflow-y-auto h-screen">
+      <div className="pl-78 p-10 flex-grow h-screen">
         <SearchBar query={query} setQuery={setQuery} placeholder="Enter a roadmap title / category to see what other people saying about" />
         {availableSections.map((section) => (
           <SectionBlock key={section.id} id={section.id} title={section.title}>
