@@ -9,8 +9,8 @@ interface PillarListProps {
 
 const PillarList: React.FC<PillarListProps> = ({ selectedRoadmapId }) => {
 // Filter pillars based on selectedRoadmapId
-const filteredPillars = pillarsData.filter(pillar => pillar.roadmapid === selectedRoadmapId);
-const roadmapTitle = roadmapData.find(r => r.id === selectedRoadmapId)?.title || 'Unknown Roadmap';
+const filteredPillars = pillarsData.filter(pillar => pillar.roadmapID === selectedRoadmapId);
+const roadmapTitle = roadmapData.find(r => r.roadmapID === selectedRoadmapId)?.title || 'Unknown Roadmap';
 // order by 'order' field
 filteredPillars.sort((a, b) => a.order - b.order);
 
@@ -23,7 +23,7 @@ filteredPillars.sort((a, b) => a.order - b.order);
                 <p className="text-gray-400 text-center mt-10">No chapters found for this roadmap.</p>
             ) : (filteredPillars.map((pillar) => (
                 <PillarCard 
-                    key={pillar.id}
+                    key={pillar.chapterID}
                     {...pillar}
                 />
             )))}

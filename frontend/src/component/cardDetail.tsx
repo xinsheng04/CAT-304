@@ -4,8 +4,8 @@ import type { Tag } from './tag';
 import { TagPill } from './tag';
 // Type and data structure
 export interface RoadmapItemCardProps {
-    id: number;
-    slug: string;
+    roadmapID: number;
+    roadmapSlug: string;
     creator: number;
     imageSrc: string; // URL for the image
     title: string;
@@ -21,7 +21,7 @@ const MAX_VISIBLE_TAGS = 4;
 // --- Main Card Component ---
 
 export const RoadmapItemCard: React.FC<RoadmapItemCardProps> = ({
-    id, slug, imageSrc, title, createdDate, tags,
+    roadmapID, roadmapSlug, imageSrc, title, createdDate, tags,
 }) => {
   // Logic to determine which tags to show and if "More..." is needed
   const visibleTags = tags.slice(0, MAX_VISIBLE_TAGS);
@@ -29,7 +29,7 @@ export const RoadmapItemCard: React.FC<RoadmapItemCardProps> = ({
   const showMoreButton = remainingTagsCount > 0;
 
   return (
-    <Link to={`/roadmap/${id}/${slug}`}>
+    <Link to={`/Roadmap/${roadmapID}/${roadmapSlug}`}>
     <div className="bg-gray-800 p-4 rounded-lg shadow-xl border border-gray-700 flex flex-col h-full hover:scale-105 transform transition duration-300">
       {/* 1. Image Placeholder/Container */}
       <div className="w-full h-32 bg-gray-700 rounded-md mb-3 overflow-hidden">

@@ -5,8 +5,8 @@ import type { PillarCardProps } from "./component/pillarCard";
 
 export const roadmapData: RoadmapItemCardProps[] = [
   {
-    id: 100001,
-    slug: "java-fundamentals",
+    roadmapID: 100001,
+    roadmapSlug: "java-fundamentals",
     creator: 1,
     imageSrc: javaImage,
     title: "Java Fundamentals",
@@ -24,8 +24,8 @@ export const roadmapData: RoadmapItemCardProps[] = [
     ],
   },
   {
-    id: 100002,
-    slug: "python-basics",
+    roadmapID: 100002,
+    roadmapSlug: "python-basics",
     creator: 2,
     imageSrc: pythonImage,
     title: "Python Basics",
@@ -40,8 +40,8 @@ export const roadmapData: RoadmapItemCardProps[] = [
     ],
   },
   {
-    id: 100003,
-    slug: "javascript-essentials",
+    roadmapID: 100003,
+    roadmapSlug: "javascript-essentials",
     creator: 3,
     imageSrc: pythonImage,
     title: "JavaScript Essentials",
@@ -56,8 +56,8 @@ export const roadmapData: RoadmapItemCardProps[] = [
     ],
   },
   {
-    id: 100004,
-    slug: "react-for-beginners",
+    roadmapID: 100004,
+    roadmapSlug: "react-for-beginners",
     creator: 4,
     imageSrc: pythonImage,
     title: "React for Beginners",
@@ -72,8 +72,8 @@ export const roadmapData: RoadmapItemCardProps[] = [
     ],
   },
   {
-    id: 100005,
-    slug: "nodejs-fundamentals",
+    roadmapID: 100005,
+    roadmapSlug: "nodejs-fundamentals",
     creator: 5,
     imageSrc: pythonImage,
     title: "Node.js Fundamentals",
@@ -88,8 +88,8 @@ export const roadmapData: RoadmapItemCardProps[] = [
     ],
   },
   {
-    id: 100006,
-    slug: "sql-basics",
+    roadmapID: 100006,
+    roadmapSlug: "sql-basics",
     creator: 6,
     imageSrc: pythonImage,
     title: "SQL Basics",
@@ -104,8 +104,8 @@ export const roadmapData: RoadmapItemCardProps[] = [
     ],
   },
   {
-    id: 100007,
-    slug: "html-css-fundamentals",
+    roadmapID: 100007,
+    roadmapSlug: "html-css-fundamentals",
     creator: 7,
     imageSrc: javaImage,
     title: "HTML & CSS Fundamentals",
@@ -120,8 +120,8 @@ export const roadmapData: RoadmapItemCardProps[] = [
     ],
   },
   {
-    id: 100008,
-    slug: "typescript-basics",
+    roadmapID: 100008,
+    roadmapSlug: "typescript-basics",
     creator: 8,
     imageSrc: javaImage,
     title: "TypeScript Basics",
@@ -136,8 +136,8 @@ export const roadmapData: RoadmapItemCardProps[] = [
     ],
   },
   {
-    id: 100009,
-    slug: "angular-fundamentals",
+    roadmapID: 100009,
+    roadmapSlug: "angular-fundamentals",
     creator: 9,
     imageSrc: javaImage,
     title: "Angular Fundamentals",
@@ -152,8 +152,8 @@ export const roadmapData: RoadmapItemCardProps[] = [
     ],
   },
   {
-    id: 100010,
-    slug: "python-advanced-concepts",
+    roadmapID: 100010,
+    roadmapSlug: "python-advanced-concepts",
     creator: 10,
     imageSrc: pythonImage,
     title: "Python Advanced Concepts",
@@ -168,8 +168,8 @@ export const roadmapData: RoadmapItemCardProps[] = [
     ],
   },
   {
-    id: 100011,
-    slug: "java-advanced-topics",
+    roadmapID: 100011,
+    roadmapSlug: "java-advanced-topics",
     creator: 11,
     imageSrc: javaImage,
     title: "Java Advanced Topics",
@@ -184,8 +184,8 @@ export const roadmapData: RoadmapItemCardProps[] = [
     ],
   },
   {
-    id: 100012,
-    slug: "react-advanced-patterns",
+    roadmapID: 100012,
+    roadmapSlug: "react-advanced-patterns",
     creator: 12,
     imageSrc: javaImage,
     title: "React Advanced Patterns",
@@ -204,9 +204,9 @@ export const roadmapData: RoadmapItemCardProps[] = [
 
 export const pillarsData: PillarCardProps[] = [
     {
-        id: 100001,
-        slug: "introduction-to-programming",
-        roadmapid: 100001,
+        chapterID: 100001,
+        chapterSlug: "introduction-to-programming",
+        roadmapID: 100001,
         title: "Introduction to Programming",
         description: "Learn the basics of programming, including variables, data types, and control structures.",
         modifiedDate: "2023-10-01",
@@ -215,9 +215,9 @@ export const pillarsData: PillarCardProps[] = [
         isViewed: false
     },
     {
-        id: 100002,
-        slug: "object-oriented-programming",
-        roadmapid: 100001,
+        chapterID: 100002,
+        chapterSlug: "object-oriented-programming",
+        roadmapID: 100001,
         title: "Object-Oriented Programming",
         description: "Understand the principles of OOP, including classes, objects, inheritance, and polymorphism.", 
         modifiedDate: "2023-10-05",
@@ -225,9 +225,9 @@ export const pillarsData: PillarCardProps[] = [
         order: 2,
         isViewed: false
     },
-    {   id: 100003,
-        slug: "data-structures-and-algorithms",
-        roadmapid: 100001,
+    {   chapterID: 100003,
+        chapterSlug: "data-structures-and-algorithms",
+        roadmapID: 100001,
         title: "Data Structures and Algorithms",
         description: "Explore common data structures and algorithms used in programming.",
         modifiedDate: "2023-10-10",
@@ -235,9 +235,9 @@ export const pillarsData: PillarCardProps[] = [
         order: 3,
         isViewed: false
     },
-    {  id: 100004,
-        slug: "error-handling-and-exceptions",
-        roadmapid: 100001,
+    {  chapterID: 100004,
+        chapterSlug: "error-handling-and-exceptions",
+        roadmapID: 100001,
         title: "Error Handling and Exceptions",
         description: "Learn how to handle errors and exceptions in your code effectively.",
         modifiedDate: "2023-10-15",
@@ -245,9 +245,9 @@ export const pillarsData: PillarCardProps[] = [
         order: 4,
         isViewed: false
     },
-    {  id: 100005,
-        slug: "java-collections-framework",
-        roadmapid: 100001, 
+    {  chapterID: 100005,
+        chapterSlug: "java-collections-framework",
+        roadmapID: 100001, 
         title: "Java Collections Framework",
         description: "Dive into the Java Collections Framework, including lists, sets, maps, and queues.",
         modifiedDate: "2023-10-20",
@@ -255,9 +255,9 @@ export const pillarsData: PillarCardProps[] = [
         order: 5,
         isViewed: false
     },
-    {  id: 100006,
-        slug: "functional-programming-in-python",
-        roadmapid: 100002,
+    {  chapterID: 100006,
+        chapterSlug: "functional-programming-in-python",
+        roadmapID: 100002,
         title: "Functional Programming in Python",
         description: "Learn about functional programming concepts in Python, including lambda functions, map, filter, and reduce.",
         modifiedDate: "2023-11-01",
@@ -266,9 +266,9 @@ export const pillarsData: PillarCardProps[] = [
         isViewed: false
       },
       {
-        id: 100007,
-        slug: "file-handling-in-python",
-        roadmapid: 100002,
+        chapterID: 100007,
+        chapterSlug: "file-handling-in-python",
+        roadmapID: 100002,
         title: "File Handling in Python",
         description: "Understand how to read from and write to files using Python.",
         modifiedDate: "2023-11-05",
@@ -277,9 +277,9 @@ export const pillarsData: PillarCardProps[] = [
         isViewed: false
       },
       {
-        id: 100008,
-        slug: "modules-and-packages",
-        roadmapid: 100002,
+        chapterID: 100008,
+        chapterSlug: "modules-and-packages",
+        roadmapID: 100002,
         title: "Modules and Packages",
         description: "Learn how to create and use modules and packages in Python for better code organization.",
         modifiedDate: "2023-11-10",
@@ -288,9 +288,9 @@ export const pillarsData: PillarCardProps[] = [
         isViewed: false
       },
       {
-        id: 100009,
-        slug: "error-and-exception-handling",
-        roadmapid: 100002,
+        chapterID: 100009,
+        chapterSlug: "error-and-exception-handling",
+        roadmapID: 100002,
         title: "Error and Exception Handling",
         description: "Learn how to handle errors and exceptions in Python effectively.",
         modifiedDate: "2023-11-15",
@@ -299,9 +299,9 @@ export const pillarsData: PillarCardProps[] = [
         isViewed: false
       },
       {  
-        id: 100010,
-        slug: "working-with-databases",
-        roadmapid: 100002,  
+        chapterID: 100010,
+        chapterSlug: "working-with-databases",
+        roadmapID: 100002,  
         title: "Working with Databases",
         description: "Understand how to connect to and interact with databases using Python.",
         modifiedDate: "2023-11-20",

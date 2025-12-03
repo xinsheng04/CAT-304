@@ -28,18 +28,7 @@ export const RoadmapItemList: React.FC<RoadmapItemListProps> = ({ items, filterT
   <div>
     <div className="grid grid-cols-3 gap-6">
       {visibleItems.map((item, index) => (
-        <RoadmapItemCard
-          key={index}
-          id={item.id}
-          slug={item.slug}
-          creator={item.creator}
-          imageSrc={item.imageSrc}
-          title={item.title}
-          description={item.description}
-          createdDate={item.createdDate}
-          modifiedDate={item.modifiedDate}
-          isFavourite={item.isFavourite}
-          tags={item.tags}
+        <RoadmapItemCard key={index} {...item}
         />
       ))}
     </div>

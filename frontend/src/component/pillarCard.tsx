@@ -3,9 +3,9 @@ import type { Tag } from './tag';
 
 // Type and data structure
 export interface PillarCardProps {
-    id: number;
-    slug: string;
-    roadmapid: number;
+    chapterID: number;
+    chapterSlug: string;
+    roadmapID: number;
     title: string;
     description?: string;
     modifiedDate: string;
