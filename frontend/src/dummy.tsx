@@ -1,7 +1,7 @@
-import type{ RoadmapItemCardProps} from "./component/cardDetail";
+import type{ RoadmapItemCardProps} from "./component/roadmaps/cardDetail";
 import javaImage from "./assets/image/java_intro.jpg";
 import pythonImage from "./assets/image/python_intro.jpg";
-import type { PillarCardProps } from "./component/pillarCard";
+import type { PillarCardProps } from "./component/roadmaps/pillarCard";
 
 export const roadmapData: RoadmapItemCardProps[] = [
   {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-import type { Tag } from './tag';
-import { TagPill } from './tag';
+import type { Tag } from './tag.tsx';
+import { TagPill } from './tag.tsx';
 // Type and data structure
 export interface RoadmapItemCardProps {
     id: number;
