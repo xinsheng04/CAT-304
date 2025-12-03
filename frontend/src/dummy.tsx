@@ -2,6 +2,7 @@ import type{ RoadmapItemCardProps} from "./component/roadmaps/cardDetail";
 import javaImage from "./assets/image/java_intro.jpg";
 import pythonImage from "./assets/image/python_intro.jpg";
 import type { PillarCardProps } from "./component/roadmaps/pillarCard";
+import type { LinkCardProps } from "./component/roadmaps/linkCard";
 
 export const roadmapData: RoadmapItemCardProps[] = [
   {
@@ -313,3 +314,15 @@ export const pillarsData: PillarCardProps[] = [
         isViewed: false
       }
 ];
+
+export const linksData: LinkCardProps[] = [
+  {
+    nodeID: 100001,
+    chapterID: 100004,
+    title: "Error Handling and Perception",
+    modifiedDate: "2023-11-20",
+    order: 1,
+    link: "https://www.geeksforgeeks.org/java/exceptions-in-java/",
+    isViewed: true
+  }
+]

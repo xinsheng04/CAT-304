@@ -3,7 +3,6 @@ import PillarCard from './pillarCard.tsx';
 import { roadmapData, pillarsData } from '../../dummy.tsx';
 
 interface PillarListProps {
-    // This is the foreign key you want to filter by
     selectedRoadmapId: number; 
 }
 
