@@ -18,12 +18,12 @@ function App() {
       <Routes>
         <Route path="/" element={<RootLayout />}>
           <Route index element={<Overview />} />
-          <Route path="Roadmap" element={<Roadmap />} />
-          <Route path="Roadmap/:roadmapID/:roadmapSlug" element={<RoadmapDetails />} />
-          <Route path="Roadmap/:roadmapID/:roadmapSlug/:chapterID/:chapterSlug" element={<RoadmapChapter />} />
-          <Route path="Project" element={<Project />} />
-          <Route path="Career" element={<Career />} />
-          <Route path="Profile" element={<Profile />} />
+          <Route path="roadmap" element={<Roadmap />} />
+          <Route path="roadmap/:roadmapID/:roadmapSlug" element={<RoadmapDetails />} />
+          <Route path="roadmap/:roadmapID/:roadmapSlug/:chapterID/:chapterSlug" element={<RoadmapChapter />} />
+          <Route path="project" element={<Project />} />
+          <Route path="career" element={<Career />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
     </Router>
