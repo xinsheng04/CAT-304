@@ -16,7 +16,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
   return (
     <Card
       key={project.projectId}
-      className="p-5 h-58 cursor-pointer bg-gray-800 block pl-3 rounded-lg shadow-md 
+      className="p-5 h-58 cursor-pointer border-none bg-gray-800 block pl-3 rounded-lg shadow-md 
     hover:shadow-lg transition-shadow duration-300"
       onClick={onClick}
     >

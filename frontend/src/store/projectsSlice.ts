@@ -70,7 +70,8 @@ const dummyState: ProjectSlice = {
       difficulty: "Beginner",
       lastUpdated: new Date("2024-03-05"),
       startingRepoLink: "https://github.com/charlie/fitness-tracker-app",
-      details: "This project involves creating a mobile app that helps users track their fitness activities and monitor health metrics such as heart rate, steps, and calories burned.",
+      // details: "This project involves creating a mobile app that helps users track their fitness activities and monitor health metrics such as heart rate, steps, and calories burned.",
+      details: "",
       trackCount: 20,
       submissionCount: 30
     }

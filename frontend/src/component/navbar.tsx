@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
                         to={item === 'Overview' ? '/' : `/${item.toLowerCase()}`}
                         // onClick={() => handleItemClick(item)}
                         className={`py-1 px-3 rounded-md transition duration-200 text-lg
-                      ${item.toLowerCase() === currentPath ? 'bg-purple-600 font-semibold' : 'hover:bg-blue-500'}`}
+                      ${location.pathname.includes(item.toLowerCase()) ? 'bg-purple-600 font-semibold' : 'hover:bg-blue-500'}`}
                     >
                         {item}
                     </Link>

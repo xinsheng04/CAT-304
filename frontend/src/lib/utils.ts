@@ -12,10 +12,9 @@ export function ellipsifyText(text: string, maxLength=50): string {
   return text.slice(0, maxLength) + "...";
 }
 
-export function formatDate(dateString: string): string {
+export function formatDate(date: Date): string {
   const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-  const date = new Date(dateString);
-  return date.toLocaleDateString(undefined, options);
+  return new Intl.DateTimeFormat('en-US', options).format(date);
 }
 
 export function capitalizeFirstLetter(text: string): string {

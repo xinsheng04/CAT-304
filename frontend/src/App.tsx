@@ -8,6 +8,7 @@ import { Career } from "./page/Career.tsx";
 import { Profile } from "./page/Profile.tsx";
 import { Login } from "./page/Login.tsx";
 import { ProjectDetails } from "./page/projects/ProjectDetails.tsx";
+import { MyProjects } from "./page/projects/MyProjects.tsx";
 import RootLayout from './layouts/RootLayout.tsx';
 import { RoadmapChapter } from "./page/roadmaps/RoadmapChapter.tsx";
 import { RoadmapDetailEdit } from "./page/roadmaps/RoadmapDetailEdit.tsx";
@@ -27,6 +28,7 @@ function App() {
           <Route path="roadmap/:roadmapID/:roadmapSlug/edit" element={<RoadmapDetailEdit/>} />
           <Route path="project" element={<Project />} />
           <Route path="project/:projectId" element={<ProjectDetails />} />
+          <Route path="project/myProjects" element={<MyProjects />} />
           <Route path="career" element={<Career />} />
           <Route path="profile" element={<Profile />} />
         </Route>
