@@ -1,6 +1,7 @@
 export interface Tag {
     type: 'Difficulty' | 'Category' | 'Prerequisite';
     label: string;
+    className?: string;
 }
 
 // Constraint for tag styling
@@ -31,7 +32,7 @@ export const TagPill: React.FC<{ tag: Tag }> = ({ tag }) => {
     <span
       className={`
         inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full
-        ${colorClass} whitespace-nowrap
+        ${colorClass} ${tag.className || ''} whitespace-nowrap
       `}
     >
       {tag.label}

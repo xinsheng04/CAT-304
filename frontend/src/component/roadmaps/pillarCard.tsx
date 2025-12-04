@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import type { Tag } from './tag.tsx';
+import type { Tag } from '../tag.tsx';
 import { Link, useParams } from 'react-router';
 
 // Type and data structure

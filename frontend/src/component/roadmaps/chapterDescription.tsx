@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { TagPill } from "./tag";
+import { TagPill } from "../tag";
 import type { PillarCardProps } from "./pillarCard";
 import { X } from 'lucide-react';
 import { roadmapData } from "@/dummy";
