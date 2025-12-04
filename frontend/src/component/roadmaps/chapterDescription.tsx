@@ -9,6 +9,7 @@ const ChapterDescription: React.FC<PillarCardProps> = ({
     title, description, modifiedDate, tags, roadmapID
 }) => {
     const navigate = useNavigate();
+    const userID = localStorage.getItem("userID");
     const imageSrc = roadmapData.find(r => r.roadmapID === roadmapID)?.imageSrc || 'placeholder-image.jpg';
     const creator = roadmapData.find(r => r.roadmapID === roadmapID)?.creator || 'Unknown Creator';
 
@@ -51,10 +52,11 @@ const ChapterDescription: React.FC<PillarCardProps> = ({
                     <h2 className="text-3xl font-bold mb-4 text-left">{title}</h2>
                     {/* Creator and  Modified date info */}
                     <div className="grid grid-cols-2 gap-4 mb-6 text-left">
+                        {((Number(userID) !== creator) && 
                         <div>
                             <h3 className="font-semibold text-left">Creator</h3>
                             <p className="mt-1 text-gray-300">{creator}</p>
-                        </div>
+                        </div>)}
                         <div>
                             <h3 className="font-semibold text-left">Last Modified</h3>
                             <p className="mt-1 text-gray-300">{modifiedDate}</p>
