@@ -5,28 +5,28 @@ import FormBar from "./formBox";
 import { validateDescription, validateTitle } from "./validateFormBox";
 import { defaultImageSrc, IMAGE_KEYWORD_MAP} from "./image";
 
-interface RoadmapDescriptionEditProps{
-    imageSrc : string;
-    title: string;
-    description: string;
+interface RoadmapDetailFormProps{
+    mode: "add" | "edit";
+    imageSrc?: string;
+    title?: string;
+    description?: string;
 }
 
-const RoadmapDescriptionEdit: React.FC<RoadmapDescriptionEditProps> = ({
-    imageSrc, title, description}) => {
+const RoadmapDetailForm: React.FC<RoadmapDetailFormProps> = ({
+    mode, imageSrc, title, description}) => {
         const navigate = useNavigate();
-        const [queryTitle, setQueryTitle] = useState(title);
-        const [queryDescription, setQueryDescription] = useState(description)
-        const [currentImageSrc, setCurrentImageSrc] = useState(imageSrc);
+        const [queryTitle, setQueryTitle] = useState(mode === "edit" ? title ?? "" : "");
+        const [queryDescription, setQueryDescription] = useState( mode === "edit" ? description ?? "" : "")
+        const [currentImageSrc, setCurrentImageSrc] = useState(mode === "edit" ? (imageSrc ?? defaultImageSrc) : defaultImageSrc);
         const [errors, setErrors] = React.useState<string[]>([]);
         // Function to find the image URL based on the title keyword
         const getDynamicImageSrc = (inputTitle: string): string => {
             const lowerTitle = inputTitle.toLowerCase();
-            
             // Check for keywords in the title
-            for (const [keyword, url] of Object.entries(IMAGE_KEYWORD_MAP)) {
+            for (const [keyword, image] of Object.entries(IMAGE_KEYWORD_MAP)) {
                 // Check if the title includes any of the predefined keywords
                 if (lowerTitle.includes(keyword)) {
-                    return url;
+                    return image;
                 }
             }
             // If no keyword is found, return the default image source
@@ -49,9 +49,10 @@ const RoadmapDescriptionEdit: React.FC<RoadmapDescriptionEditProps> = ({
             setErrors(errormsg);
             if (errormsg.length > 0) {
                 return;
-                } else {
+            } 
+            else {
                 navigate(-1)
-                }
+            }
         }
 
         return (
@@ -60,7 +61,7 @@ const RoadmapDescriptionEdit: React.FC<RoadmapDescriptionEditProps> = ({
                     <div className="flex justify-end">
                         <button
                             className="text-white hover:text-gray-400 p-1"
-                            aria-label="Close Featured Roadmap"
+                            aria-label={ mode === "add" ? "Cancel" : "Close Featured Roadmap" }
                             onClick={() => navigate(-1)}
                         >
                             <X size={20} />
@@ -76,7 +77,7 @@ const RoadmapDescriptionEdit: React.FC<RoadmapDescriptionEditProps> = ({
                                     alt={queryTitle}
                                     className="w-full h-full object-cover" 
                                     onError={(e) => {
-                                        e.currentTarget.src = 'placeholder-image.jpg'; 
+                                        e.currentTarget.src = defaultImageSrc; 
                                     }}
                                 />
                             </div>
@@ -84,7 +85,7 @@ const RoadmapDescriptionEdit: React.FC<RoadmapDescriptionEditProps> = ({
                                 className="w-full bg-gray-500/80 hover:bg-gray-500 rounded-lg font-semibold transition shadow-xl"
                                 onClick={handleSubmit}
                             >
-                                Apply Change
+                                { mode === "add" ? "Add Roadmap" : "Apply Change" }
                             </button>
                         </div>
                         {/* Right Section: Tags */}
@@ -109,4 +110,4 @@ const RoadmapDescriptionEdit: React.FC<RoadmapDescriptionEditProps> = ({
         );
     }
 
-export default RoadmapDescriptionEdit;
+export default RoadmapDetailForm;

@@ -4,24 +4,25 @@ import { X } from 'lucide-react';
 import FormBar from "./formBox";
 import { validateTitle, validateOrder, validateDifficulty, validateCategory, validatePrerequisite } from "./validateFormBox";
 
-interface ChapterDescriptionEditProps{
-    title : string;
-    description: string;
-    difficulty: string;
-    order: number;
-    category: string;
-    prerequisite: string
+interface ChapterDetailFormProps{
+    mode: "add" | "edit";
+    title?: string;
+    description?: string;
+    difficulty?: string;
+    order?: number;
+    category?: string;
+    prerequisite?: string
 }
 
-const ChapterDescriptionEdit: React.FC<ChapterDescriptionEditProps> = ({
-    title, description, difficulty, order, category, prerequisite}) => {
+const ChapterDetailForm: React.FC<ChapterDetailFormProps> = ({
+    mode, title, description, difficulty, order, category, prerequisite}) => {
         const navigate = useNavigate();
-        const [queryTitle, setQueryTitle] = useState(title);
-        const [queryDescription, setQueryDescription] = useState(description)
-        const [queryDifficulty, setQueryDifficulty] = useState(difficulty)
-        const [queryOrder, setQueryOrder] = useState(String(order))
-        const [queryCategory, setQueryCategory] = useState(category)
-        const [queryPrerequisite, setQueryPrerequisite] = useState(prerequisite)
+        const [queryTitle, setQueryTitle] = useState(mode === "edit" ? title ?? "" : "");
+        const [queryDescription, setQueryDescription] = useState(mode === "edit" ? description ?? "" : "")
+        const [queryDifficulty, setQueryDifficulty] = useState(mode === "edit" ? difficulty ?? "" : "")
+        const [queryOrder, setQueryOrder] = useState(mode === "edit" && order !== undefined ? String(order) : "");
+        const [queryCategory, setQueryCategory] = useState(mode === "edit" ? category ?? "" : "")
+        const [queryPrerequisite, setQueryPrerequisite] = useState(mode === "edit" ? prerequisite ?? "" : "")
         const [errors, setErrors] = React.useState<string[]>([]);
         const handleSubmit = (e: React.FormEvent) => {
             e.preventDefault()
@@ -46,7 +47,7 @@ const ChapterDescriptionEdit: React.FC<ChapterDescriptionEditProps> = ({
                 <div className="flex justify-end">
                     <button
                         className="text-white hover:text-gray-400 p-1"
-                        aria-label="Close Featured Roadmap"
+                        aria-label={ mode === "add" ? "Cancel" : "Close Featured Chapter" }
                         onClick={() => navigate(-1)}
                         >
                         <X size={20} />
@@ -97,7 +98,7 @@ const ChapterDescriptionEdit: React.FC<ChapterDescriptionEditProps> = ({
                             className="w-full bg-gray-500/80 hover:bg-gray-500 rounded-lg font-semibold transition shadow-xl"
                             onClick={handleSubmit}
                         >
-                            Apply Change
+                            { mode === "add" ? "Add Chapter" : "Apply Change" }
                         </button>
                     </div>
                 </div>
@@ -106,4 +107,4 @@ const ChapterDescriptionEdit: React.FC<ChapterDescriptionEditProps> = ({
         );
     }
 
-export default ChapterDescriptionEdit;
+export default ChapterDetailForm;

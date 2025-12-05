@@ -1,6 +1,7 @@
 import React from 'react';
 import PillarCard from './pillarCard.tsx';
 import { roadmapData, pillarsData } from '../../dummy.tsx';
+import { Link } from 'react-router-dom';
 
 interface PillarListProps {
     selectedRoadmapId: number; 
@@ -9,6 +10,7 @@ interface PillarListProps {
 const PillarList: React.FC<PillarListProps> = ({ selectedRoadmapId }) => {
 // Filter pillars based on selectedRoadmapId
 const filteredPillars = pillarsData.filter(pillar => pillar.roadmapID === selectedRoadmapId);
+const roadmapSlug = roadmapData.find(r => r.roadmapID === selectedRoadmapId)?.roadmapSlug || 'Unknown Roadmap Slug';
 const roadmapTitle = roadmapData.find(r => r.roadmapID === selectedRoadmapId)?.title || 'Unknown Roadmap';
 const creator = roadmapData.find(r => r.roadmapID === selectedRoadmapId)?.creator || 'Unknown creator';
 const userID = localStorage.getItem("userID");
@@ -22,9 +24,11 @@ filteredPillars.sort((a, b) => a.order - b.order);
                     Chapters for {roadmapTitle}
                 </h3>
                 {((Number(userID) === creator) && 
-                <button className=' px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 transition'>
-                    Add chapter
-                </button>)}
+                <Link to={`/roadmap/${selectedRoadmapId}/${roadmapSlug}/add-chapter`}>
+                    <button className=' px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 transition'>
+                        Add chapter
+                    </button>
+                </Link>)}
             </div>
             {filteredPillars.length === 0 ? (
                 <p className="text-gray-400 text-center mt-10">No chapters found for this roadmap.</p>
