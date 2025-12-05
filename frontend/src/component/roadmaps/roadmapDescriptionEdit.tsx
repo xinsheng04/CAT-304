@@ -1,7 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from 'lucide-react';
 import FormBar from "./formBox";
+import defaultImageSrc from "../../assets/image/placeholder_image.jpg";
+import javaImage from "../../assets/image/java_intro.jpg";
+import pythonImage from "../../assets/image/python_intro.jpg"
+import javaScriptImage from "../../assets/image/javascript_intro.jpg"
+import cImage from "../../assets/image/c++_intro.jpg"
+import machinelearningImage from "../../assets/image/machine_learning_intro.jpg"
+import devopsImage from "../../assets/image/devop_intro.jpg"
+import frontendImage from "../../assets/image/frontend_intro.jpg"
+import backendImage from "../../assets/image/backend_intro.jpg"
+import reactImage from "../../assets/image/react_intro.jpg"
+import apiImage from "../../assets/image/api_intro.jpg"
+import angularImage from "../../assets/image/angular_intro.jpg"
+import typeScriptImage from "../../assets/image/typescript_intro.png"
+import htmlcssImage from "../../assets/image/html_css_intro.jpg"
+import sqlImage from "../../assets/image/sql_intro.png"
 
 interface RoadmapDescriptionEditProps{
     imageSrc : string;
@@ -9,12 +24,53 @@ interface RoadmapDescriptionEditProps{
     description: string;
 }
 
+const IMAGE_KEYWORD_MAP: { [key: string]: string } = {
+    // IMPORTANT: Replace these with the actual public/absolute URLs for your images
+    "javascript": javaScriptImage,
+    "c++": cImage,
+    "java": javaImage, 
+    "python": pythonImage,
+    "machine-learning": machinelearningImage,
+    "devops": devopsImage,
+    "frontend": frontendImage,
+    "backend": backendImage,
+    "react": reactImage,
+    "api": apiImage,
+    "angular" : angularImage,
+    "sql" : sqlImage,
+    "typescript": typeScriptImage,
+    "css": htmlcssImage,
+    "html": htmlcssImage
+};
 
 const RoadmapDescriptionEdit: React.FC<RoadmapDescriptionEditProps> = ({
     imageSrc, title, description}) => {
         const navigate = useNavigate();
         const [queryTitle, setQueryTitle] = useState(title);
         const [queryDescription, setQueryDescription] = useState(description)
+        const [currentImageSrc, setCurrentImageSrc] = useState(imageSrc);
+        // Function to find the image URL based on the title keyword
+        const getDynamicImageSrc = (inputTitle: string): string => {
+            const lowerTitle = inputTitle.toLowerCase();
+            
+            // Check for keywords in the title
+            for (const [keyword, url] of Object.entries(IMAGE_KEYWORD_MAP)) {
+                // Check if the title includes any of the predefined keywords
+                if (lowerTitle.includes(keyword)) {
+                    return url;
+                }
+            }
+            // If no keyword is found, return the default image source
+            return defaultImageSrc;
+        };
+
+
+        useEffect(() => {
+            const newImage = getDynamicImageSrc(queryTitle);
+            setCurrentImageSrc(newImage);
+                
+        }, [queryTitle, defaultImageSrc]);
+
         return (
                 <div className=" max-w-5xl mx-auto text-white">
                     {/* Top Right Icon */}
@@ -32,8 +88,8 @@ const RoadmapDescriptionEdit: React.FC<RoadmapDescriptionEditProps> = ({
                         <div className="w-full md:w-[40%]">
                             <div className="relative h-70 bg-gray-700/30 rounded-md mb-4 overflow-hidden">
                                 <img
-                                    src={imageSrc}
-                                    alt={title}
+                                    src={currentImageSrc}
+                                    alt={queryTitle}
                                     className="w-full h-full object-cover" 
                                     onError={(e) => {
                                         e.currentTarget.src = 'placeholder-image.jpg'; 

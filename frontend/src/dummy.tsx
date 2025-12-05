@@ -1,6 +1,19 @@
 import type{ RoadmapItemCardProps} from "./component/roadmaps/roadmapCard";
 import javaImage from "./assets/image/java_intro.jpg";
 import pythonImage from "./assets/image/python_intro.jpg";
+import defaultImageSrc from "./assets/image/placeholder_image.jpg";
+import javaScriptImage from "./assets/image/javascript_intro.jpg"
+import cImage from "./assets/image/c++_intro.jpg"
+import machinelearningImage from "./assets/image/machine_learning_intro.jpg"
+import devopsImage from "./assets/image/devop_intro.jpg"
+import frontendImage from "./assets/image/frontend_intro.jpg"
+import backendImage from "./assets/image/backend_intro.jpg"
+import reactImage from "./assets/image/react_intro.jpg"
+import apiImage from "./assets/image/api_intro.jpg"
+import angularImage from "./assets/image/angular_intro.jpg"
+import typeScriptImage from "./assets/image/typescript_intro.png"
+import htmlcssImage from "./assets/image/html_css_intro.jpg"
+import sqlIntro from "./assets/image/sql_intro.png"
 import type { PillarCardProps } from "./component/roadmaps/pillarCard";
 import type { LinkCardProps } from "./component/roadmaps/linkCard";
 
@@ -33,7 +46,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
     roadmapID: 100003,
     roadmapSlug: "javascript-essentials",
     creator: 100002,
-    imageSrc: pythonImage,
+    imageSrc: javaScriptImage,
     title: "JavaScript Essentials",
     description: "JavaScript Essentials provides a clear path for mastering the core features of JavaScript, the language of the web. This roadmap includes topics such as variables, functions, loops, arrays, objects, and basic DOM manipulation. You will also learn how JavaScript runs in the browser, how events work, and how to interact with HTML and CSS. These fundamentals form the base required for front-end frameworks like React, Angular, and Vue.",
     createdDate: "2025-08-15",
@@ -45,7 +58,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
     roadmapID: 100004,
     roadmapSlug: "react-for-beginners",
     creator: 100003,
-    imageSrc: pythonImage,
+    imageSrc: reactImage,
     title: "React for Beginners",
     description: "This roadmap introduces the basics of React, one of the most in-demand front-end frameworks. You will learn how to create components, manage state, handle props, and work with React Hooks such as useState and useEffect. The roadmap also covers JSX, component trees, and simple API fetching. By the end, you will understand how to build interactive and reusable UI components — an essential skill for modern web development.",
     createdDate: "2025-09-25",
@@ -57,7 +70,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
     roadmapID: 100005,
     roadmapSlug: "nodejs-fundamentals",
     creator: 100001,
-    imageSrc: pythonImage,
+    imageSrc: defaultImageSrc,
     title: "Node.js Fundamentals",
     description: "Node.js Fundamentals guides you into the world of backend JavaScript development. You will learn how Node.js works, how to use built-in modules, and how to create simple servers. The roadmap also covers asynchronous programming, callbacks, promises, and using npm packages. By understanding the Node.js runtime environment and event loop, you will be prepared to build APIs or move into full-stack development using frameworks like Express.js.",
     createdDate: "2025-11-09",
@@ -69,7 +82,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
     roadmapID: 100006,
     roadmapSlug: "sql-basics",
     creator: 100007,
-    imageSrc: pythonImage,
+    imageSrc: sqlIntro,
     title: "SQL Basics",
     description: "SQL Basics provides a foundational understanding of relational databases and the SQL language. You will learn how to create, read, update, and delete data using SQL queries. The roadmap covers essential concepts such as database design, normalization, joins, and indexing. By mastering SQL, you will be equipped to work with popular database systems like MySQL, PostgreSQL, and SQLite, which are crucial for backend development and data management.",
     createdDate: "2025-12-15",
@@ -81,7 +94,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
     roadmapID: 100007,
     roadmapSlug: "html-css-fundamentals",
     creator: 100007,
-    imageSrc: javaImage,
+    imageSrc: htmlcssImage,
     title: "HTML & CSS Fundamentals",
     description:  "HTML & CSS Fundamentals teaches the core building blocks of web development. You will learn how to structure webpages using HTML elements such as headings, paragraphs, lists, and forms. Then, you will work with CSS to style layouts, apply colors, spacing, and responsive design. This roadmap helps beginners create clean and attractive webpages and builds the foundation needed for JavaScript and front-end frameworks.",
     createdDate: "2025-11-11",
@@ -93,7 +106,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
     roadmapID: 100008,
     roadmapSlug: "typescript-basics",
     creator: 100001,
-    imageSrc: javaImage,
+    imageSrc: typeScriptImage,
     title: "TypeScript Basics",
     description: "TypeScript Basics introduces the strongly typed superset of JavaScript that adds static types. You will learn about type annotations, interfaces, classes, and generics. The roadmap covers how TypeScript improves code quality and developer experience by catching errors early and enabling better tooling. By mastering TypeScript basics, you will be prepared to work on large-scale JavaScript applications and frameworks like Angular.",
     createdDate: "2025-12-05",
@@ -105,7 +118,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
     roadmapID: 100009,
     roadmapSlug: "angular-fundamentals",
     creator: 100002,
-    imageSrc: javaImage,
+    imageSrc: angularImage,
     title: "Angular Fundamentals",
     description: "Angular Fundamentals covers the core concepts of the Angular framework. You will learn about components, templates, data binding, directives, services, and dependency injection. The roadmap also introduces Angular CLI, routing, and forms. By mastering these fundamentals, you will be able to build dynamic single-page applications and understand the architecture of modern front-end development with Angular.",
     createdDate: "2025-01-15",
@@ -141,7 +154,7 @@ export const roadmapData: RoadmapItemCardProps[] = [
     roadmapID: 100012,
     roadmapSlug: "react-advanced-patterns",
     creator: 100002,
-    imageSrc: javaImage,
+    imageSrc: reactImage,
     title: "React Advanced Patterns",
     description: "Explore advanced patterns in React development, including higher-order components, render props, context API, hooks, and performance optimization techniques. This roadmap helps you build scalable and maintainable React applications by mastering design patterns and best practices.",
     createdDate: "2025-02-15",
@@ -149,6 +162,72 @@ export const roadmapData: RoadmapItemCardProps[] = [
     isFavourite: false,
     
   },
+  {
+    roadmapID: 100013,
+    roadmapSlug: "api-design-and-development",
+    creator: 100003,
+    imageSrc: apiImage,
+    title: "API Design and Development",
+    description: "Master the principles of designing, developing, and deploying robust APIs. Topics include RESTful design, GraphQL fundamentals, authentication (OAuth, JWT), API documentation (Swagger/OpenAPI), and performance testing.",
+    createdDate: "2025-03-01",
+    modifiedDate: "2026-03-01",
+    isFavourite: false,
+  },
+  {
+    roadmapID: 100014,
+    roadmapSlug: "modern-frontend-development",
+    creator: 100004,
+    imageSrc: frontendImage,
+    title: "Modern Frontend Development",
+    description: "A comprehensive path covering HTML5, CSS3 (Flexbox/Grid), advanced JavaScript (ES6+), and popular frameworks like Vue.js and Svelte. Focus on responsive design, state management, and build tools (Webpack/Vite).",
+    createdDate: "2025-04-10",
+    modifiedDate: "2026-04-10",
+    isFavourite: false,
+  },
+  {
+    roadmapID: 100015,
+    roadmapSlug: "scalable-backend-engineering",
+    creator: 100005,
+    imageSrc: backendImage,
+    title: "Scalable Backend Engineering",
+    description: "Learn to build high-performance, scalable servers using languages like Node.js, Go, or Python (Django/Flask). Includes database management (SQL/NoSQL), microservices architecture, caching strategies, and security implementation.",
+    createdDate: "2025-05-20",
+    modifiedDate: "2026-05-20",
+    isFavourite: false,
+  },
+  {
+    roadmapID: 100016,
+    roadmapSlug: "devops-fundamentals-and-ci-cd",
+    creator: 100006,
+    imageSrc: devopsImage,
+    title: "DevOps Fundamentals and CI/CD",
+    description: "Master the DevOps toolchain, focusing on automation, infrastructure as code (Terraform), containerization (Docker, Kubernetes), and building continuous integration/continuous delivery (CI/CD) pipelines (Jenkins/GitLab CI).",
+    createdDate: "2025-06-05",
+    modifiedDate: "2026-06-05",
+    isFavourite: false,
+  },
+  {
+    roadmapID: 100017,
+    roadmapSlug: "machine-learning-engineering",
+    creator: 100007,
+    imageSrc: machinelearningImage,
+    title: "Machine Learning Engineering",
+    description: "A deep dive into model development, training, and deployment. Covers core algorithms, data preprocessing, MLOps, cloud platforms (AWS Sagemaker/Azure ML), and performance optimization for production environments.",
+    createdDate: "2025-07-12",
+    modifiedDate: "2026-07-12",
+    isFavourite: false,
+  },
+  {
+    roadmapID: 100018,
+    roadmapSlug: "modern-c++",
+    creator: 100008,
+    imageSrc: cImage,
+    title: "Modern C++ Programming",
+    description: "Focus on C++17 and C++20 features, object-oriented programming, standard template library (STL), memory management, multithreading, and best practices for developing high-performance, low-latency applications.",
+    createdDate: "2025-08-25",
+    modifiedDate: "2026-08-25",
+    isFavourite: false,
+},
 ];
 
 

@@ -16,6 +16,8 @@ type Section = {
 const sections: Section[] = [
   { id: "whats-new", title: "What's New" },
   { id: "recently-viewed", title: "Recently Viewed" },
+  { id: "javascript", title: "JavaScript", tag: "JavaScript"},
+  { id: "c++", title: "C++", tag: "C++"},
   { id: "java", title: "Java", tag: "Java" },
   { id: "python", title: "Python", tag: "Python" },
   { id: "machine-learning", title: "Machine Learning", tag: "Machine Learning" },
@@ -24,6 +26,9 @@ const sections: Section[] = [
   { id: "backend", title: "Backend", tag: "Backend" },
   { id: "react", title: "React", tag: "React" },
   { id: "api", title: "API", tag: "API" },
+  { id: "angular", title: "Angular", tag: "Angular" },
+  { id: "sql", title: "SQL", tag: "SQL" },
+  { id: "typescript", title: "TypeScript", tag: "TypeScript" },
   { id: "your-design", title: "Your Design" },
 ];
 
