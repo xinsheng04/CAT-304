@@ -34,6 +34,15 @@ const RoadmapSidebar: React.FC<Props> = ({ visibleSections }) => {
                     // Adjust threshold (100) as needed
                     if (rect.top <= 100 && rect.bottom >= 100) {
                         setActiveId(section.id);
+
+                        // Scroll the sidebar item into view if it is outside the viewport
+                        const sidebarItem = document.getElementById(`sidebar-${section.id}`);
+                        if (sidebarItem) {
+                            sidebarItem.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }
                         break;
                     }
                 }
@@ -50,6 +59,7 @@ const RoadmapSidebar: React.FC<Props> = ({ visibleSections }) => {
                 {visibleSections.map((item) => (
                     <a 
                         key={item.id}
+                        id={`sidebar-${item.id}`}
                         href={`#${item.id}`} // Standard anchor link for fallback/accessibility
                         onClick={(e) => {
                             e.preventDefault(); // Prevent default hash navigation
