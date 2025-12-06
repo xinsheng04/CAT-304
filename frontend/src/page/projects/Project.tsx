@@ -11,6 +11,8 @@ import { categoryList } from "@/lib/types.ts";
 import { commonButtonStyles, commonIconStyles } from "../../lib/styles.ts";
 import { useNavigate } from "react-router";
 import ProjectCard from "../../component/projects/projectCard.tsx";
+import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
+import { ProjectForm } from "./projectForm.tsx";
 
 
 export const Project: React.FC = () => {
@@ -65,6 +67,18 @@ export const Project: React.FC = () => {
                                 <img src={folder_icon} alt="" className={commonIconStyles} />
                                 My Projects and Submissions
                             </Button>
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button className={`${commonButtonStyles} h-10`}>+ Add a project</Button>
+                                </DialogTrigger>
+                                <ProjectForm
+                                    onSubmit={
+                                        (data) => console.log("Submitted data:", data)
+                                    }
+                                    onClose={() => { }}
+                                    openAsCreateForm={true}
+                                />
+                            </Dialog>
                         </div>
                     </div>
                 </div>

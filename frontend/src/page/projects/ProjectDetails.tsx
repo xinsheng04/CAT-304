@@ -11,20 +11,22 @@ import { Toggle } from "@/component/shadcn/toggle";
 import { Button } from "@/component/shadcn/button";
 import alert_icon from "../../assets/projects/alert_icon.png";
 import SubmissionCard from "@/component/projects/submissionCard";
+import { Dialog, DialogTrigger} from "@/component/shadcn/dialog";
+import { ProjectForm } from "./projectForm";
 // import projectDetailsMD from "../../store/mdexample.md?raw";
 
 export const ProjectDetails: React.FC = () => {
   const navigate = useNavigate();
   const { projectId } = useParams<{ projectId: string }>();
-  const creatorId = "Alice"; // Placeholder for current user ID
   const project = useSelector((state: any) =>
     state.projects.projectsList.find((proj: any) => proj.projectId === projectId)
   );
+  const userId = useSelector((state: any) => state.profile.userId);
   const submissions = useSelector((state: any) => state.submissions.submissionsList.filter((sub: any) => sub.projectId === projectId));
 
   const communitySubmissions: any[] = [], mySubmissions: any[] = []; // Placeholder arrays for submissions
   submissions.map((sub: any) => {
-    if (sub.cretorId === creatorId) {
+    if (sub.creatorId === userId) {
       mySubmissions.push(sub);
     } else {
       communitySubmissions.push(sub);
@@ -75,6 +77,30 @@ export const ProjectDetails: React.FC = () => {
       }
 
       <div className="self-baseline-last space-x-5">
+        {
+          userId === project?.creatorId && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="rounded-2xl cursor-pointer"
+                >Edit Project</Button>
+              </DialogTrigger>
+              <ProjectForm
+                onSubmit={(data) => {
+                  // Handle project editing logic here
+                  console.log("Edited project data:", data);
+                }}
+                onClose={() => {
+                  // Handle dialog close logic here
+                  console.log("Dialog closed");
+                }}
+                openAsCreateForm={false}
+                initialData={project}
+              />
+            </Dialog>
+          )
+        }
         <Button
           variant="outline"
           onClick={() => {
@@ -96,6 +122,12 @@ export const ProjectDetails: React.FC = () => {
           className="text-white cursor-pointer"
         >
           Track this project
+        </Toggle>
+        <Toggle
+          pressed={false} //later dynamically determine if user has done this project
+          onPressedChange={() => { }} //handle marking logic here
+          className="text-white cursor-pointer">
+            Mark as Done
         </Toggle>
       </div>
 

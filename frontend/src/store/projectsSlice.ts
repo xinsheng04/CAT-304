@@ -8,7 +8,7 @@ export type ProjectType = {
   shortDescription: string;
   difficulty: Difficulty;
   category: Category;
-  creator: string;
+  creatorId: string;
   lastUpdated: Date;
   startingRepoLink?: string;
   details: string;
@@ -40,7 +40,7 @@ const dummyState: ProjectSlice = {
       title: "AI-Powered Chatbot",
       shortDescription: "A chatbot that uses AI to provide customer support.",
       category: "Machine Learning",
-      creator: "Alice",
+      creatorId: "1",
       difficulty: "Intermediate",
       lastUpdated: new Date("2024-01-15"),
       startingRepoLink: "https://github.com/alice/ai-chatbot",
@@ -53,7 +53,7 @@ const dummyState: ProjectSlice = {
       title: "E-commerce Website",
       shortDescription: "A full-featured e-commerce platform for online shopping.",
       category: "Web Development",
-      creator: "Bob",
+      creatorId: "2",
       difficulty: "Advanced",
       lastUpdated: new Date("2024-02-10"),
       startingRepoLink: "https://github.com/bob/ecommerce-website",
@@ -66,7 +66,7 @@ const dummyState: ProjectSlice = {
       title: "Fitness Tracker App",
       shortDescription: "A mobile app to track fitness activities and health metrics.",
       category: "Mobile Apps",
-      creator: "Charlie",
+      creatorId: "3",
       difficulty: "Beginner",
       lastUpdated: new Date("2024-03-05"),
       startingRepoLink: "https://github.com/charlie/fitness-tracker-app",

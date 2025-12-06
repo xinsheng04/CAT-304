@@ -1,6 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import projectsReducer from "./projectsSlice";
 import submissionsReducer from "./submissionsSlice";
+import userListReducer from "./userListSlice";
+import profileReducer from "./profileSlice";  
 // Import your reducers here
 // Example: import userReducer from "./slices/userSlice";
 
@@ -33,6 +35,8 @@ export const store = configureStore({
         // Example: user: userReducer,
         projects: projectsReducer,
         submissions: submissionsReducer,
+        userList: userListReducer,
+        profile: profileReducer,
     } as any,
     preloadedState,
 });

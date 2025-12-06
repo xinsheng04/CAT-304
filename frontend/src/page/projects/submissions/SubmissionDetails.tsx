@@ -12,12 +12,9 @@ const SubmissionDetails: React.FC = () => {
   const { submissionId } = useParams<{ submissionId: string }>();
 
   const submission = useSelector((state: any) => state.submissions.submissionsList.find((sub: any) => sub.submissionId === submissionId));
-  // const creatorId = submission?.creatorId;
-  // const creatorName = useSelector((state: any) =>
-  //   state.users.usersList.find((user: any) => user.userId === creatorId)
-  // )?.name;
-  const creatorName = "Alice"; // Placeholder for current user name
-  const userName = "Alice"; // Placeholder for current user name
+  const creatorId = submission.creatorId;
+  const creatorName = useSelector((state: any) => state.userList.userList.find((user: any) => user.userId === creatorId))?.username;
+  const userName = useSelector((state: any) => state.profile.username);
   const projectId = submission?.projectId;
   const projectTitle = useSelector((state: any) =>
     state.projects.projectsList.find((proj: any) => proj.projectId === projectId)

@@ -4,7 +4,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 export type SubmissionType = {
   submissionId: string;
   projectId: string;
-  creator: string;
+  creatorId: string;
   postedOn: Date;
   lastUpdated: Date;
   title: string;
@@ -29,7 +29,7 @@ const dummyState: SubmissionsSlice = {
     {
       submissionId: "1",
       projectId: "1",
-      creator: "Alice",
+      creatorId: "1",
       postedOn: new Date("2024-03-01"),
       lastUpdated: new Date("2024-03-05"),
       title: "AI Chatbot v1",
@@ -39,7 +39,7 @@ const dummyState: SubmissionsSlice = {
     {
       submissionId: "2",
       projectId: "2",
-      creator: "Bob",
+      creatorId: "2",
       postedOn: new Date("2024-03-10"),
       lastUpdated: new Date("2024-03-12"),
       title: "E-commerce Platform v1",
