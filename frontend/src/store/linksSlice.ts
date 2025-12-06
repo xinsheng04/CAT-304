@@ -1,0 +1,69 @@
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { linksData } from "@/dummy";
+
+export interface LinkType {
+    nodeID: number;
+    chapterID: number;
+    title: string;
+    modifiedDate: string;
+    order: number;
+    link: string;
+    isViewed: boolean;
+}
+
+type InitialLinkOmits = "nodeID" | "modifiedDate" | "isViewed";
+
+export type InitialLinkType = Omit<LinkType, InitialLinkOmits>;
+
+interface LinkSlice {
+  linkList: Array<LinkType>;
+}
+
+let nextNodeID = 100256;
+function generateNodeID() {
+    return (nextNodeID++);
+}
+
+// const initialState: LinkSlice = {
+//     linkList: [],
+// };
+
+const dummyState: LinkSlice = {
+    linkList: linksData,
+};
+
+const linkSlice = createSlice({
+    name: "links",
+    initialState: dummyState,
+    reducers:{
+        addLink: (state, action: PayloadAction<InitialLinkType>) => {
+            const newLink: LinkType = {
+                ...action.payload,
+                nodeID: generateNodeID(),
+                modifiedDate: new Date().toISOString(),
+                isViewed: false,
+            };
+            state.linkList.push(newLink);
+        },
+        editLink: (state, action: PayloadAction<LinkType>) => {
+            const index = state.linkList.findIndex(
+                (submission) => submission.nodeID === action.payload.nodeID
+            );
+            if (index !== -1) {
+                state.linkList[index] = {
+                    ...action.payload,
+                    modifiedDate: new Date().toISOString(),
+                };
+            }
+        },
+        deleteLink: (state, action: PayloadAction<number>) => {
+            state.linkList = state.linkList.filter(
+                (submission) => submission.nodeID !== action.payload
+            );
+        },
+    },
+});
+
+export const { addLink, editLink, deleteLink } = linkSlice.actions;
+export default linkSlice.reducer;

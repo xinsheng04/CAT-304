@@ -3,6 +3,9 @@ import projectsReducer from "./projectsSlice";
 import submissionsReducer from "./submissionsSlice";
 import userListReducer from "./userListSlice";
 import profileReducer from "./profileSlice";  
+import roadmapReducer from "./roadmapSlice";
+import pillarReducer from "./pillarsSlice";
+import linkReducer from "./linksSlice";
 // Import your reducers here
 // Example: import userReducer from "./slices/userSlice";
 
@@ -37,6 +40,9 @@ export const store = configureStore({
         submissions: submissionsReducer,
         userList: userListReducer,
         profile: profileReducer,
+        roadmap: roadmapReducer,
+        chapter: pillarReducer,
+        link: linkReducer,
     } as any,
     preloadedState,
 });

@@ -6,7 +6,7 @@ export interface LinkCardProps {
     nodeID: number;
     chapterID: number;
     title: string;
-    modifiedDate: String;
+    modifiedDate: string;
     order: number;
     link: string;
     isViewed: boolean;
