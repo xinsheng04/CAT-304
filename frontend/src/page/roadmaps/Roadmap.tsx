@@ -39,10 +39,9 @@ export const Roadmap: React.FC = () => {
   const roadmapData = useSelector((state: any) => state.roadmap.roadmapList);
   const pillarsData = useSelector((state: any) => state.chapter.pillarList);
   const linksData = useSelector((state: any) => state.link.linkList);
-  
-  const getRecentlyViewedRoadmaps = () => {
-    return roadmapData.filter((roadmap: any) => {
-      const roadmapID = Number(roadmap.roadmapID);
+
+  const getRecentlyViewedRoadmaps = (sourceData: any[]) => {
+    return sourceData.filter((roadmap: any) => {const roadmapID = Number(roadmap.roadmapID);
 
       // Get all chapters under the roadmap
       const chapters = pillarsData.filter(
@@ -60,32 +59,6 @@ export const Roadmap: React.FC = () => {
     });
   };
 
-  const availableSections = sections.filter((section) => {
-    // if not Login, recent viewed and your design section will hide
-    if (!isLoggedIn && (section.id === "recently-viewed" || section.id === "your-design")) {
-      return false;
-    }
-    // always show your design" when logged in, even if user has no items
-    if (section.id === "your-design" && isLoggedIn) return true;
-    // show sections without tag (like "What's New") or any other sections
-    if (!section.tag) return true;
-
-    // show section only if there is at least one roadmap item with matching tag label
-    return roadmapData.some((item: any) => {
-      const effectiveTags = (item.tags && item.tags.length) ? item.tags : generateTags(item.roadmapID, pillarsData);
-      const matchesTag = effectiveTags.some((t: any) => t.label === section.tag);
-      const matchesQuery =
-        item.title.toLowerCase().includes(query.toLowerCase()) ||
-        effectiveTags.some((t: any) => t.label.toLowerCase().includes(query.toLowerCase()));
-      return matchesTag && matchesQuery;
-    });
-  });
-
-  const visibleSidebarItems = availableSections.map((s) => ({
-    name: s.title,
-    id: s.id,
-  }));
-
   const filteredRoadmapData = roadmapData.filter((item: any) => {
     const q = query.toLowerCase();
     const effectiveTags = (item.tags && item.tags.length) ? item.tags : generateTags(item.roadmapID, pillarsData);
@@ -95,6 +68,67 @@ export const Roadmap: React.FC = () => {
     );
   });
 
+  const getItemsForSection = (section: Section) => {
+    // User own designs
+    if (section.id === "your-design" && isLoggedIn && userID) {
+      return filteredRoadmapData.filter(
+        (item: any) => item.creator === Number(userID)
+      );
+    }
+
+    // New content that is not created by the user
+    if (section.id === "whats-new" && isLoggedIn && userID) {
+      return filteredRoadmapData.filter(
+        (item: any) => item.creator !== Number(userID)
+      );
+    }
+
+    // Recently viewed roadmaps
+    if (section.id === "recently-viewed" && isLoggedIn) {
+      return getRecentlyViewedRoadmaps(filteredRoadmapData);
+    }
+
+    // Tag-based sections
+    if (section.tag) {
+      return filteredRoadmapData.filter((item: any) => {
+        const effectiveTags =
+          item.tags?.length > 0
+            ? item.tags
+            : generateTags(item.roadmapID, pillarsData);
+
+        return effectiveTags.some((t: any) => t.label === section.tag);
+      });
+    }
+
+    // Default → show all filtered data
+    return filteredRoadmapData;
+  };
+
+  const availableSections = sections.filter((section) => {
+    // Hide certain sections for guest users
+    if (!isLoggedIn && ["recently-viewed", "your-design"].includes(section.id)) {
+      return false;
+    }
+
+    const items = getItemsForSection(section);
+
+    // For dynamic sections like "What's New" & "Recently Viewed"
+    if (!section.tag) {
+      if (["whats-new", "recently-viewed"].includes(section.id)) {
+        return items.length > 0;
+      }
+      return true;
+    }
+
+    return items.length > 0;
+  });
+
+
+  const visibleSidebarItems = availableSections.map((s) => ({
+    name: s.title,
+    id: s.id,
+  }));
+
   return (
     <div>
       <div className="fixed">
@@ -103,24 +137,16 @@ export const Roadmap: React.FC = () => {
       <div className="pl-78 p-10">
         <SearchBar query={query} setQuery={setQuery} placeholder="Enter a roadmap title / category to see what other people saying about" />
         {availableSections.map((section) => {
-          let itemsToShow = filteredRoadmapData;
-          // Special filter for "Your Design" section
-          if (section.id === "your-design" && isLoggedIn && userID) {
-            itemsToShow = filteredRoadmapData.filter((item: any) => item.creator === Number(userID));
-          }
-          if (section.id === "whats-new" && isLoggedIn && userID) {
-            itemsToShow = filteredRoadmapData.filter((item: any) => item.creator !== Number(userID));
-          }
-          if (section.id === "recently-viewed" && isLoggedIn) {
-            itemsToShow = getRecentlyViewedRoadmaps();
-          }
+          const items = getItemsForSection(section);
 
-          return(
-          <SectionBlock key={section.id} id={section.id} title={section.title}>
-            <RoadmapItemList items={itemsToShow} filterTag={section.tag} />
-          </SectionBlock>
+          if (items.length === 0 && section.id !== "your-design") return null;
+
+          return (
+            <SectionBlock key={section.id} id={section.id} title={section.title}>
+              <RoadmapItemList items={items} filterTag={section.tag} />
+            </SectionBlock>
           );
-      })}
+        })}
       </div>
     </div>
   );
