@@ -32,9 +32,9 @@ function generateChapterID() {
     return (nextChapterID++);
 }
 
-// const initialState: PillarSlice = {
-//     pillarList: [],
-// };
+const initialState: PillarSlice = {
+    pillarList: [],
+};
 
 const dummyState: PillarSlice = {
     pillarList: pillarsData

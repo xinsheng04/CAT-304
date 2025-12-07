@@ -39,49 +39,49 @@ const dummyState: UserSlice = {
       password: "12345678"
     },
     {
-      userId: "100000",
+      userId: 100002,
       username: "Xin Sheng",
       email: "xinsheng04@example.com",
       password: "12345678"
     },
     {
-      userId: "100001",
+      userId: 100001,
       username: "Jia Liang",
       email: "jialiang04@example.com",
       password: "12345678"
     },
     {
-      userId: "100003",
+      userId: 100003,
       username: "SeeWatt",
       email: "seewatt@example.com",
       password: "12345678"
     },
     {
-      userId: "100004",
+      userId: 100004,
       username: "Guest Me",
       email: "guestme@example.com",
       password: "12345678"
     },
     {
-      userId: "100005",
+      userId: 100005,
       username: "Lenard",
       email: "lenard@example.com",
       password: "12345678"
     },
     {
-      userId: "100006",
+      userId: 100006,
       username: "Wun Zhe",
       email: "wunzhe04@example.com",
       password: "12345678"
     },
     {
-      userId: "100007",
+      userId: 100007,
       username: "Jee",
       email: "jch04@example.com",
       password: "12345678"
     },
     {
-      userId: "100008",
+      userId: 100008,
       username: "Admin",
       email: "admin@example.com",
       password: "12345678"

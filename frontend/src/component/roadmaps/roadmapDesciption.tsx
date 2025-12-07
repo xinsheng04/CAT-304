@@ -8,11 +8,13 @@ import { Heart, X } from 'lucide-react';
 import type { PillarCardProps } from "./pillarCard";
 import { useDispatch } from 'react-redux';
 import { toggleFavourite } from "@/store/roadmapSlice";
+import type { UserListType } from "@/store/userListSlice";
 
 const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({
     creator,imageSrc, title, description, createdDate, tags,
     modifiedDate, isFavourite, roadmapID: roadmapIDProp}) => {
-    
+    const userData = useSelector((state: any) => state.userList.userList) as UserListType[];
+    const username = userData.find(user => user.userId === creator)?.username || 'Unknown Username';
     const pillarsData = useSelector((state: any) => state.chapter.pillarList) as PillarCardProps[];
     const dispatch = useDispatch();
     const handleToggleFavourite = () => {
@@ -99,7 +101,7 @@ const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({
                         <>
                             <div>
                                 <h3 className="font-semibold text-left">Creator</h3>
-                                <p className="mt-1 text-gray-300">{creator}</p>
+                                <p className="mt-1 text-gray-300">{username}</p>
                             </div>
                             <br></br>
                         </>)}

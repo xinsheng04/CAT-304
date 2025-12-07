@@ -6,15 +6,18 @@ import type { PillarCardProps } from "./pillarCard";
 import { X } from 'lucide-react';
 import { useSelector } from "react-redux";
 import type { RoadmapItemCardProps } from "./roadmapCard";
+import type { UserListType } from "@/store/userListSlice";
 
 const ChapterDescription: React.FC<PillarCardProps> = ({
     chapterID, chapterSlug, title, description, modifiedDate, difficulty, category, prerequisite, roadmapID
 }) => {
     const navigate = useNavigate();
     const userID = localStorage.getItem("userID");
+    const userData = useSelector((state: any) => state.userList.userList) as UserListType[];
     const roadmapData = useSelector((state: any) => state.roadmap.roadmapList) as RoadmapItemCardProps[];
     const imageSrc = roadmapData.find(r => r.roadmapID === roadmapID)?.imageSrc || 'placeholder-image.jpg';
     const creator = roadmapData.find(r => r.roadmapID === roadmapID)?.creator || 'Unknown Creator';
+    const username = userData.find(user => user.userId === creator)?.username || 'Unknown Username';
     const roadmapSlug = roadmapData.find(r => r.roadmapID === roadmapID)?.roadmapSlug || 'Unknown Roadmap Slug';
     const tags: Tag[] = [
         { type: 'Difficulty', label: difficulty },
@@ -72,7 +75,7 @@ const ChapterDescription: React.FC<PillarCardProps> = ({
                         {((Number(userID) !== creator) && 
                         <div>
                             <h3 className="font-semibold text-left">Creator</h3>
-                            <p className="mt-1 text-gray-300">{creator}</p>
+                            <p className="mt-1 text-gray-300">{username}</p>
                         </div>)}
                         <div>
                             <h3 className="font-semibold text-left">Last Modified</h3>

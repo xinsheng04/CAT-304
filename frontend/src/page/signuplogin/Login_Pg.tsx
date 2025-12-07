@@ -34,7 +34,7 @@ const Login_Pg: FC = () => {
       return false;
     }
 
-    localStorage.setItem("userID", userDetail.userId);
+    localStorage.setItem("userID", userDetail.userId.toString());
     return true;
   };
 
