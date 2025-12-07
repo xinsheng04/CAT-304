@@ -38,6 +38,27 @@ export const Roadmap: React.FC = () => {
 
   const roadmapData = useSelector((state: any) => state.roadmap.roadmapList);
   const pillarsData = useSelector((state: any) => state.chapter.pillarList);
+  const linksData = useSelector((state: any) => state.link.linkList);
+  
+  const getRecentlyViewedRoadmaps = () => {
+    return roadmapData.filter((roadmap: any) => {
+      const roadmapID = Number(roadmap.roadmapID);
+
+      // Get all chapters under the roadmap
+      const chapters = pillarsData.filter(
+        (chapter: any) => Number(chapter.roadmapID) === roadmapID
+      );
+
+      // Check if any chapter is viewed
+      const chapterViewed = chapters.some((chapter: any) => chapter.isViewed === true);
+      if (chapterViewed) return true;
+
+      // If no chapter viewed → check if any link is viewed
+      const chapterIds = new Set(chapters.map((c: any) => c.chapterID));
+      const linkViewed = linksData.some((link: any) => chapterIds.has(link.chapterID) && link.isViewed === true);
+      return linkViewed;
+    });
+  };
 
   const availableSections = sections.filter((section) => {
     // if not Login, recent viewed and your design section will hide
@@ -90,6 +111,10 @@ export const Roadmap: React.FC = () => {
           if (section.id === "whats-new" && isLoggedIn && userID) {
             itemsToShow = filteredRoadmapData.filter((item: any) => item.creator !== Number(userID));
           }
+          if (section.id === "recently-viewed" && isLoggedIn) {
+            itemsToShow = getRecentlyViewedRoadmaps();
+          }
+
           return(
           <SectionBlock key={section.id} id={section.id} title={section.title}>
             <RoadmapItemList items={itemsToShow} filterTag={section.tag} />
