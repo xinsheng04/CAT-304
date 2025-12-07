@@ -18,7 +18,7 @@ const Login_Pg: FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-  // validate email & password separately
+    // validate email & password separately
     const emailErrors = Validate_Email(email);
     const passwordErrors = Validate_Password(password);
     // combine

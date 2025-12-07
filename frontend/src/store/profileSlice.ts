@@ -21,7 +21,9 @@ const profileSlice = createSlice({
       state.username = action.payload;
     },
     logout(state) {
+      state.userId = "";
       state.username = "";
+      state.token = "";
     }
   },
 });
