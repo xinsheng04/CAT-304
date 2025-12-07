@@ -33,9 +33,9 @@ function generateRoadmapID() {
 }
 
 
-// const initialState: RoadmapSlice = {
-//     roadmapList: [],
-// };
+const initialState: RoadmapSlice = {
+    roadmapList: [],
+};
 
 const dummyState: RoadmapSlice = {
     roadmapList: roadmapData

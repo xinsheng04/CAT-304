@@ -26,9 +26,9 @@ function generateNodeID() {
     return (nextNodeID++);
 }
 
-// const initialState: LinkSlice = {
-//     linkList: [],
-// };
+const initialState: LinkSlice = {
+    linkList: [],
+};
 
 const dummyState: LinkSlice = {
     linkList: linksData,
