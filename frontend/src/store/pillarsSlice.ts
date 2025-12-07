@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { pillarsData } from "@/dummy";
 import { generateSlug } from "@/lib/utils";
 import { touchPillar, touchRoadmap } from "./action";
+import { deleteLink } from "./linksSlice";
 
 export interface PillarType{
     chapterID: number;
@@ -98,6 +99,11 @@ export const deleteChapterAndTouch = (chapterID: number) => (dispatch: any, getS
     const state: any = getState();
     const pillar = state.chapter?.pillarList?.find((p: any) => p.chapterID === chapterID);
     const roadmapID = pillar?.roadmapID;
+    // delete any links that belong to this chapter
+    const links: any[] = state.link?.linkList?.filter((l: any) => l.chapterID === chapterID) ?? [];
+    for (const l of links) {
+        dispatch(deleteLink(l.nodeID));
+    }
     dispatch(deleteChapter(chapterID));
     if (roadmapID !== undefined) dispatch(touchRoadmap(roadmapID));
 };

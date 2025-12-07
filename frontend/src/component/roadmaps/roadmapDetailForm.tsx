@@ -5,7 +5,8 @@ import FormBar from "./formBox";
 import { validateDescription, validateTitle } from "./validateFormBox";
 import { defaultImageSrc, bin, IMAGE_KEYWORD_MAP} from "./image";
 import { useDispatch } from "react-redux";
-import { addRoadmap, editRoadmap, deleteRoadmap } from "@/store/roadmapSlice";
+import type { AppDispatch } from "@/store";
+import { addRoadmap, editRoadmap, deleteRoadmapAndCascade } from "@/store/roadmapSlice";
 
 interface RoadmapDetailFormProps{
     mode: "add" | "edit";
@@ -17,7 +18,7 @@ interface RoadmapDetailFormProps{
 const RoadmapDetailForm: React.FC<RoadmapDetailFormProps> = ({
     mode, imageSrc, title, description}) => {
         const navigate = useNavigate();
-        const dispatch = useDispatch();
+        const dispatch = useDispatch<AppDispatch>();
         const userID = localStorage.getItem("userID");
         const {roadmapID} = useParams<{ roadmapID: string}>();
         const [queryTitle, setQueryTitle] = useState(mode === "edit" ? title ?? "" : "");
@@ -86,7 +87,7 @@ const RoadmapDetailForm: React.FC<RoadmapDetailFormProps> = ({
 
         const handleDelete = () => {
             if (roadmapID) {
-            dispatch(deleteRoadmap(Number(roadmapID)));
+            dispatch(deleteRoadmapAndCascade(Number(roadmapID)));
         }
         navigate(-2);
         };

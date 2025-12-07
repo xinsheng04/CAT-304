@@ -3,6 +3,8 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { roadmapData } from "@/dummy";
 import { generateSlug } from "@/lib/utils";
 import { touchRoadmap } from "./action";
+import { deleteChapter } from "./pillarsSlice";
+import { deleteLink } from "./linksSlice";
 
 export interface RoadmapType {
     roadmapID: number;
@@ -83,3 +85,20 @@ const roadmapSlice = createSlice({
 
 export const { addRoadmap, editRoadmap, deleteRoadmap } = roadmapSlice.actions;
 export default roadmapSlice.reducer;
+
+// Delete roadmap and cascade delete chapters and links belonging to it
+export const deleteRoadmapAndCascade = (roadmapID: number) => (dispatch: any, getState: any) => {
+    const state: any = getState();
+    // find chapters that belong to this roadmap
+    const chapters: any[] = state.chapter?.pillarList?.filter((c: any) => c.roadmapID === roadmapID) ?? [];
+    for (const ch of chapters) {
+        // delete links under each chapter
+        const links: any[] = state.link?.linkList?.filter((l: any) => l.chapterID === ch.chapterID) ?? [];
+        for (const l of links) {
+            dispatch(deleteLink(l.nodeID));
+        }
+        dispatch(deleteChapter(ch.chapterID));
+    }
+    // finally delete the roadmap itself
+    dispatch(deleteRoadmap(roadmapID));
+};
