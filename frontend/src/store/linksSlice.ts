@@ -70,11 +70,19 @@ const linkSlice = createSlice({
             if (index !== -1){
                 state.linkList[index].isViewed = !state.linkList[index].isViewed;
             }
-        }
+        },
+        autosetViewTrue: (state, action: PayloadAction<number>) => {
+            const index = state.linkList.findIndex(
+                (submission) => submission.nodeID === action.payload
+            );
+            if (index !== -1){
+                state.linkList[index].isViewed = true;
+            }
+        },
     },
 });
 
-export const { addLink, editLink, deleteLink, toggleView } = linkSlice.actions;
+export const { addLink, editLink, deleteLink, toggleView, autosetViewTrue } = linkSlice.actions;
 // Thunks that update the related pillar's modified date after link changes
 export const addLinkAndTouch = (payload: InitialLinkType) => (dispatch: any, getState: any) => {
     dispatch(addLink(payload));

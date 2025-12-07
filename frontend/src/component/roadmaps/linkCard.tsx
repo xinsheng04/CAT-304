@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import type { RoadmapItemCardProps } from './roadmapCard';
 import type { PillarCardProps } from './pillarCard';
 import { useDispatch } from 'react-redux';
-import { toggleView } from '@/store/linksSlice';
+import { toggleView, autosetViewTrue } from '@/store/linksSlice';
 
 
 // Type and data structure
@@ -22,6 +22,13 @@ const LinkCard : React.FC<LinkCardProps> = ({
     nodeID, chapterID, title, order, link, isViewed,
 }) => {
     const dispatch = useDispatch();
+    // seperate click
+    const directLink = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+        dispatch(autosetViewTrue(nodeID));
+        window.open(link, "_blank")
+    }
     // toggleViewed indicator
     const handleToggleViewed = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -54,8 +61,9 @@ const LinkCard : React.FC<LinkCardProps> = ({
             <div className="flex-grow text-lg font-medium text-gray-900 text-left">
                 {title}
             </div>
-
-            {/* Viewed Indicator */}
+            
+            {creator != userID ? (
+            // Viewed Indicator
             <div onClick={handleToggleViewed} className="ml-4 cursor-pointer">
                 {isViewed ? (
                     <svg className={"w-6 h-6 text-green-800"} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -64,6 +72,14 @@ const LinkCard : React.FC<LinkCardProps> = ({
                     :
                     <div className="w-6 h-6 border-2 border-gray-400 rounded-full"></div>}
             </div>
+            ):(
+            // Button
+            <Link to ={`/roadmap/${roadmapID}/${roadmapSlug}/${chapterID}/${chapterSlug}/${nodeID}/edit`}>
+                <button onClick={directLink}
+                        className=" px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-500 transition">
+                    Link
+                </button>
+            </Link>)}
         </div>
     );
     const location = useLocation();
@@ -78,7 +94,7 @@ const LinkCard : React.FC<LinkCardProps> = ({
                 </Link>
         ):(
             // Not creator → open external resource
-                <div onClick={() => window.open(link, "_blank")}>
+                <div onClick={directLink}>
                     {CardContent}
                 </div>
         )}
