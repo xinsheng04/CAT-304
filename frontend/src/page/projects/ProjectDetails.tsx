@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import github_icon from "../../assets/projects/github_icon.png";
 import { commonIconStyles } from "@/lib/styles";
 import RadioGroup from "@/component/projects/radioGroup";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown from 'react-markdown';
 import { Toggle } from "@/component/shadcn/toggle";
 import { Button } from "@/component/shadcn/button";
 import alert_icon from "../../assets/projects/alert_icon.png";
@@ -14,19 +14,28 @@ import SubmissionCard from "@/component/projects/submissionCard";
 import { Dialog, DialogTrigger } from "@/component/shadcn/dialog";
 import { ProjectForm } from "./projectForm";
 import { SubmissionForm } from "./submissionForm";
-import { useDispatch } from "react-redux";
-// import projectDetailsMD from "../../store/mdexample.md?raw";
+import {
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/component/shadcn/dialog";
+import { FieldGroup } from "@/component/shadcn/field";
+import { commonBackgroundClass, commonMarkDownClass } from "@/lib/styles";
+import { base64ToString } from "@/lib/utils";
 
 export const ProjectDetails: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const [submissionDialogOpen, setSubmissionDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const { projectId } = useParams<{ projectId: string }>();
   const project = useSelector((state: any) =>
-    state.projects.projectsList.find((proj: any) => proj.projectId === projectId)
+    state.projects.projectsList.find((proj: any) => proj.projectId === Number(projectId))
   );
+  const creatorId = project?.creatorId;
+  const creatorName = useSelector((state: any) => state.userList.userList.find((user: any) => user.userId === creatorId))?.username;
   const userId = useSelector((state: any) => state.profile.userId);
-  const submissions = useSelector((state: any) => state.submissions.submissionsList.filter((sub: any) => sub.projectId === projectId));
-
+  const submissions = useSelector((state: any) => state.submissions.submissionsList.filter((sub: any) => sub.projectId === Number(projectId)));
   const communitySubmissions: any[] = [], mySubmissions: any[] = []; // Placeholder arrays for submissions
   submissions.map((sub: any) => {
     if (sub.creatorId === userId) {
@@ -47,7 +56,7 @@ export const ProjectDetails: React.FC = () => {
       <h1 className="text-left mt-2 text-4xl font-extralight text-white">{project?.title}</h1>
       <p className="text-white text-[1.5rem] font-light">{project?.shortDescription}</p>
       <p className="text-white text-[1.2rem]">
-        <span>Created By: {project?.creator}</span> | Last Update: {project.lastUpdated && formatDate(new Date(project.lastUpdated))}
+        <span>Created By: {creatorName}</span> | Last Update: {project.lastUpdated && formatDate(new Date(project.lastUpdated))}
       </p>
 
       {project.startingRepoLink &&
@@ -82,22 +91,32 @@ export const ProjectDetails: React.FC = () => {
       <div className="self-baseline-last space-x-5">
         {
           userId === project?.creatorId && (
-            <Dialog>
+            <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
                   className="rounded-2xl cursor-pointer"
                 >Edit Project</Button>
               </DialogTrigger>
-              <ProjectForm
-                onSubmit={(payload) => { dispatch({ type: "projects/editProject", payload }); }}
-                openAsCreateForm={false}
-                initialData={project}
-              />
+              <DialogContent className={commonBackgroundClass}>
+                <DialogHeader>
+                  <DialogTitle>Edit Project</DialogTitle>
+                  <DialogDescription>
+                    Change the project details by modifying the form below.
+                  </DialogDescription>
+                </DialogHeader>
+                <FieldGroup className={commonBackgroundClass}>
+                  <ProjectForm
+                    openAsCreateForm={false}
+                    initialData={project}
+                    close={() => setEditDialogOpen(false)}
+                  />
+                </FieldGroup>
+              </DialogContent>
             </Dialog>
           )
         }
-        <Button
+        {/* <Button
           variant="outline"
           onClick={() => {
             // Implement share functionality here
@@ -105,19 +124,30 @@ export const ProjectDetails: React.FC = () => {
           className="rounded-2xl cursor-pointer"
         >
           Share This Project
-        </Button>
-        <Dialog>
+        </Button> */}
+        <Dialog open={submissionDialogOpen} onOpenChange={setSubmissionDialogOpen}>
           <DialogTrigger asChild>
             <Button
               variant="outline"
               className="rounded-2xl cursor-pointer"
             >+ Add a Submission</Button>
           </DialogTrigger>
-          <SubmissionForm
-            onSubmit={(payload) => { dispatch({ type: "projects/addSubmission", payload }); }}
-            openAsCreateForm={true}
-            initialData={project}
-          />
+          <DialogContent className={commonBackgroundClass}>
+            <DialogHeader>
+              <DialogTitle>Contribute your solution to this project</DialogTitle>
+              <DialogDescription>
+                Share your solution with others by filling out the form below.
+              </DialogDescription>
+            </DialogHeader>
+            <FieldGroup className={commonBackgroundClass}>
+              <SubmissionForm
+                close={() => setSubmissionDialogOpen(false)}
+                openAsCreateForm={true}
+                initialData={project}
+                projectId={projectId!}
+              />
+            </FieldGroup>
+          </DialogContent>
         </Dialog>
 
         <Toggle
@@ -149,9 +179,10 @@ export const ProjectDetails: React.FC = () => {
       <div className="text-white mt-4 mb-10">
         {displaySection === "Project Description" && (
           <div>
-            <div className="prose prose-invert max-w-none mt-4 text-white text-left">
+            <div className={`prose prose-invert max-w-none mt-4 text-white text-left ${commonMarkDownClass}`}>
+              {/* changed: decode base64 string to markdown text */}
               <ReactMarkdown>
-                {project?.details || "No project details available."}
+                {project?.detailsFile ? base64ToString(project.detailsFile) : "No project details available."}
               </ReactMarkdown>
             </div>
           </div>
@@ -181,7 +212,6 @@ export const ProjectDetails: React.FC = () => {
         )}
         {displaySection === "My Submissions" && (
           <div>
-
             {
               mySubmissions.length === 0 ? (
                 <p>You have no submissions yet.</p>
