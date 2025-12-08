@@ -1,6 +1,6 @@
 import React from "react";
 import type { FC } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import "@/component/Signup_Login/Login_Signup_Pg.css";
 import { Validate_Email, Validate_Password } from "@/component/Signup_Login/Validate_Signup_Login";
@@ -18,7 +18,8 @@ const Login_Pg: FC = () => {
   const [password, setPassword] = React.useState("");
   const [errors, setErrors] = React.useState<string[]>([]);
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const fromPath = location.state?.from || "/";
   const userData = useSelector((state: any) => state.userList.userList) as UserListType[];
 
   const handleLogin = (email: string, password: string) => {
@@ -55,7 +56,7 @@ const Login_Pg: FC = () => {
     // Login logic
     if (handleLogin(email, password)) {
       alert(`Login Successfully.\nEmail: ${email}`);
-      navigate("/");
+      navigate(fromPath, { replace: true });
     }
   };
 

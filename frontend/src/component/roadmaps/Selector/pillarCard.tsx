@@ -45,7 +45,7 @@ const PillarCard : React.FC<PillarCardProps> = ({
             dispatch(toggleView(chapterID))
         }
         else{
-            navigate("/Login");
+            navigate("/Login", { state: { from: location.pathname } });
         }
     };
     // percentage generator

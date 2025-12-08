@@ -31,7 +31,7 @@ const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({
             dispatch(toggleFavourite(Number(roadmapID)))
         }
         else{
-            navigate("/Login");
+            navigate("/Login", { state: { from: location.pathname } });
         }
     };
 
@@ -45,7 +45,7 @@ const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({
                 <button
                     className="text-white hover:text-gray-400 p-1"
                     aria-label="Close Featured Roadmap"
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate("/roadmap")}
                 >
                     <X size={20} />
                 </button>

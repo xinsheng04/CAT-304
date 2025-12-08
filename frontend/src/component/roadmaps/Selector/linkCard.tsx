@@ -48,7 +48,7 @@ const LinkCard : React.FC<LinkCardProps> = ({
             dispatch(toggleView(nodeID))
         }
         else{
-            navigate("/Login");
+            navigate("/Login", { state: { from: location.pathname } });
         }
     };
     const roadmapData = useSelector((state: any) => state.roadmap.roadmapList) as RoadmapItemCardProps[];
