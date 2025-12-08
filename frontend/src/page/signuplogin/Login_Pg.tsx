@@ -1,8 +1,12 @@
 import React from "react";
 import type { FC } from "react";
+<<<<<<< HEAD
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {login} from "@/store/profileSlice";
+=======
+import { Link, useLocation, useNavigate } from "react-router-dom";
+>>>>>>> 6d4b22a5a745c8f8b122ffbdd87789973f601ae4
 
 import "@/component/Signup_Login/Login_Signup_Pg.css";
 import { Validate_Email, Validate_Password } from "@/component/Signup_Login/Validate_Signup_Login";
@@ -20,7 +24,10 @@ const Login_Pg: FC = () => {
   const [password, setPassword] = React.useState("");
   const [errors, setErrors] = React.useState<string[]>([]);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+
+  const location = useLocation();
+  const fromPath = location.state?.from || "/";
+
   const userData = useSelector((state: any) => state.userList.userList) as UserListType[];
   const DEFAULT_AVATAR = "/src/assets/profile/bear_avatar.png";
   
@@ -79,7 +86,7 @@ const Login_Pg: FC = () => {
     // Login logic
     if (handleLogin(email, password)) {
       alert(`Login Successfully.\nEmail: ${email}`);
-      navigate("/");
+      navigate(fromPath, { replace: true });
     }
   };
 

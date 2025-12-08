@@ -35,7 +35,7 @@ const profileSlice = createSlice({
       state.token = action.payload.token ?? "";
     },
     logout(state) {
-      state.userId = 0;
+      state.userId = NaN;
       state.username = "";
       state.email = "";
       state.role = "";

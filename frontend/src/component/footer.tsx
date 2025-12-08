@@ -1,9 +1,9 @@
 import React from 'react';
-import { FaFacebookF, FaInstagram, FaGithub } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaGithub, FaLinkedin } from 'react-icons/fa';
 
 const Footer: React.FC = () => {
     return (
-        <footer className="bg-gray-900/50 text-gray-400 py-6 px-8 flex flex-col md:flex-row items-center justify-between rounded-t-lg z-50 fixed bottom-0 w-full h-15">
+        <footer className="bg-gray-900 text-gray-400 py-6 px-8 flex flex-col md:flex-row items-center justify-between rounded-t-lg z-50 fixed bottom-0 w-full h-15">
             {/* Copyright */}
             <span className="text-sm">&copy; 2025 UpCode: Form Zero to Hero, Inc. All rights reserved.</span>
 
@@ -23,6 +23,11 @@ const Footer: React.FC = () => {
                      aria-label="GitHub"
                      onClick={() => window.open("https://github.com/xinsheng04/CAT-304", "_blank")}>
                     <FaGithub size={20} />
+                </div>
+                <div className="hover:text-white transition-colors" 
+                     aria-label="Whatsapp"
+                     onClick={() => window.open("https://www.linkedin.com/in/tan-xin-sheng-216291238?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app ", "_blank")}>
+                    <FaLinkedin size={20} />
                 </div>
             </div>
         </footer>

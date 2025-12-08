@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import RoadmapSidebar from "../../component/roadmaps/roadmapSidebar";
-import RoadmapItemList from "../../component/roadmaps/roadmapList";
+import RoadmapSidebar from "../../component/roadmaps/sidebar";
+import RoadmapItemList from "../../component/roadmaps/Selector/roadmapList";
 import SectionBlock from "../../component/roadmaps/sectionBlock";
 import SearchBar from "../../component/searchBar";
 import { generateTags } from "../../component/roadmaps/groupTag";
@@ -134,7 +134,7 @@ export const Roadmap: React.FC = () => {
       <div className="fixed">
         <RoadmapSidebar visibleSections={visibleSidebarItems} />
       </div>
-      <div className="pl-78 p-10">
+      <div className="pl-78 pr-5">
         <SearchBar query={query} setQuery={setQuery} placeholder="Enter a roadmap title / category to see what other people saying about" />
         {availableSections.map((section) => {
           const items = getItemsForSection(section);
