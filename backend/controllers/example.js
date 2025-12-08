@@ -1,6 +1,7 @@
-import { createPool } from '../config.js';
+// import { createPool } from '../config.js';
+import { supabase } from "./supabase.js";
 
-const pool = await createPool();
+// const pool = await createPool();
 
 /*
 Example controller function
@@ -31,3 +32,15 @@ export async function exampleController(req, res) {
   }
 }
 */
+
+// Example supabase usage
+
+app.get("/projects", async (req, res) => {
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*");
+
+  if (error) return res.status(500).json({ error });
+
+  res.json(data);
+});
