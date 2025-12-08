@@ -1,6 +1,8 @@
 import React from "react";
 import type { FC } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import {login} from "@/store/profileSlice";
 
 import "@/component/Signup_Login/Login_Signup_Pg.css";
 import { Validate_Email, Validate_Password } from "@/component/Signup_Login/Validate_Signup_Login";
@@ -18,9 +20,10 @@ const Login_Pg: FC = () => {
   const [password, setPassword] = React.useState("");
   const [errors, setErrors] = React.useState<string[]>([]);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const userData = useSelector((state: any) => state.userList.userList) as UserListType[];
-
+  const DEFAULT_AVATAR = "/src/assets/profile/bear_avatar.png";
+  
   const handleLogin = (email: string, password: string) => {
     const userDetail = userData.find(user => user.email === email);
 
@@ -33,10 +36,31 @@ const Login_Pg: FC = () => {
       alert("Wrong password");
       return false;
     }
+    const key = `userProfile_${userDetail.email}`;
+    // 1. Load existing saved profile if available
+    const savedProfile = localStorage.getItem(key);
+    let profileToUse;
 
-    localStorage.setItem("userID", userDetail.userId.toString());
-    return true;
-  };
+      if (savedProfile) {
+        profileToUse = JSON.parse(savedProfile);
+        if (!profileToUse.avatar) {
+          profileToUse.avatar = DEFAULT_AVATAR;
+        }
+      } else {
+        profileToUse = {
+          ...userDetail,
+          avatar: DEFAULT_AVATAR,
+          bio: "",
+        };
+        localStorage.setItem(key, JSON.stringify(profileToUse));
+      }
+
+      localStorage.setItem("activeUser", JSON.stringify(profileToUse));
+      localStorage.setItem("userID", profileToUse.userId.toString());
+
+      dispatch(login(profileToUse));
+      return true;
+    };
 
   const handleSubmit = (e: React.FormEvent) => {
 

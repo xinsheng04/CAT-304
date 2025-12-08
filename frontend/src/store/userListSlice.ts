@@ -6,6 +6,8 @@ export type UserListType = {
   username: string;
   email: string;
   password: string;
+  role: string;
+  bio?:string;
 }
 
 interface UserSlice {
@@ -24,67 +26,78 @@ const dummyState: UserSlice = {
       userId: 1,
       username: "Alice",
       email: "alice@example.com",
-      password: "12345678"
+      password: "12345678",
+      role:"Student"
     },
     {
       userId: 2,
       username: "Bob",
       email: "bob@example.com",
-      password: "12345678"
+      password: "12345678",
+      role:"Student"
     },
     {
       userId: 3,
       username: "Charlie",
       email: "charlie@example.com",
-      password: "12345678"
+      password: "12345678",
+      role:"Student"
     },
     {
       userId: 100002,
       username: "Xin Sheng",
       email: "xinsheng04@example.com",
-      password: "12345678"
+      password: "12345678",
+      role:"Mentor"
     },
     {
       userId: 100001,
       username: "Jia Liang",
       email: "jialiang04@example.com",
-      password: "12345678"
+      password: "12345678",
+      role:"Student"
     },
     {
       userId: 100003,
       username: "SeeWatt",
       email: "seewatt@example.com",
-      password: "12345678"
+      password: "12345678",
+      role:"Student"
     },
     {
       userId: 100004,
       username: "Guest Me",
       email: "guestme@example.com",
-      password: "12345678"
+      password: "12345678",
+      role:"Student"
     },
     {
       userId: 100005,
       username: "Lenard",
       email: "lenard@example.com",
-      password: "12345678"
+      password: "12345678",
+      role:"Mentor"
     },
     {
       userId: 100006,
       username: "Wun Zhe",
       email: "wunzhe04@example.com",
-      password: "12345678"
+      password: "12345678",
+      role:"Company"
     },
     {
       userId: 100007,
       username: "Jee",
       email: "jch04@example.com",
-      password: "12345678"
+      password: "12345678",
+      role:"Mentor"
     },
     {
       userId: 100008,
       username: "Admin",
       email: "admin@example.com",
-      password: "12345678"
+      password: "12345678",
+      role:"Company"
     },
   ],
 };

@@ -16,6 +16,10 @@ export const All: React.FC = () => {
     function handleCategoryChange(value: string){
         setCategory(value);
     }
+    // Load the active user from localStorage
+    const activeUserRaw = localStorage.getItem("activeUser");
+    const activeUser = activeUserRaw ? JSON.parse(activeUserRaw) : null;
+
     return (
     <div>
         {/*navbar vertically*/}
@@ -34,13 +38,13 @@ export const All: React.FC = () => {
             <div className="pt-10 ">
                 {category === "All" && (
                 <>
-                  <ProfileContent/>
+                  <ProfileContent key={activeUser?.email}/>
                   <ActivityContent/>
                   <SkillContent/>
                   <SettingContent/>
                 </>
               )}
-                {category === "Profile" && <ProfileContent/>}
+                {category === "Profile" && <ProfileContent key={activeUser?.email}/>}
                 {category === "Activity" && <ActivityContent/>}
                 {category === "Skill" && <SkillContent/>}
                 {category === "Setting" && <SettingContent/>}
