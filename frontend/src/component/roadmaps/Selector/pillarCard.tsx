@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
-import { Link, useParams } from 'react-router';
+import { Link, useLocation, useNavigate, useParams } from 'react-router';
 import { toggleView, autosetViewTrue } from '@/store/pillarsSlice';
 import { useSelector } from "react-redux";
 import type { LinkCardProps } from './linkCard';
@@ -28,15 +28,32 @@ const PillarCard : React.FC<PillarCardProps> = ({
     const { roadmapSlug } = useParams<{ roadmapSlug: string }>();
     const dispatch = useDispatch();
     const linksData = useSelector((state: any) => state.link.linkList) as LinkCardProps[];
+
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    useEffect(() => {
+            const userID = localStorage.getItem("userID");
+            setIsLoggedIn(userID && userID !== "0" ? true : false);
+    }, [location]); // re-check when route changes
+    
     // toggleViewed indicator
     const handleToggleViewed = (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
-        dispatch(toggleView(chapterID))
+        if(isLoggedIn){
+            dispatch(toggleView(chapterID))
+        }
+        else{
+            navigate("/Login", { state: { from: location.pathname } });
+        }
     };
     // percentage generator
     const generateViewPercentage = (chapterID: number) => {
         const filtered = linksData.filter(p => p.chapterID === chapterID);
+        if (filtered.length === 0) {
+            return 0; // Return 0% for chapters with no links
+        }
         const viewArr = filtered.map(p => p.isViewed);
 
         const viewScore = (level: boolean) => (level ? 1 : 0);
@@ -74,7 +91,7 @@ const PillarCard : React.FC<PillarCardProps> = ({
             </div>
 
             {/* Percentage Viewer */}
-            {generateViewPercentage(chapterID)!==100 && 
+            {generateViewPercentage(chapterID)!==100 && generateViewPercentage(chapterID)!==0 && 
             (<div className="flex items-center gap-2">
                 <div className="w-16 h-2 bg-gray-300 rounded-full overflow-hidden">
                     <div

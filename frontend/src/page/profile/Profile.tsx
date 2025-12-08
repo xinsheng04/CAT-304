@@ -19,8 +19,8 @@ function ProfileRow({
     editable?: boolean;
 }){
     return(
-        <div className= "space-y-2">
-            <label className="text-lg font-bold text-white">{label}</label>
+        <div className= "space-y-2 ">
+            <label className="block w-full text-lg font-bold text-white text-start">{label}</label>
             <div className="w-full flex items-center bg-white/50 px-4 py-2 rounded-full text-black gap-2">
                 {icon && (
                     <img src={icon}     
@@ -35,7 +35,10 @@ function ProfileRow({
                         onChange={(e)=> onChange?.(e.target.value)}
                         placeholder="Enter here..."/>
                 ):(
-                <span className="opacity-80">{desc}</span>
+                <span className="opacity-80">{
+                    desc && desc.trim() !== ""? desc
+                    : "Master of saying nothing"}
+                </span>
                 )}
                 
             </div>
@@ -43,6 +46,7 @@ function ProfileRow({
     );
 }
 export function ProfileContent(){
+    
     const avatarOptions = [
         "/src/assets/profile/bear_avatar.png",
         "/src/assets/profile/rabbit_avatar.png",
@@ -53,83 +57,82 @@ export function ProfileContent(){
         "/src/assets/profile/lion_avatar.png",
         "/src/assets/profile/dinasour_avatar.png"
     ];
-    const testing = {
-        username: "test",
-        role: "Student",
-        email: "john@gmail.com",
+
+    const activeUserRaw = localStorage.getItem("activeUser");
+    const activeUser = JSON.parse(activeUserRaw as string);
+    
+    const localKey = `userProfile_${activeUser.email}`;
+    const storedProfile = localStorage.getItem(localKey);
+    
+    const baseProfile = {
+        username: activeUser.username,        
+        email: activeUser.email,                         
+        role: activeUser.role,                                
+        avatar: activeUser.avatar||"/src/assets/profile/bear_avatar.png",
         bio: "",
-        avatar: "/src/assets/profile/bear_avatar.png",
+    };
+    if (storedProfile) {
+        const parsed = JSON.parse(storedProfile);
+    
+    if (!parsed.avatar) {
+        parsed.avatar = "/src/assets/profile/bear_avatar.png";
+        localStorage.setItem(localKey, JSON.stringify(parsed));
     }
-    const storeProfile = localStorage.getItem("userProfile");
-    const initalProfile = storeProfile? JSON.parse(storeProfile):testing;
-    const [profile, setProfile] = useState(initalProfile);
+    }
+    const initialProfile = storedProfile
+    ? JSON.parse(localStorage.getItem(localKey)!)
+    : baseProfile;
+
+
+    const [profile, setProfile] = useState(initialProfile);
     const [showAvatar, setshowAvatar] = useState(false);
-    const [previewAvatar, setpreviewAvatar] = useState(profile.avatar);
     const [isEditing,setisEditing] = useState(false);
 
 
     const handleChange = (field: string, value: string) => {
         setProfile((prev: any) => ({ ...prev, [field]: value }));
     };
-    const handleSaveAvatar = () => {
-        setProfile(prev => ({
-            ...prev,
-            avatar: previewAvatar,
-        }));
 
-        setshowAvatar(false);
-    };
-
-    const handleCancelAvatar = () =>{
-        setpreviewAvatar(profile.avatar);
-        setshowAvatar(false);
-    }
     const handlesaveProfile = () =>{
         console.log("Saved data:" ,profile);
-        alert("Profile saved"!);
-        localStorage.setItem("userProfile", JSON.stringify(profile));
+        alert("Profile saved!");
+        localStorage.setItem(localKey, JSON.stringify(profile));
+        setProfile(profile);
         setisEditing(false);
+    }
+    if (!activeUserRaw) {
+        return (
+            <div className="text-white text-center py-20">
+            Please login to view your profile.
+            </div>
+        );
     }
 
     return (
+        
         <div className="w-full flex justify-center items-center py-20">
             <div className="w-[600px] bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl shadow-xl p-10 space-y-8">
                 <div className="flex flex-col items-center space-y-4">
-                    <img src={previewAvatar} className="w-32 h-32 rounded-full border-4 border-white/50 object-cover shadow-lg "/>
-                    {!showAvatar &&(
+                    <img src={profile.avatar} className="w-50 h-50 rounded-full border-4 border-white/50 object-cover shadow-lg bg-fuchsia-200"/>
+                    {isEditing && !showAvatar && (
                         <button className="text-sm text-purple-300 hover:text-purple-200" onClick={() => setshowAvatar(true)}>
                             Change Picture
                         </button>
                     )}
 
                     {showAvatar && (
-                        <>
                         <div className="grid grid-cols-4 gap-6 place-items-center mt-4">
                         {avatarOptions.map((avatar) => (
                             <img 
                                 key={avatar} 
                                 src={avatar} 
-                                onClick={() => setpreviewAvatar(avatar)} 
+                                onClick={() => setProfile(prev => ({ ...prev, avatar }))} 
                                 className={"w-16 h-16 rounded-full cursor-pointer "+
-                                (previewAvatar === avatar? "ring-4 ring-purple-400"
+                                (profile.avatar === avatar? "ring-4 ring-purple-400"
                                 : "opacity-80 hover:opacity-100")}/>
                         ))}
                         </div>
-                        <div className="w-full flex justify-end gap-6 mt-8">
-                            <button 
-                                onClick = {handleCancelAvatar} 
-                                className="bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600"> 
-                                    Cancel 
-                            </button>
-                            <button 
-                                onClick={handleSaveAvatar}
-                                className="bg-green-500 text-white px-8 py-2 rounded-full hover:bg-green-600">
-                                Save
-                            </button>
-                        </div>
-                        </>
                     )}
-                    
                 
                 </div>
             {!isEditing && (
@@ -151,14 +154,22 @@ export function ProfileContent(){
             {isEditing && (
                 <div className="flex justify-end gap-4">
                     <button
-                    onClick={() => setisEditing(false)}
-                    className="bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600">
-                        Cancel
+                        onClick={() => {
+                        const stored = localStorage.getItem(localKey);    
+                        setProfile(stored ? JSON.parse(stored) : initialProfile);
+                        setisEditing(false);
+                        setshowAvatar(false);
+                        }}
+                        className="bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600">
+                            Cancel
                     </button>
                     <button
-                    onClick={handlesaveProfile}
-                    className="bg-green-500 text-white px-8 py-2 rounded-full hover:bg-green-600">
-                        Save
+                        onClick={() => {
+                            handlesaveProfile();
+                            setshowAvatar (false);
+                        }}
+                        className="bg-green-500 text-white px-8 py-2 rounded-full hover:bg-green-600">
+                            Save
                     </button>
                 </div>
             )}

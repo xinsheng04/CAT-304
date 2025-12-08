@@ -20,16 +20,16 @@ function loadUserInfo(){
   }
 }
 
-function saveUserInfo(userInfo:any){
+function saveUserInfo(profile:any){
   try{
-    localStorage.setItem('userInfo',JSON.stringify(userInfo));
+    localStorage.setItem('userInfo',JSON.stringify(profile));
   }
   catch{}
 }
 
 // provide only the userInfo slice as preloadedState
 const preloadedState= { 
-  userInfo: loadUserInfo()?? undefined,
+  profile: loadUserInfo()?? undefined,
 }
 
 export const store = configureStore({
@@ -51,9 +51,9 @@ export const store = configureStore({
 let prevUserInfo: any;
 store.subscribe(() => {
   const state: any = store.getState();
-  if (state.userInfo !== prevUserInfo) {
-    prevUserInfo = state.userInfo;
-    saveUserInfo(state.userInfo);
+  if (state.profile !== prevUserInfo) {
+    prevUserInfo = state.profile;
+    saveUserInfo(state.profile);
   }
 });
 
