@@ -109,10 +109,11 @@ export function ProfileContent(){
     }
 
     return (
-        
+        <div>
+        <label className="block text-center text-white text-4xl font-bold pt-1 mt-2 -mb-15 ">Profile</label>
         <div className="w-full flex justify-center items-center py-20">
             <div className="w-[600px] bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl shadow-xl p-10 space-y-8">
-            <label className="block text-center text-white text-4xl font-bold pt-1 mt-2 ">Profile</label>
+            
                 <div className="flex flex-col items-center space-y-4">
                     <img src={profile.avatar} alt="" className="w-50 h-50 rounded-full border-4 border-white/50 object-cover shadow-lg bg-fuchsia-200"/>
                     {isEditing && !showAvatar && (
@@ -177,5 +178,6 @@ export function ProfileContent(){
             )}
             </div>
         </div>
+    </div>
     )
 }

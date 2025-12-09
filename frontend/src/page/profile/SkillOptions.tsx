@@ -15,6 +15,12 @@ export default function SkillOptions({ userEmail }: { userEmail: string }) {
     "Node.js",
     "UI/UX",
     "SQL",
+    "R",
+    "Suparbase",
+    "TypeScript",
+    "Java",
+    "C",
+    "C#"
   ];
 
   const key = `userProfile_${userEmail}`;
@@ -44,6 +50,7 @@ export default function SkillOptions({ userEmail }: { userEmail: string }) {
     dispatch(login(updatedProfile));
 
     setSelecting(false);
+    alert("Skills saved!");
   };
 
   const handleCancel = () => {
@@ -75,7 +82,7 @@ export default function SkillOptions({ userEmail }: { userEmail: string }) {
 
       {/* Selection Panel */}
       {selecting && (
-        <div className="p-4 border rounded-lg bg-white shadow space-y-4">
+        <div className="p-4 border rounded-lg bg-gray-300/70 shadow space-y-4">
           <h2 className="text-lg font-semibold">Choose Skills</h2>
 
           <div className="flex flex-wrap gap-2">
