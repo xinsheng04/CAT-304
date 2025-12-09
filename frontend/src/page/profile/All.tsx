@@ -39,14 +39,14 @@ export const All: React.FC = () => {
                 {category === "All" && (
                 <>
                   <ProfileContent key={activeUser?.email}/>
+                  <SkillContent email={activeUser?.email}/>
                   <ActivityContent/>
-                  <SkillContent/>
                   <SettingContent/>
                 </>
               )}
                 {category === "Profile" && <ProfileContent key={activeUser?.email}/>}
                 {category === "Activity" && <ActivityContent/>}
-                {category === "Skill" && <SkillContent/>}
+                {category === "Skill" && <SkillContent email={activeUser?.email}/>}
                 {category === "Setting" && <SettingContent/>}
             </div>
         </div>
