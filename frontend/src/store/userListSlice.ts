@@ -48,7 +48,7 @@ const dummyState: UserSlice = {
       username: "Xin Sheng",
       email: "xinsheng04@example.com",
       password: "12345678",
-      role:"Mentor"
+      role:"Student"
     },
     {
       userId: 100001,
