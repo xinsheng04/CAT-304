@@ -11,7 +11,7 @@ import PasswordInput from "@/component/Signup_Login/PasswordInput";
 import email_icon from "@/assets/signuplogin/email.png";
 import hero_img from "@/assets/signuplogin/Hero.png";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { UserListType } from "@/store/userListSlice";
 
 const Login_Pg: FC = () => {
@@ -20,6 +20,7 @@ const Login_Pg: FC = () => {
   const [errors, setErrors] = React.useState<string[]>([]);
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
   const location = useLocation();
   const fromPath = location.state?.from || "/";
 
