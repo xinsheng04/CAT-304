@@ -60,6 +60,8 @@ const submissionsSlice = createSlice({
     addSubmission: (state, action: PayloadAction<InitialSubmissionType>) => {
       const newSubmission: SubmissionType = {
         ...action.payload,
+        projectId: Number(action.payload.projectId),  // Ensure it's a number
+        creatorId: Number(action.payload.creatorId),  // Ensure it's a number
         submissionId: generateSubmissionId(),
         postedOn: new Date().toISOString(),
         lastUpdated: new Date().toISOString(),

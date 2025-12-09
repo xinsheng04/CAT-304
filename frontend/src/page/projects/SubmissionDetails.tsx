@@ -48,8 +48,8 @@ const SubmissionDetails: React.FC = () => {
         Project: {projectTitle} | Created By: {submission?.creator}
       </p>
       <p className="text-white text-[1rem]">
-        Submitted On: {submission?.postedOn && formatDate(new Date(submission.postedOn))}
-        | Last Update: {submission.lastUpdated && formatDate(new Date(submission.lastUpdated))}
+        <span>Submitted On: {submission?.postedOn && formatDate(new Date(submission.postedOn))} </span>
+        | <span>Last Update: {submission.lastUpdated && formatDate(new Date(submission.lastUpdated))}</span>
       </p>
 
       <div className="rounded-[.8rem] grid grid-rows-2 mt-4 overflow-hidden w-[90%]">

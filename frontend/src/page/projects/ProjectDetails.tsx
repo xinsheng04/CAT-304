@@ -28,14 +28,18 @@ export const ProjectDetails: React.FC = () => {
   const navigate = useNavigate();
   const [submissionDialogOpen, setSubmissionDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const { projectId } = useParams<{ projectId: string }>();
+  let { projectId: projectIdParam } = useParams<{ projectId: string }>();
+  const projectId = Number(projectIdParam);
   const project = useSelector((state: any) =>
-    state.projects.projectsList.find((proj: any) => proj.projectId === Number(projectId))
+    state.projects.projectsList.find((proj: any) => proj.projectId === projectId)
   );
   const creatorId = project?.creatorId;
   const creatorName = useSelector((state: any) => state.userList.userList.find((user: any) => user.userId === creatorId))?.username;
-  const userId = useSelector((state: any) => state.profile.userId);
-  const submissions = useSelector((state: any) => state.submissions.submissionsList.filter((sub: any) => sub.projectId === Number(projectId)));
+  // const userId = useSelector((state: any) => state.profile.userId);
+  const userId = 1;
+  const submissions = useSelector((state: any) => state.submissions.submissionsList
+  .filter((sub: any) => Number(sub.projectId) === projectId)
+  );
   const communitySubmissions: any[] = [], mySubmissions: any[] = []; // Placeholder arrays for submissions
   submissions.map((sub: any) => {
     if (sub.creatorId === userId) {
@@ -144,7 +148,7 @@ export const ProjectDetails: React.FC = () => {
                 close={() => setSubmissionDialogOpen(false)}
                 openAsCreateForm={true}
                 initialData={project}
-                projectId={projectId!}
+                projectId={projectId}
               />
             </FieldGroup>
           </DialogContent>
@@ -188,7 +192,7 @@ export const ProjectDetails: React.FC = () => {
           </div>
         )}
         {displaySection === "Community Submissions" && (
-          <div>
+          <div className="grid grid-cols-1 gap-3.5">
             {
               communitySubmissions.length === 0 ? (
                 <p>No community submissions available.</p>

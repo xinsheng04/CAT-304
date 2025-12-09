@@ -17,14 +17,16 @@ type SubmissionFormProps = {
   close: () => void;
   openAsCreateForm?: boolean;
   initialData?: any;
-  projectId: string;
+  projectId: number;
 }
 
 export const SubmissionForm: React.FC<SubmissionFormProps> = ({ openAsCreateForm, close, initialData, projectId }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileInput, setFileInput] = useState<File | null>(null);
   const dispatch = useDispatch();
-  const creatorId = useSelector((state: any) => state.profile.userId);
+  // Currently creatorId is bugged
+  // const creatorId = useSelector((state: any) => state.profile.userId); 
+  const creatorId = 1;
 
   async function handleSubmit(fd: FormData) {
     const payload: any = {
@@ -38,11 +40,10 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({ openAsCreateForm
     } else {
       delete payload.rationaleFile;
     }
-    // console.log("Submitting submission with payload:", payload);
+    console.log("Submitting payload:", payload);
     dispatch({ type: openAsCreateForm ? "submissions/addSubmission" : "submissions/editSubmission", payload });
     close();
   }
-
 
   return (
     <Form

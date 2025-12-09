@@ -50,7 +50,6 @@ export function base64ToString(base64: string): string {
   try {
     return atob(base64);
   } catch (error) {
-    console.error("Failed to decode base64:", error);
-    return "";
+    return base64;
   }
 }
