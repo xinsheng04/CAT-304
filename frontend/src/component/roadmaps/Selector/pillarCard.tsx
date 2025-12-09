@@ -21,10 +21,11 @@ export interface PillarCardProps {
     isViewed: boolean;
     onToggleClick: (chapterID: number) => void;
     isOpen: boolean;
+    showArrow?: boolean;
 }
 
 const PillarCard : React.FC<PillarCardProps> = ({
-    title, order, isViewed, roadmapID, chapterID, chapterSlug, onToggleClick, isOpen
+    title, order, isViewed, roadmapID, chapterID, chapterSlug, onToggleClick, isOpen, showArrow = true
 
 }) => {
     // use link to get roadmap slug
@@ -125,12 +126,14 @@ const PillarCard : React.FC<PillarCardProps> = ({
                     </div>
                 </div>
             </Link>
+            {showArrow && (
             <img
                 src={down}
                 alt={title}
                 onClick={handleArrowClick}
                 className={`w-5 h-5 rounded-full bg-white border-2 border-pink-300 absolute left-1/2 -bottom-3 ${isOpen ? 'rotate-180' : ''} transform -translate-x-1/2`} 
             />
+            )}
         </div>
     );
 }

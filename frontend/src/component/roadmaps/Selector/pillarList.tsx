@@ -64,6 +64,21 @@ function navigateToProjectDetails(projectId: number) {
     navigate(`/project/${projectId}`);
 }
 
+// Helper function to check if a pillar has matching projects
+function hasProjects(pillar: PillarCardProps): boolean {
+    const chapterProjects = projects.filter(project => {
+        if (project.difficulty !== pillar.difficulty) {
+            return false;
+        }
+        const pillarCategories = Array.isArray(pillar.category) ? pillar.category : [pillar.category];
+        if (!pillarCategories.includes(project.category)) {
+            return false;
+        }
+        return true;
+    });
+    return chapterProjects.length > 0;
+}
+
 const [openChapterId, setOpenChapterId] = useState<number | null>(null);
 
 function toggleProjectsVisibility(chapterID: number) {
@@ -94,6 +109,7 @@ function toggleProjectsVisibility(chapterID: number) {
                         {...pillar}
                         onToggleClick={toggleProjectsVisibility}
                         isOpen={openChapterId === pillar.chapterID}
+                        showArrow={hasProjects(pillar)}
                     />
                     {openChapterId === pillar.chapterID && (
                         <PillarProjects 
