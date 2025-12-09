@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PillarCard, { type PillarCardProps } from '../Selector/pillarCard.tsx';
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from 'react-router-dom';
@@ -27,20 +27,20 @@ const PillarProjects: React.FC<{ pillar: PillarCardProps; projects: ProjectType[
     if (chapterProjects.length !== 0) {
         return (
         <div>
-        <h3 className="pl-5 text-2xl font-semibold text-white text-left">
-            Suggested project
-        </h3>
-        <div className="flex flex-nowrap overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden space-x-4 p-4">
-            {chapterProjects.map((project: ProjectType) => (
-                <div className="flex-shrink-0 w-70">
-                <ProjectCard 
-                    key={project.projectId} 
-                    project={project}
-                    onClick={() => navigateToProjectDetails(project.projectId)}
-                />
-                </div>
-            ))}
-        </div>
+            <h3 className="pl-5 text-m font-semibold text-white text-left">
+                Suggested project
+            </h3>
+            <div className="flex flex-nowrap overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden space-x-4 p-4">
+                {chapterProjects.map((project: ProjectType) => (
+                    <div className="flex-shrink-0 w-70">
+                        <ProjectCard 
+                            key={project.projectId} 
+                            project={project}
+                            onClick={() => navigateToProjectDetails(project.projectId)}
+                        />
+                    </div>
+                ))}
+            </div>
         </div>
     );
     }
@@ -63,6 +63,15 @@ const navigate = useNavigate();
 function navigateToProjectDetails(projectId: number) {
     navigate(`/project/${projectId}`);
 }
+
+const [openChapterId, setOpenChapterId] = useState<number | null>(null);
+
+function toggleProjectsVisibility(chapterID: number) {
+    // If the clicked chapter is already open, close it (set to null)
+    // Otherwise, open the clicked chapter
+    setOpenChapterId(prevId => (prevId === chapterID ? null : chapterID));
+}
+
     return (
         <div className="w-full mx-auto">
             <div className='flex items-center justify-between mb-6'>
@@ -83,12 +92,16 @@ function navigateToProjectDetails(projectId: number) {
                     <PillarCard 
                         key={pillar.chapterID}
                         {...pillar}
+                        onToggleClick={toggleProjectsVisibility}
+                        isOpen={openChapterId === pillar.chapterID}
                     />
-                    <PillarProjects 
+                    {openChapterId === pillar.chapterID && (
+                        <PillarProjects 
                             pillar={pillar} // Pass the entire pillar object now
                             projects={projects}
                             navigateToProjectDetails={navigateToProjectDetails}
-                    />
+                        />
+                    )}
                 </div>
             )))}
         </div>
