@@ -72,14 +72,14 @@ export const Roadmap: React.FC = () => {
     // User own designs
     if (section.id === "your-design" && isLoggedIn && userID) {
       return filteredRoadmapData.filter(
-        (item: any) => item.creator === Number(userID)
+        (item: any) => item.creatorID === Number(userID)
       );
     }
 
     // New content that is not created by the user
     if (section.id === "whats-new" && isLoggedIn && userID) {
       return filteredRoadmapData.filter(
-        (item: any) => item.creator !== Number(userID)
+        (item: any) => item.creatorID !== Number(userID)
       );
     }
 

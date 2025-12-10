@@ -31,18 +31,18 @@ const Recommendation: React.FC<{ pillar: PillarCardProps; projects: ProjectType[
             <div className='pl-5 pr-5'>
                 {/* small backgroundless navbar */}
                 <div className="flex items-center gap-4 mb-3 justify-end">
-                    <button
+                    {chapterProjects.length > 0 && (<button
                         type="button"
                         onClick={() => setActiveTab('project')}
                         className={`text-sm font-semibold ${activeTab === 'project' ? 'text-white underline' : 'text-gray-300'}`}>
                         Suggested project
-                    </button>
-                    <button
+                    </button>)}
+                    {chapterCareers.length > 0 && (<button
                         type="button"
                         onClick={() => setActiveTab('career')}
                         className={`text-sm font-semibold ${activeTab === 'career' ? 'text-white underline' : 'text-gray-300'}`}>
                         Suggested career
-                    </button>
+                    </button>)}
                 </div>
 
                 {activeTab === 'project' && (
@@ -51,7 +51,7 @@ const Recommendation: React.FC<{ pillar: PillarCardProps; projects: ProjectType[
                             {chapterProjects.map((project: ProjectType) => (
                                 <div className="flex-shrink-0 w-70" key={project.projectId}>
                                     <ProjectCard 
-                                        project={project}
+                                        projectId={project.projectId}
                                         onClick={() => navigateToProjectDetails(project.projectId)}
                                     />
                                 </div>
@@ -132,7 +132,7 @@ function toggleProjectsVisibility(chapterID: number) {
             {filteredPillars.length === 0 ? (
                 <p className="text-gray-400 text-center mt-10">No chapters found for this roadmap.</p>
             ) : (filteredPillars.map((pillar) => (
-                <div key={pillar.chapterID} className="mb-8">
+                <div key={pillar.chapterID} className='mb-4'>
                     <PillarCard 
                         key={pillar.chapterID}
                         {...pillar}
