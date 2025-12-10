@@ -25,6 +25,10 @@ import { AddRoadmap } from "./page/roadmaps/AddRoadmap";
 import SubmissionDetails from "./page/projects/SubmissionDetails";
 import { AddChapter } from "./page/roadmaps/AddChapter";
 import { AddNode } from "./page/roadmaps/AddNode";
+import { AddRecommendedProject } from "./page/roadmaps/Recommendation/addProject";
+import { AddRecommendedCareer } from "./page/roadmaps/Recommendation/addCareer";
+import { EditRecommendedProject } from "./page/roadmaps/Recommendation/editProject";
+import { EditRecommendedCareer } from "./page/roadmaps/Recommendation/editCareer";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +53,10 @@ const router = createBrowserRouter([
               { path: "edit", element: <EditChapter /> },
               { path: "add-node", element: <AddNode /> },
               { path: ":nodeID/edit", element: <EditNode /> },
+              { path: "recommend-project", element: <AddRecommendedProject /> },
+              { path: "recommend-career", element: <AddRecommendedCareer /> },
+              { path: "recommend-project-edit", element: <EditRecommendedProject /> },
+              { path: "recommend-career-edit", element: <EditRecommendedCareer /> },
             ]
           }
         ]
