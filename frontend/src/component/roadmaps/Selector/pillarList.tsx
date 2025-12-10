@@ -4,76 +4,11 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from 'react-router-dom';
 import type { RoadmapItemCardProps } from './roadmapCard.tsx';
 import type { ProjectType } from '@/store/projectsSlice.ts';
-import ProjectCard from '@/component/projects/projectCard.tsx';
+import Recommendation from './recommendation.tsx';
 
 interface PillarListProps {
     selectedRoadmapId: number; 
 }
-
-// Helper component to display projects for a single pillar
-const Recommendation: React.FC<{ pillar: PillarCardProps; projects: ProjectType[]; navigateToProjectDetails: (projectId: number) => void }> = 
-    ({ pillar, projects, navigateToProjectDetails }) => {
-    const chapterProjects = projects.filter(project => {
-        if (project.difficulty !== pillar.difficulty) {
-            return false;
-        }
-        const pillarCategories = Array.isArray(pillar.category) ? pillar.category : [pillar.category];
-        if (!pillarCategories.includes(project.category)) {
-            return false;
-        }
-        return true;
-    });
-
-    const chapterCareers: any[] = [];
-    const [activeTab, setActiveTab] = useState<'project' | 'career'>('project');
-
-        return (
-            <div className='pl-5 pr-5'>
-                {/* small backgroundless navbar */}
-                <div className="flex items-center gap-4 mb-3 justify-end">
-                    <button
-                        type="button"
-                        onClick={() => setActiveTab('project')}
-                        className={`text-sm font-semibold ${activeTab === 'project' ? 'text-white underline' : 'text-gray-300'}`}>
-                        Suggested project
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setActiveTab('career')}
-                        className={`text-sm font-semibold ${activeTab === 'career' ? 'text-white underline' : 'text-gray-300'}`}>
-                        Suggested career
-                    </button>
-                </div>
-
-                {activeTab === 'project' && (
-                    chapterProjects.length > 0 ? (
-                        <div className="flex flex-nowrap overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden space-x-4">
-                            {chapterProjects.map((project: ProjectType) => (
-                                <div className="flex-shrink-0 w-70" key={project.projectId}>
-                                    <ProjectCard 
-                                        project={project}
-                                        onClick={() => navigateToProjectDetails(project.projectId)}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <p className="pl-5 text-sm text-gray-400">No suggested projects found.</p>
-                    )
-                )}
-
-                {activeTab === 'career' && (
-                    chapterCareers.length > 0 ? (
-                        <div className="flex flex-nowrap overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden space-x-4">
-                            {/* TODO: render career cards when careers are available */}
-                        </div>
-                    ) : (
-                        <p className="pl-5 text-sm text-gray-400">No career found.</p>
-                    )
-                )}
-            </div>
-        );
-};
 
 const PillarList: React.FC<PillarListProps> = ({ selectedRoadmapId }) => {
 // Filter pillars based on selectedRoadmapId
@@ -95,6 +30,7 @@ function navigateToProjectDetails(projectId: number) {
 
 // Helper function to check if a pillar has matching projects
 function hasProjects(pillar: PillarCardProps): boolean {
+    if(Number(userID) === creator) return true;
     const chapterProjects = projects.filter(project => {
         if (project.difficulty !== pillar.difficulty) {
             return false;
@@ -132,7 +68,7 @@ function toggleProjectsVisibility(chapterID: number) {
             {filteredPillars.length === 0 ? (
                 <p className="text-gray-400 text-center mt-10">No chapters found for this roadmap.</p>
             ) : (filteredPillars.map((pillar) => (
-                <div key={pillar.chapterID} className="mb-8">
+                <div key={pillar.chapterID} className='mb-4'>
                     <PillarCard 
                         key={pillar.chapterID}
                         {...pillar}
@@ -145,6 +81,7 @@ function toggleProjectsVisibility(chapterID: number) {
                             pillar={pillar}
                             projects={projects}
                             navigateToProjectDetails={navigateToProjectDetails}
+                            creator={creator.toString()}
                         />
                     )}
                 </div>

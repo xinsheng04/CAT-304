@@ -37,14 +37,16 @@ return (
                         Add Link
                     </button>
                 </Link>)}
-        </div>
+        </div >
             {filteredLinks.length === 0 ? (
                 <p className="text-gray-400 text-center mt-10">No links found for this chapter.</p>
             ) : (filteredLinks.map((links) => (
-                <LinkCard 
-                    key={links.chapterID}
-                    {...links}
-                />
+                <div className='mb-4'>
+                    <LinkCard 
+                        key={links.chapterID}
+                        {...links}
+                    />
+                </div>
             )))}
         </div>
 )}
