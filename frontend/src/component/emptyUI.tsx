@@ -9,7 +9,7 @@ interface EmptyBoxProps {
 }
 
 export const EmptyUI: React.FC<EmptyBoxProps> = ({ iconSrc, title, description, children }) => {
-  return <Empty className="bg-gray-800/20 rounded-2xl gap-0 p-8 sm:p-12 border border-gray-700/50 shadow-lg">
+  return <Empty className="bg-gray-800/20 rounded-2xl gap-0 p-8 sm:p-12 border border-gray-700/50 shadow-lg mr-9">
     <EmptyHeader className="flex flex-col items-center gap-2 mb-6">
       <EmptyMedia className="flex justify-center">
         <img className="w-24 h-24 sm:w-32 sm:h-32 object-contain opacity-80 hover:opacity-100 transition-opacity" src={iconSrc} alt="Empty Icon" />

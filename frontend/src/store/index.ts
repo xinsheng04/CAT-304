@@ -7,6 +7,7 @@ import roadmapReducer from "./roadmapSlice";
 import pillarReducer from "./pillarsSlice";
 import linkReducer from "./linksSlice";
 import projectTrackingReducer from "./projectTrackingSlice";
+import recommendationReducer from "./recommendationSlice";
 // Import your reducers here
 // Example: import userReducer from "./slices/userSlice";
 
@@ -45,6 +46,7 @@ export const store = configureStore({
         chapter: pillarReducer,
         link: linkReducer,
         projectTracking: projectTrackingReducer,
+        recommendations: recommendationReducer,
     } as any,
     preloadedState,
 });

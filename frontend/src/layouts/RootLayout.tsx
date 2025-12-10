@@ -14,7 +14,7 @@ const RootLayout: React.FC = () => {
         alt="Background"
       />
       <Navbar />
-      <main className="flex-1 pb-60 pt-20">
+      <main className="flex-1 py-20 px-4 md:px-8 lg:px-16">
         <Outlet />
       </main>
       <Footer/>
