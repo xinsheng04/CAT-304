@@ -1,13 +1,10 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import { Overview } from "./page/Overview";
 import { Roadmap } from "./page/roadmaps/Roadmap";
 import { RoadmapDetails } from "./page/roadmaps/RoadmapDetails";
 import { Project } from "./page/projects/Project";
-import { Career } from "./page/Career";
+import { Career } from "./page/career/Career";
 import { All } from "./page/profile/All";
 import Login_Pg from "./page/signuplogin/Login_Pg";
 import Signup_Pg from "./page/signuplogin/Signup_Pg";
@@ -33,6 +30,8 @@ import Admin_Users from "./page/admin/ad_user";
 import Admin_Roadmaps from "./page/admin/ad_roadmap";
 import Admin_Projects from "./page/admin/ad_project";
 import Admin_Analytics from "./page/admin/ad_analytics";
+import { AddCareer } from "./page/career/AddCareer.tsx";
+import CareerDetailsModal from "@/page/career/CareerInfoSub";
 
 const router = createBrowserRouter([
   {
@@ -42,14 +41,17 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Overview /> },
       { path: "login", element: <Login_Pg /> },
-      { 
-        path: "roadmap", 
+      {
+        path: "roadmap",
         children: [
           { index: true, element: <Roadmap /> },
           { path: "add-roadmap", element: <AddRoadmap /> },
           { path: ":roadmapID/:roadmapSlug", element: <RoadmapDetails /> },
           { path: ":roadmapID/:roadmapSlug/edit", element: <EditRoadmap /> },
-          { path: ":roadmapID/:roadmapSlug/add-chapter", element: <AddChapter /> },
+          {
+            path: ":roadmapID/:roadmapSlug/add-chapter",
+            element: <AddChapter />,
+          },
           {
             path: ":roadmapID/:roadmapSlug/:chapterID/:chapterSlug",
             children: [
@@ -59,20 +61,27 @@ const router = createBrowserRouter([
               { path: ":nodeID/edit", element: <EditNode /> },
               { path: "recommend-project", element: <RecommendedProject /> },
               { path: "recommend-career", element: <RecommendedCareer /> },
-            ]
-          }
-        ]
+            ],
+          },
+        ],
       },
-      { 
-        path: "project", 
+      {
+        path: "project",
         children: [
           { index: true, element: <Project /> },
           { path: ":projectId", element: <ProjectDetails /> },
           { path: "myProjects", element: <MyProjects /> },
           { path: "submission/:submissionId", element: <SubmissionDetails /> },
-        ]
+        ],
       },
-      { path: "career", element: <Career /> },
+      { path: "career",
+        children: [
+          { index: true, element: <Career /> },
+          { path: "addCareer", element: <AddCareer />},
+          { path: ":id/:slug", element: <CareerDetailsModal />},
+          
+        ],
+      },
       { path: "profile", element: <All /> },
       { path: "signup", element: <Signup_Pg /> },
       { path: "forgot-password", element: <ForgotPassword_Pg /> },
