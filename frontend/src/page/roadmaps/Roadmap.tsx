@@ -6,7 +6,7 @@ import SearchBar from "../../component/searchBar";
 import { generateTags } from "../../component/roadmaps/groupTag";
 import { useSelector } from "react-redux";
 
-type Section = {
+export type Section = {
   id: string;
   title: string;
   tag?: string; // undefined means "no tag filter" (e.g. What's New)
@@ -142,7 +142,7 @@ export const Roadmap: React.FC = () => {
           if (items.length === 0 && section.id !== "your-design") return null;
 
           return (
-            <SectionBlock key={section.id} id={section.id} title={section.title}>
+            <SectionBlock key={section.id} id={section.id} title={section.title} extraClass="pt-18">
               <RoadmapItemList items={items} filterTag={section.tag} />
             </SectionBlock>
           );
