@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import projectsReducer from "./projectsSlice";
 import submissionsReducer from "./submissionsSlice";
 import userListReducer from "./userListSlice";
-import profileReducer from "./profileSlice";  
+import profileReducer from "./profileSlice";
 import roadmapReducer from "./roadmapSlice";
 import pillarReducer from "./pillarsSlice";
 import linkReducer from "./linksSlice";
@@ -11,44 +11,43 @@ import recommendationReducer from "./recommendationSlice";
 // Import your reducers here
 // Example: import userReducer from "./slices/userSlice";
 
-// Load from local storage 
-function loadUserInfo(){
-  try{
-    const raw = localStorage.getItem('userInfo');
+// Load from local storage
+function loadUserInfo() {
+  try {
+    const raw = localStorage.getItem("userInfo");
     if (!raw) return undefined;
     return JSON.parse(raw);
-  }catch{
+  } catch {
     return undefined;
   }
 }
 
-function saveUserInfo(profile:any){
-  try{
-    localStorage.setItem('userInfo',JSON.stringify(profile));
-  }
-  catch{}
+function saveUserInfo(profile: any) {
+  try {
+    localStorage.setItem("userInfo", JSON.stringify(profile));
+  } catch {}
 }
 
 // provide only the userInfo slice as preloadedState
-const preloadedState= { 
-  profile: loadUserInfo()?? undefined,
-}
+const preloadedState = {
+  profile: loadUserInfo() ?? undefined,
+};
 
 export const store = configureStore({
-    reducer: {
-        // Add your reducers here
-        // Example: user: userReducer,
-        projects: projectsReducer,
-        submissions: submissionsReducer,
-        userList: userListReducer,
-        profile: profileReducer,
-        roadmap: roadmapReducer,
-        chapter: pillarReducer,
-        link: linkReducer,
-        projectTracking: projectTrackingReducer,
-        recommendations: recommendationReducer,
-    } as any,
-    preloadedState,
+  reducer: {
+    // Add your reducers here
+    // Example: user: userReducer,
+    projects: projectsReducer,
+    submissions: submissionsReducer,
+    userList: userListReducer,
+    profile: profileReducer,
+    roadmap: roadmapReducer,
+    chapter: pillarReducer,
+    link: linkReducer,
+    projectTracking: projectTrackingReducer,
+    recommendations: recommendationReducer,
+  } as any,
+  preloadedState,
 });
 
 // persist only userInfo on changes
