@@ -1,7 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import { Overview } from "./page/Overview";
 import { Roadmap } from "./page/roadmaps/Roadmap";
@@ -36,14 +33,17 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Overview /> },
       { path: "login", element: <Login_Pg /> },
-      { 
-        path: "roadmap", 
+      {
+        path: "roadmap",
         children: [
           { index: true, element: <Roadmap /> },
           { path: "add-roadmap", element: <AddRoadmap /> },
           { path: ":roadmapID/:roadmapSlug", element: <RoadmapDetails /> },
           { path: ":roadmapID/:roadmapSlug/edit", element: <EditRoadmap /> },
-          { path: ":roadmapID/:roadmapSlug/add-chapter", element: <AddChapter /> },
+          {
+            path: ":roadmapID/:roadmapSlug/add-chapter",
+            element: <AddChapter />,
+          },
           {
             path: ":roadmapID/:roadmapSlug/:chapterID/:chapterSlug",
             children: [
@@ -53,18 +53,18 @@ const router = createBrowserRouter([
               { path: ":nodeID/edit", element: <EditNode /> },
               { path: "recommend-project", element: <RecommendedProject /> },
               { path: "recommend-career", element: <RecommendedCareer /> },
-            ]
-          }
-        ]
+            ],
+          },
+        ],
       },
-      { 
-        path: "project", 
+      {
+        path: "project",
         children: [
           { index: true, element: <Project /> },
           { path: ":projectId", element: <ProjectDetails /> },
           { path: "myProjects", element: <MyProjects /> },
           { path: "submission/:submissionId", element: <SubmissionDetails /> },
-        ]
+        ],
       },
       { path: "career", element: <Career /> },
       { path: "profile", element: <All /> },
