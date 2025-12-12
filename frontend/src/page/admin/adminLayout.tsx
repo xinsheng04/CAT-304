@@ -4,7 +4,7 @@ import AdminTopbar from "@/component/admin/adminTopbar";
 
 export default function AdminLayout() {
     return (
-        <div className="flex w-full h-screen bg-gray-900 text-white">
+        <div className="flex w-full h-screen bg-gray-800 text-white">
 
             {/* Sidebar */}
             <AdminSidebar />

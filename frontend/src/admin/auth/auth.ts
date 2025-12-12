@@ -7,3 +7,4 @@ export function isAdmin() {
   const user = getActiveUser();
   return user?.role === "admin";
 }
+

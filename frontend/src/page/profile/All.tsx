@@ -41,7 +41,7 @@ export const All: React.FC = () => {
                 />  
             </div>
             {/*contents*/}
-            <div className="pt-10 ">
+            <div className="pt-10 pl-12">
                 {category === "All" && (
                 <>
                   <ProfileContent key={activeUser?.email}/>

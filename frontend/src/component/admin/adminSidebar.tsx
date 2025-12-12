@@ -13,7 +13,7 @@ export default function AdminSidebar() {
   const { pathname } = useLocation();
 
   return (
-    <div className="w-64 bg-gray-800 h-screen p-5 border-r border-gray-700 fixed">
+    <div className="w-64 bg-gray-900 h-screen p-5 fixed">
 
       <h1 className="text-xl font-bold mb-6">Admin</h1>
 
