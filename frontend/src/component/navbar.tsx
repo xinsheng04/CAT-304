@@ -1,19 +1,15 @@
-import React , { useState, useEffect } from 'react';
+import React from 'react';
 import logo from '../assets/UpCode.png';
 import { Link, useLocation } from 'react-router-dom';
-
+import { useSelector } from 'react-redux';
 const Navbar: React.FC = () => {
     const navItems: string[] = ['Overview', 'Roadmap', 'Project', 'Career'];
     // const [activeItem, setActiveItem] = useState('Overview'); // Default to 'Overview'
     const location = useLocation();
     const currentPath = location.pathname.replace("/", "").toLowerCase() || 'overview';
-    // State to track login
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    useEffect(() => {
-        const userID = localStorage.getItem("userID");
-        setIsLoggedIn(userID && userID !== "0" ? true : false);
-    }, [location]); // re-check when route changes
+    // read 
+    const user = useSelector((state: any) => state.profile);
+    const isLoggedIn = !!user?.email;
 
     return (
         <nav className="bg-indigo-950 backdrop-blur-sm text-white flex justify-between items-center fixed top-0 left-0 right-0 z-10 h-16 px-4">

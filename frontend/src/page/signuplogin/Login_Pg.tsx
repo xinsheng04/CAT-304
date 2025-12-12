@@ -62,7 +62,11 @@ const Login_Pg: FC = () => {
       localStorage.setItem("userID", profileToUse.userId.toString());
 
       dispatch(login(profileToUse));
-      return true;
+      if(userDetail.role === "Admin"){
+        return "admin";
+      }else{
+        return "user";
+      }
     };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -80,9 +84,18 @@ const Login_Pg: FC = () => {
     if (errormsg.length > 0) return;
 
     // Login logic
-    if (handleLogin(email, password)) {
-      alert(`Login Successfully.\nEmail: ${email}`);
-      navigate(fromPath, { replace: true });
+    const login_acc = handleLogin(email,password);
+    if(login_acc === false ){
+      alert("Please reenter again");
+      return;
+    }else if( login_acc === "admin"){
+      alert(`Admin Login Successful.\nEmail: ${email}`);
+      navigate("/admin");
+    }else if(login_acc === "user"){
+      alert(` Login Successful.\nEmail: ${email}`);
+      navigate(fromPath, {replace : true});
+    }else {
+      console.error("Unexpected login role:", login_acc);
     }
   };
 
