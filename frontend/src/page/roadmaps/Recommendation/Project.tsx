@@ -34,7 +34,8 @@ export const RecommendedProject: React.FC = () => {
                 {sections.map((section) => {
                 return (
                     <SectionBlock key={section.id} id={section.id} title={section.title}>
-                        <RecommendedList selectedChapterID={Number(chapterID)} 
+                        <RecommendedList mode = "project"
+                                         selectedID={Number(chapterID)} 
                                          selectedSection={section.id}
                                          searchQuery={query} />
                     </SectionBlock>

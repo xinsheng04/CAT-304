@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import PillarCard from '../Selector/pillarCard.tsx';
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from 'react-router-dom';
-import type { ProjectType } from '@/store/projectsSlice.ts';
 import Recommendation from './recommendation.tsx';
 import type { RecommendationType } from '@/store/recommendationSlice.ts';
 import type { RoadmapType } from '@/store/roadmapSlice.ts';
 import type { PillarType } from '@/store/pillarsSlice.ts';
-import type { CareerItem } from '@/store/careerSlice.ts';
 
 
 interface PillarListProps {
@@ -18,8 +16,6 @@ const PillarList: React.FC<PillarListProps> = ({ selectedRoadmapId }) => {
 // Filter pillars based on selectedRoadmapId
 const roadmapData = useSelector((state: any) => state.roadmap.roadmapList) as RoadmapType[];
 const pillarsData = useSelector((state: any) => state.chapter.pillarList) as PillarType[];
-const projects = useSelector((state: any) => state.projects.projectsList) as ProjectType[];
-const careers = useSelector((state: any) => state.career.careerList) as CareerItem[];
 const recommendedData = useSelector((state: any) => state.recommendations.recommendations) as RecommendationType[];
 const filteredPillars = pillarsData.filter(pillar => pillar.roadmapID === selectedRoadmapId);
 const roadmapSlug = roadmapData.find(r => r.roadmapID === selectedRoadmapId)?.roadmapSlug || 'Unknown Roadmap Slug';
@@ -92,7 +88,6 @@ function toggleProjectsVisibility(chapterID: number) {
                         <Recommendation
                             mode="project"
                             selectedID={pillar.chapterID}
-                            projects={projects}
                             navigateDetails={navigateToProjectDetails}
                             creator={creator.toString()}
                         />
@@ -108,7 +103,6 @@ function toggleProjectsVisibility(chapterID: number) {
                         <Recommendation
                             mode="career"
                             selectedID={selectedRoadmapId}
-                            careers={careers}
                             navigateDetails={navigateToCareerDetails}
                             creator={creator.toString()}
                         />
