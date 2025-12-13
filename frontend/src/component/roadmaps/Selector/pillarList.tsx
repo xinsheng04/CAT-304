@@ -30,10 +30,6 @@ function navigateToProjectDetails(projectId: number) {
     navigate(`/project/${projectId}`);
 }
 
-function navigateToCareerDetails(careerId: number, careerSlug: string) {
-    navigate(`/career/${careerId}/${careerSlug}`);
-}
-
 // Helper function to check if a pillar has project in recommended data
 function hasProjects(pillar: PillarType): boolean {
     if(Number(userID) === creator) return true;
@@ -103,7 +99,6 @@ function toggleProjectsVisibility(chapterID: number) {
                         <Recommendation
                             mode="career"
                             selectedID={selectedRoadmapId}
-                            navigateDetails={navigateToCareerDetails}
                             creator={creator.toString()}
                         />
                     </div>

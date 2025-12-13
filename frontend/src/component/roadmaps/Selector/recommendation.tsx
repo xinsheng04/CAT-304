@@ -13,7 +13,7 @@ import { CareerItemCard } from '@/component/career/Selector/careerCard';
 interface RecommendationProps {
     mode: "career" | "project"
     selectedID: number;
-    navigateDetails: (Id: number, slug: string) => void;
+    navigateDetails?: (Id: number) => void;
     creator: string
 }
 
@@ -64,7 +64,7 @@ const Recommendation: React.FC<RecommendationProps> =
 
                             <ProjectCard 
                                 projectId={project.projectId}
-                                onClick={() => navigateDetails(project.projectId, "")}
+                                onClick={() => navigateDetails && navigateDetails(project.projectId)}
                             />
                         </div>
                     ))}
