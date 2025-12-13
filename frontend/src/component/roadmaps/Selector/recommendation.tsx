@@ -7,31 +7,24 @@ import { useSelector } from 'react-redux';
 import type { PillarType } from '@/store/pillarsSlice';
 import type { RoadmapType } from '@/store/roadmapSlice';
 import type { CareerItem } from '@/store/careerSlice';
+import type { RecommendationType } from '@/store/recommendationSlice.ts';
 import { CareerItemCard } from '@/component/career/Selector/careerCard';
-
-interface Recommendation {
-  recommendationId: number;
-  sourceId: number;
-  targetId: number;
-  sourceType: string;
-  targetType: string;
-}
 
 interface RecommendationProps {
     mode: "career" | "project"
     selectedID: number;
-    projects?: ProjectType[];
-    careers?: CareerItem[];
     navigateDetails: (Id: number, slug: string) => void;
     creator: string
 }
 
 const Recommendation: React.FC<RecommendationProps> = 
-    ({mode, selectedID, projects, careers, navigateDetails, creator }) => {
-    const recommendedData = useSelector((state: any) => state.recommendations.recommendations) as Recommendation[];
+    ({mode, selectedID, navigateDetails, creator }) => {
+    const recommendedData = useSelector((state: any) => state.recommendations.recommendations) as RecommendationType[];
+    const projects = useSelector((state: any) => state.projects.projectsList) as ProjectType[];
+    const careers = useSelector((state: any) => state.career.careerList) as CareerItem[];
     let pillar: PillarType | undefined;
     let roadmap: RoadmapType | undefined;
-    let filterRecommendedData: Recommendation[] = [];
+    let filterRecommendedData: RecommendationType[] = [];
     let chapterProjects: ProjectType[] = [];
     let roadmapCareers: CareerItem[] = [];
 
@@ -76,7 +69,7 @@ const Recommendation: React.FC<RecommendationProps> =
                         </div>
                     ))}
                     {userID === creator && (
-                    <AddRecommendation link={`/roadmap/${roadmapID}/${roadmapSlug}/${pillar!.chapterID}/${pillar!.chapterSlug}/recommend-project`}/>)}
+                    <AddRecommendation extraClass="h-full" link={`/roadmap/${roadmapID}/${roadmapSlug}/${pillar!.chapterID}/${pillar!.chapterSlug}/recommend-project`}/>)}
                 </div>
                 ) : (
                 <>
@@ -100,12 +93,14 @@ const Recommendation: React.FC<RecommendationProps> =
                         </div>
                     ))}
                     {userID === creator && (
-                    <AddRecommendation extraClass=' h-100 ' link={`/roadmap/${roadmapID}/${roadmapSlug}/recommend-career`}/>)}
+                    <AddRecommendation extraClass=' h-full hover:scale-105 transform transition duration-300' 
+                                       link={`/roadmap/${roadmapID}/${roadmapSlug}/recommend-career`}/>)}
                 </div>
                 ) : (
                 <>
                 {userID === creator ?
-                    (<AddRecommendation extraClass=' flex flex-nowrap w-full' link={`/roadmap/${roadmapID}/${roadmapSlug}/recommend-career`}/>)
+                    (<AddRecommendation extraClass=' flex flex-nowrap w-full hover:scale-105 transform transition duration-300' 
+                                        link={`/roadmap/${roadmapID}/${roadmapSlug}/recommend-career`}/>)
                     :
                     (<p className="pl-5 text-sm text-gray-400">No suggested career found.</p>)}
                 </>
