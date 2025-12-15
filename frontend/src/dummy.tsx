@@ -40,7 +40,7 @@ export const roadmapData: RoadmapType[] = [
     title: "JavaScript Essentials",
     description: "JavaScript Essentials provides a clear path for mastering the core features of JavaScript, the language of the web. This roadmap includes topics such as variables, functions, loops, arrays, objects, and basic DOM manipulation. You will also learn how JavaScript runs in the browser, how events work, and how to interact with HTML and CSS. These fundamentals form the base required for front-end frameworks like React, Angular, and Vue.",
     createdDate: "2025-11-15",
-    modifiedDate:  "2055128155",
+    modifiedDate: "2025-11-15",
     isFavourite: false,
     
   },
