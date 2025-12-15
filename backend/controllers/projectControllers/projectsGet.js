@@ -1,5 +1,4 @@
 import { supabase } from "../../config.js";
-import { getUserNameFromId } from "../../util/getUserNameFromId.js";
 
 // Get all projects (not including starting repo link, details file, recommendations and submissions)
 /*
