@@ -17,8 +17,8 @@ const PillarList: React.FC<PillarListProps> = ({ selectedRoadmapId }) => {
 
 const userID = localStorage.getItem("userID");
 const { roadmapID } = useParams<{ roadmapID: string }>();
-const { data: roadmapData = []} = useGetSingleRoadmap(Number(roadmapID), userID)
-const { data: pillarsData = []} = useGetRoadmapChapters(selectedRoadmapId, userID) as {data: PillarType[]}
+const { data: roadmapData } = useGetSingleRoadmap(Number(roadmapID), userID)
+const { data: pillarsData = [] } = useGetRoadmapChapters(selectedRoadmapId, userID)
 
 // Filter pillars based on selectedRoadmapId
 const recommendedData = useSelector((state: any) => state.recommendations.recommendations) as RecommendationType[];

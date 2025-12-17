@@ -8,9 +8,7 @@ import { useGetSingleRoadmap } from "@/api/roadmaps/roadmapAPI";
 export const RoadmapDetails: React.FC = () => {
     const { roadmapID } = useParams<{ roadmapID: string }>(); // get id from URL
     const userID = localStorage.getItem("userID");
-    const { data: roadmapItem, isLoading, isError } = useGetSingleRoadmap(Number(roadmapID), userID);
-    if (isLoading) return <div className="w-72 h-64 bg-gray-800 animate-pulse rounded-lg" />;
-    if (isError || !roadmapItem) return null;
+    
     //for profile usage
     const hasCountedRef = useRef(false);
     useEffect(() => {
@@ -24,6 +22,10 @@ export const RoadmapDetails: React.FC = () => {
         
         hasCountedRef.current = true;
     }, [roadmapID]);
+
+    const { data: roadmapItem, isLoading, isError } = useGetSingleRoadmap(Number(roadmapID), userID);
+    if (isLoading) return <div className="w-72 h-64 bg-gray-800 animate-pulse rounded-lg" />;
+    if (isError || !roadmapItem) return null;
 
     if (!roadmapItem) return <p className="text-white text-center mt-10">Roadmap not found</p>;
     return (
