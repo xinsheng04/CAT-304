@@ -6,26 +6,34 @@ import { generateTags } from '../groupTag';
 import { Heart, X } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { toggleFavourite } from "@/store/roadmapSlice";
-import type { LinkType } from "@/store/linksSlice";
 import { useGetSingleRoadmap } from "@/api/roadmaps/roadmapAPI";
 import { IMAGE_MAP, defaultImageSrc } from "@/lib/image";
 import { useGetRoadmapChapters } from "@/api/roadmaps/chapterAPI";
-import type { PillarType } from "@/store/pillarsSlice";
 import { useGetSingleUser } from "@/api/roadmaps/userAPI";
 import { useGetAllLinks } from "@/api/roadmaps/linkAPI";
-
 
 
 const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({
     selectedRoadmapID}) => {
     const userID = localStorage.getItem("userID");
-    const { data: roadmapItem, isLoading, isError } = useGetSingleRoadmap(selectedRoadmapID, userID);
-    const { data: userData } = useGetSingleUser(roadmapItem.creatorID);
+    
+    const dispatch = useDispatch();   
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    useEffect(() => {
+        const userID = localStorage.getItem("userID");
+        setIsLoggedIn(userID && userID !== "0" ? true : false);
+    }, [location]); // re-check when route changes
+
+    const { data: roadmapItem, isLoading: roadmapLoading, isError: roadmapError } = useGetSingleRoadmap(selectedRoadmapID, userID);
+    const { data: userData } = useGetSingleUser(roadmapItem!.creatorID);
     const username = userData?.username ?? 'Unknown Username';
-    const { data: pillarsData } = useGetRoadmapChapters(selectedRoadmapID, userID) as { data: PillarType[]};
-    const { data: linksData } = useGetAllLinks(userID) as { data: LinkType[] }
-    if (isLoading) return <div className="w-72 h-64 bg-gray-800 animate-pulse rounded-lg" />;
-    if (isError || !roadmapItem) return null;
+    const { data: pillarsData = [] , isLoading: pillarsLoading } = useGetRoadmapChapters(selectedRoadmapID, userID);
+    const { data: linksData = [] } = useGetAllLinks(userID)
+
+    if (roadmapLoading || pillarsLoading) return <div className="w-72 h-64 bg-gray-800 animate-pulse rounded-lg" />;
+    if (roadmapError || !roadmapItem) return null;
 
     const uniqueChapterID = [...new Set(pillarsData.map(data => data.chapterID))];
     const filterLinksData = linksData.filter(data => {
@@ -44,14 +52,6 @@ const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({
     else {
         latestModifiedDate = roadmapItem.modifiedDate;
     }
-    const dispatch = useDispatch();   
-    const location = useLocation();
-    const navigate = useNavigate();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    useEffect(() => {
-            const userID = localStorage.getItem("userID");
-            setIsLoggedIn(userID && userID !== "0" ? true : false);
-    }, [location]); // re-check when route changes
 
     const handleToggleFavourite = () => {
         if (isLoggedIn){
@@ -166,5 +166,3 @@ const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({
 }
 
 export default RoadmapDescription;
-
-

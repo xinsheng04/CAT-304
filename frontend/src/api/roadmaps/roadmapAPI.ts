@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import Api from '../index.ts';
+import type { RoadmapType } from '@/store/roadmapSlice.ts';
 
 // 1. Get All Roadmap
 export const useGetRoadmaps = (userID?: string | null) => {
-    return useQuery({
+    return useQuery<RoadmapType[]>({
         queryKey: ['roadmaps', userID],
         queryFn: async () => {
             const headers = userID ? { 'x-user-id': userID } : {};
@@ -15,7 +16,7 @@ export const useGetRoadmaps = (userID?: string | null) => {
 
 // 2. Get Specific Roadmap
 export const useGetSingleRoadmap = (roadmapID: number, userID?: string | null) => {
-    return useQuery({
+    return useQuery<RoadmapType>({
         queryKey: ['roadmaps', roadmapID, userID],
         queryFn: async () => {
             const headers = userID ? { 'x-user-id': userID } : {};

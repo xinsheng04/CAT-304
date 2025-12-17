@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate, useParams } from 'react-router';
-import { toggleView, autosetViewTrue, type PillarType } from '@/store/pillarsSlice';
-import { useSelector } from "react-redux";
+import { toggleView} from '@/store/pillarsSlice';
 import down from "../../../assets/image/down.png"
-import type { LinkType } from '@/store/linksSlice';
+import { autosetViewTrue } from '@/store/linksSlice';
+import { useGetSingleChapter } from '@/api/roadmaps/chapterAPI';
+import { useGetChapterLinks } from '@/api/roadmaps/linkAPI';
 
 // Type and data structure
 export interface PillarCardProps {
@@ -18,20 +19,24 @@ const PillarCard : React.FC<PillarCardProps> = ({
     selectedChapterID, onToggleClick, isOpen, showArrow = true
 
 }) => {
-    // use link to get roadmap slug
-    const { roadmapSlug } = useParams<{ roadmapSlug: string }>();
     const dispatch = useDispatch();
-    const linksData = useSelector((state: any) => state.link.linkList) as LinkType[];
-    const pillarData = useSelector((state: any) => state.chapter.pillarList) as PillarType[];
-    const chapterItem = pillarData.find(p => p.chapterID === selectedChapterID);
-    if (!chapterItem) return <p className="text-white text-center mt-10">Chapter not found</p>;
     const location = useLocation();
     const navigate = useNavigate();
+    // use link to get roadmap slug
+    const userID = localStorage.getItem("userID");
+    const { roadmapID, roadmapSlug } = useParams<{ roadmapID: string, roadmapSlug: string }>();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+
     useEffect(() => {
-            const userID = localStorage.getItem("userID");
-            setIsLoggedIn(userID && userID !== "0" ? true : false);
+        const userID = localStorage.getItem("userID");
+        setIsLoggedIn(userID && userID !== "0" ? true : false);
     }, [location]); // re-check when route changes
+
+    const { data: chapterItem , isLoading: chapterLoading, isError} = useGetSingleChapter(Number(roadmapID), selectedChapterID, userID);
+    const { data: linksData = [], isLoading: linksLoading} = useGetChapterLinks(selectedChapterID, userID);
+    if (chapterLoading || linksLoading) return <div className="w-72 h-64 bg-gray-800 animate-pulse rounded-lg" />;
+    if (isError || !chapterItem) return <p className="text-white text-center mt-10">Chapter not found</p>;
+
     
     // toggleViewed indicator
     const handleToggleViewed = (e: React.MouseEvent) => {
@@ -53,26 +58,19 @@ const PillarCard : React.FC<PillarCardProps> = ({
     }
 
     // percentage generator
-    const generateViewPercentage = (chapterID: number) => {
-        const filtered = linksData.filter(p => p.chapterID === chapterID);
-        if (filtered.length === 0) {
-            return 0; // Return 0% for chapters with no links
-        }
-        const viewArr = filtered.map(p => p.isViewed);
-
-        const viewScore = (level: boolean) => (level ? 1 : 0);
-
-        const getPercentage = (arr: boolean[]) => {
-            const avg = arr.reduce((sum, d) => sum + viewScore(d), 0) / arr.length;
-            return avg;
-        }
-        const percentage = getPercentage(viewArr) * 100;
-        const percentText = Math.round(percentage);
-        if(percentText == 100){
-            dispatch(autosetViewTrue(chapterID))
-        }
-        return percentText
+    const generateViewPercentage = () =>  {
+        if (!linksData || linksData.length === 0) return 0;
+        const viewedCount = linksData.filter(link => link.isViewed).length;
+        return Math.round((viewedCount / linksData.length) * 100);
     }
+
+    const viewPercentage = generateViewPercentage();
+
+    useEffect(() => {
+        if (viewPercentage === 100) {
+            dispatch(autosetViewTrue(chapterItem.chapterID));
+        }
+    }, [viewPercentage, dispatch, chapterItem.chapterID]);
 
     return (
         <div className='relative p-4 m-2 rounded-xl shadow-lg transition-all duration-300 
@@ -94,16 +92,16 @@ const PillarCard : React.FC<PillarCardProps> = ({
                     </div>
 
                     {/* Percentage Viewer */}
-                    {generateViewPercentage(chapterItem.chapterID)!==100 && generateViewPercentage(chapterItem.chapterID)!==0 && 
+                    {viewPercentage !== 100 && viewPercentage !== 0 && 
                     (<div className="flex items-center gap-2">
                         <div className="w-16 h-2 bg-gray-300 rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-green-500 transition-all duration-300"
-                                style={{ width: `${generateViewPercentage(chapterItem.chapterID)}%` }}
+                                style={{ width: `${viewPercentage}%` }}
                             ></div>
                         </div>
                         <div className="text-gray-700 font-semibold text-sm min-w-[40px]">
-                            {generateViewPercentage(chapterItem.chapterID)}%
+                            {viewPercentage}%
                         </div>
                     </div>)}
 

@@ -1,9 +1,10 @@
 import { useQuery} from '@tanstack/react-query';
 import Api from '../index.ts';
+import type { LinkType } from '@/store/linksSlice.ts';
 
 // 1. Get All Link
 export const useGetAllLinks = (userID?: string | null) => {
-    return useQuery({
+    return useQuery<LinkType[]>({
         queryKey: ['links', userID],
         queryFn: async () => {
             const headers = userID ? { 'x-user-id': userID } : {};
@@ -15,7 +16,7 @@ export const useGetAllLinks = (userID?: string | null) => {
 
 // 2. Get All Links based on Chapter
 export const useGetChapterLinks = (chapterID: number, userID?: string | null) => {
-    return useQuery({
+    return useQuery<LinkType[]>({
         queryKey: ['links', chapterID, userID],
         queryFn: async () => {
             const headers = userID ? { 'x-user-id': userID } : {};
@@ -28,7 +29,7 @@ export const useGetChapterLinks = (chapterID: number, userID?: string | null) =>
 
 // 3. Get Specific Link
 export const useGetSingleLink = (chapterID: number, linkID: number, userID?: string | null) => {
-    return useQuery({
+    return useQuery<LinkType>({
         queryKey: ['chapters', chapterID, linkID, userID],
         queryFn: async () => {
             const headers = userID ? { 'x-user-id': userID } : {};

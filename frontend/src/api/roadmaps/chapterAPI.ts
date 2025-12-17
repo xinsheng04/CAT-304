@@ -1,9 +1,10 @@
 import { useQuery} from '@tanstack/react-query';
 import Api from '../index.ts';
+import type { PillarType } from '@/store/pillarsSlice.ts';
 
 // 1. Get All Chapter
 export const useGetAllChapters = (userID?: string | null) => {
-    return useQuery({
+    return useQuery<PillarType[]>({
         queryKey: ['chapters', userID],
         queryFn: async () => {
             const headers = userID ? { 'x-user-id': userID } : {};
@@ -15,7 +16,7 @@ export const useGetAllChapters = (userID?: string | null) => {
 
 // 2. Get All Chapter based on Roadmap
 export const useGetRoadmapChapters = (roadmapID: number, userID?: string | null) => {
-    return useQuery({
+    return useQuery<PillarType[]>({
         queryKey: ['chapters', roadmapID, userID],
         queryFn: async () => {
             const headers = userID ? { 'x-user-id': userID } : {};
@@ -28,7 +29,7 @@ export const useGetRoadmapChapters = (roadmapID: number, userID?: string | null)
 
 // 3. Get Specific Chapter
 export const useGetSingleChapter = (roadmapID: number, chapterID: number, userID?: string | null) => {
-    return useQuery({
+    return useQuery<PillarType>({
         queryKey: ['chapters', roadmapID, chapterID, userID],
         queryFn: async () => {
             const headers = userID ? { 'x-user-id': userID } : {};
