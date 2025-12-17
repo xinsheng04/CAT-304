@@ -37,7 +37,9 @@ export const getAllBasicDetailsOnly = async (req, res) => {
 // Get project by title, including recommendations, tracking data (user) and submissions (surface data)
 /*
 Input:
-  params: title: string
+  params: 
+  title: string
+  userId: number
   body: None
 Output: {
   projectId: number;
@@ -63,7 +65,7 @@ export const getByTitleComplete = async (req, res) => {
     .from("Projects")
     .select(`
       *,
-      Users!creatorId(fname, lname),
+      Users!creatorId(username),
       Submissions(*)
     `)
     .eq("title", req.params.title)
@@ -84,11 +86,11 @@ export const getByTitleComplete = async (req, res) => {
     .select("isTracking, isMarkedAsDone")
     .eq("projectId", project.projectId)
     .eq("userId", req.params.userId)
-    .single();
+    .maybeSingle();  // Won't throw error if user hasn't tracked the project
 
   return res.json({
     ...project,
-    creatorName: project.Users ? `${project.Users.fname} ${project.Users.lname}` : null,
+    creatorName: project.Users ? `${project.Users.username}` : null,
     recommendations: recommendations || [],
     submissions: project.Submissions || [],
     isMarkedAsDone: trackingData?.isMarkedAsDone || false,
@@ -99,7 +101,9 @@ export const getByTitleComplete = async (req, res) => {
 // Get project by projectId, including recommendations, tracking data (user) and submissions (surface data)
 /*
 Input:
-  params: projectId: number
+  params: 
+  projectId: number
+  userId: number
   body: None
 Output: {
   projectId: number;
@@ -125,7 +129,7 @@ export const getByIdComplete = async (req, res) => {
     .from("Projects")
     .select(`
       *,
-      Users!creatorId(fname, lname),
+      Users!creatorId(username),
       Submissions(*)
     `)
     .eq("projectId", req.params.projectId)
@@ -150,7 +154,7 @@ export const getByIdComplete = async (req, res) => {
 
   return res.json({
     ...project,
-    creatorName: project.Users ? `${project.Users.fname} ${project.Users.lname}` : null,
+    creatorName: project.Users ? `${project.Users.username}` : null,
     recommendations: recommendations || [],
     submissions: project.Submissions || [],
     isMarkedAsDone: trackingData?.isMarkedAsDone || false,

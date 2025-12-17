@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import Api from '../index.ts';
 
-import type { InitialProjectType, ProjectType } from '../../lib/projectModuleTypes.ts';
+import type { InitialProjectType } from '../../lib/projectModuleTypes.ts';
 
 export function useCreateProject(creatorId: number) {
   return useMutation({
