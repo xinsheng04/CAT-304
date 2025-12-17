@@ -22,7 +22,20 @@ Output: {
 */
 
 export const createProject = async (req, res) => {
-  const { recommendations, ...projectData } = req.body;
+  // Ensure we have a JSON body to avoid destructuring errors
+  if (!req.body || typeof req.body !== "object") {
+    return res.status(400).json({ error: "Request body must be JSON with required fields" });
+  }
+
+  // Safely destructure with defaults
+  const { recommendations = [], ...projectData } = req.body;
+
+  // Basic required field validation
+  const requiredFields = ["title", "shortDescription", "difficulty", "category", "creatorId"];
+  const missingFields = requiredFields.filter((f) => projectData[f] === undefined);
+  if (missingFields.length > 0) {
+    return res.status(400).json({ error: `Missing required fields: ${missingFields.join(", ")}` });
+  }
 
   // Insert project
   const { data: newProject, error: projectError } = await supabase
@@ -63,7 +76,11 @@ Input:
 
 export const putTrackingData = async(req, res) => {
   const { projectId, userId } = req.params;
-  const trackingData = req.body;
+  // Guard against missing/invalid JSON body
+  const trackingData = (req.body && typeof req.body === "object") ? req.body : null;
+  if (!trackingData) {
+    return res.status(400).json({ error: "Request body must be JSON with tracking fields" });
+  }
 
   // Upsert tracking data
   const { error: trackingError } = await supabase

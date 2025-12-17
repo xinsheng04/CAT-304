@@ -14,9 +14,7 @@ import { Button } from "@/component/shadcn/button";
 import { categoryList } from "@/lib/types";
 import { useSelector } from "react-redux";
 import { useCreateProject } from "@/api/projects/projectsAPI";
-import type { AppDispatch } from "@/store"; // Import AppDispatch from your store
 import { uint8ToBase64, convertFileToUInt8 } from "@/lib/utils";
-import { addProjectAndRecommendations } from "@/store/projectsSlice";
 import type { ExtendedProjectType } from "@/store/projectsSlice";
 
 type ProjectFormProps = {
