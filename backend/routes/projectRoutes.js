@@ -60,6 +60,6 @@ router.post('/projects/:projectId/recommendations/add', addRecommendation);
 // Update recommendation for a project (might be useful if we add weightage later)
 router.put('/projects/:projectId/recommendations/:recommendationId/update', updateRecommendation);
 // Delete recommendation for a project
-router.delete('/projects/:projectId/recommendations/:recommendationId/delete', deleteRecommendation);
+router.delete('/projects/recommendations/:recommendationId/delete', deleteRecommendation);
 
 export default router;

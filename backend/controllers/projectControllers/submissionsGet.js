@@ -28,7 +28,7 @@ export const getAllSubmissions = async (req, res) => {
       postedOn,
       title,
       repoLink,
-      Users!creatorId(fname, lname)
+      Users!creatorId(username)
     `)
     .eq("projectId", projectId);
 
@@ -42,7 +42,7 @@ export const getAllSubmissions = async (req, res) => {
     postedOn: submission.postedOn,
     title: submission.title,
     repoLink: submission.repoLink,
-    creatorName: submission.Users ? `${submission.Users.fname} ${submission.Users.lname}` : null,
+    creatorName: submission.Users ? `${submission.Users.username}` : null,
   }));
 
   return res.json({ submissions: enrichedData });
@@ -113,10 +113,16 @@ export const getSubmissionById = async (req, res) => {
     .eq("submissionId", submissionId)
     .single();
   if (error) {
+    if (error.code === 'PGRST116') {
+      return res.status(404).json({ error: "Submission not found" });
+    }
     return res.status(500).json({ error: error.message });
+  }
+  if (!submission) {
+    return res.status(404).json({ error: "Submission not found" });
   }
   // Get creator name
   submission.creatorName = await getUserNameFromId(submission.creatorId);
-  return res.json(submission);
+  return res.json({ submission });
 }
 
