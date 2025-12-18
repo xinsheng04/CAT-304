@@ -1,17 +1,12 @@
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router";
 import { RoadmapItemCard } from "../roadmaps/Selector/roadmapCard";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@radix-ui/react-collapsible";
 import search_icon from "../../assets/search_icon.png"
 import { useGetAllRecommendations } from "@/api/projects/recommendationsAPI";
-import type { RoadmapType } from "@/store/roadmapSlice";
 interface InterModuleRelationsProps {
   projectId: number;
 }
 
 export const InterModuleRelations: React.FC<InterModuleRelationsProps> = ({ projectId }) => {
-  const navigate = useNavigate();
-  const roadmapList = useSelector((state: any) => state.roadmap.roadmapList) as RoadmapType[];
   const {
     data: recommendations = [],
     isLoading: isLoadingRecommendations,

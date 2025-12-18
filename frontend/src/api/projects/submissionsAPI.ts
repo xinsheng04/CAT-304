@@ -44,7 +44,7 @@ export function useGetAllSubmissionsByCreator(creatorId: number) {
     queryKey: ['submissions', 'byCreatorId', creatorId],
     queryFn: async (): Promise<SubmissionType[]> => {
       const response = await Api.get(`/projects/${creatorId}/submissions/getAllSubmissionsByUser`);
-      return response.data;
+      return response.data.submissions;
     }
   })
 }
