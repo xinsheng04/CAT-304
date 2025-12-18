@@ -98,8 +98,8 @@ const Login_Pg: FC = () => {
     const login_acc = handleLogin(email, password);
     if (login_acc === "admin") {
       alert(`Admin Login Successful.\nEmail: ${email}`);
-      navigate("/admin");
-    } else if (login_acc === "user") {
+      navigate("/admin", {replace: true});
+    }else if(login_acc === "user"){
       alert(` Login Successful.\nEmail: ${email}`);
       navigate(fromPath, { replace: true });
     } else {
