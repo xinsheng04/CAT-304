@@ -41,6 +41,9 @@ const PillarCard : React.FC<PillarCardProps> = ({
 
     const { data: linksData = [], isLoading: linksLoading} = useGetChapterLinks(selectedChapterID, userID);
 
+    const viewMutation = useCreateChapterRecord();
+    const unviewMutation = useDeleteChapterRecord();
+    
     // percentage generator
     const generateViewPercentage = () =>  {
         if (!linksData || linksData.length === 0) return 0;
@@ -51,7 +54,8 @@ const PillarCard : React.FC<PillarCardProps> = ({
     const viewPercentage = generateViewPercentage();
 
     useEffect(() => {
-        if (viewPercentage === 100) {
+        if (!localChapterItem) return;
+        if (viewPercentage === 100 && !localChapterItem.isViewed) {
             setLocalChapterItem({ ...localChapterItem, isViewed: true });
             viewMutation.mutate(
                 { userID: Number(userID), chapterID: Number(selectedChapterID) },
@@ -59,9 +63,6 @@ const PillarCard : React.FC<PillarCardProps> = ({
             );
         }
     }, [viewPercentage]);
-
-    const viewMutation = useCreateChapterRecord();
-    const unviewMutation = useDeleteChapterRecord();
 
     if (chapterLoading || linksLoading) return <div className="w-72 h-64 bg-gray-800 animate-pulse rounded-lg" />;
     if (isError || !localChapterItem) return <p className="text-white text-center mt-10">Chapter not found</p>;
