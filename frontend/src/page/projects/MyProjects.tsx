@@ -22,9 +22,9 @@ export const MyProjects: React.FC = () => {
   const userId = useSelector((state: any) => state.profile.userId);
 
   const { data: createdProjects = [], isLoading: isLoadingCreatedProjects, 
-    isError: isErrorCreatedProjects } = useGetAllBasicDetailsOnly(userId);
+    isError: isErrorCreatedProjects, isSuccess: isSuccessCreatedProjects } = useGetAllBasicDetailsOnly(userId);
   const { data: submissions = [], isLoading: isLoadingSubmissions, 
-    isError: isErrorSubmissions } = useGetAllSubmissionsByCreator(userId);
+    isError: isErrorSubmissions, isSuccess: isSuccessSubmissions } = useGetAllSubmissionsByCreator(userId);
 
   function handleCategoryChange(value: string) {
     setCategory(value);
@@ -50,26 +50,27 @@ export const MyProjects: React.FC = () => {
 
   let hasContentToShow = false;
   let targetArr = [];
-  switch (submissionType) {
-    case "Created Projects":
-      targetArr = createdProjects;
-      break;
-    case "Tracked Projects":
-      targetArr = createdProjects.filter((project: ProjectType & { isTracking: boolean }) => project.isTracking);
-      break;
-    case "Projects Marked as Done":
-      targetArr = createdProjects.filter((project: ProjectType & { isMarkedAsDone: boolean }) => 
-        project.isMarkedAsDone);
-      break;
-    case "Project Submissions":
-      targetArr = submissions;
-      break;
-    default:
-      hasContentToShow = false;
+  if(isSuccessCreatedProjects && isSuccessSubmissions){
+    switch (submissionType) {
+      case "Created Projects":
+        targetArr = createdProjects;
+        break;
+      case "Tracked Projects":
+        targetArr = createdProjects.filter((project: ProjectType & { isTracking: boolean }) => project.isTracking);
+        break;
+      case "Projects Marked as Done":
+        targetArr = createdProjects.filter((project: ProjectType & { isMarkedAsDone: boolean }) => 
+          project.isMarkedAsDone);
+        break;
+      case "Project Submissions":
+        targetArr = submissions;
+        break;
+      default:
+        hasContentToShow = false;
+    }
+    hasContentToShow = targetArr.length > 0 && (category === "All" ||
+      targetArr.some((record: any) => record.category === category));
   }
-
-  hasContentToShow = targetArr.length > 0 && (category === "All" ||
-    targetArr.some((record: any) => record.category === category));
 
   return (
     <div className="pt-6 px-3 w-full mx-auto flex flex-col">
