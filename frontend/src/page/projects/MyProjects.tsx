@@ -5,12 +5,12 @@ import RadioGroup from "../../component/projects/radioGroup.tsx";
 import type { ProjectType } from "../../lib/projectModuleTypes.ts";
 import { useGetAllBasicDetailsOnly } from "@/api/projects/projectsAPI.ts";
 import { useGetAllSubmissionsByCreator } from "@/api/projects/submissionsAPI.ts";
-// import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { categoryList } from "@/lib/types.ts";
 import { useNavigate } from "react-router";
 import ProjectCard from "../../component/projects/projectCard.tsx";
 import SubmissionCard from "@/component/projects/submissionCard.tsx";
-
+import { LoadingIcon } from "@/component/LoadingIcon";
 
 export const MyProjects: React.FC = () => {
   const navigate = useNavigate();
@@ -19,11 +19,12 @@ export const MyProjects: React.FC = () => {
   const [category, setCategory] = useState(selections[0]);
   const [submissionType, setSubmissionType] = useState<"Created Projects" | "Tracked Projects" | 
   "Projects Marked as Done" | "Project Submissions">("Created Projects");
-  // const userId = useSelector((state: any) => state.profile.userId);
-  const userId = 1; // Temporary fix until auth is done
+  const userId = useSelector((state: any) => state.profile.userId);
 
-  const { data: createdProjects = [] } = useGetAllBasicDetailsOnly(userId);
-  const { data: submissions = [] } = useGetAllSubmissionsByCreator(userId);
+  const { data: createdProjects = [], isLoading: isLoadingCreatedProjects, 
+    isError: isErrorCreatedProjects, isSuccess: isSuccessCreatedProjects } = useGetAllBasicDetailsOnly(userId);
+  const { data: submissions = [], isLoading: isLoadingSubmissions, 
+    isError: isErrorSubmissions, isSuccess: isSuccessSubmissions } = useGetAllSubmissionsByCreator(userId);
 
   function handleCategoryChange(value: string) {
     setCategory(value);
@@ -32,28 +33,44 @@ export const MyProjects: React.FC = () => {
     navigate(`/${path}/${destId}`);
   }
 
-  let hasContentToShow = false;
-  let targetArr = [];
-  switch (submissionType) {
-    case "Created Projects":
-      targetArr = createdProjects;
-      break;
-    case "Tracked Projects":
-      targetArr = createdProjects.filter((project: ProjectType & { isTracking: boolean }) => project.isTracking);
-      break;
-    case "Projects Marked as Done":
-      targetArr = createdProjects.filter((project: ProjectType & { isMarkedAsDone: boolean }) => 
-        project.isMarkedAsDone);
-      break;
-    case "Project Submissions":
-      targetArr = submissions;
-      break;
-    default:
-      hasContentToShow = false;
+  if (isLoadingCreatedProjects || isLoadingSubmissions) {
+    return (
+      <div className="mt-2 pt-3 space-y-2 pl-9 bg-gray-800/20 rounded-2xl shadow-2xl w-7xl mx-auto h-[90vh] overflow-hidden">
+        <LoadingIcon text="Loading Projects and Submissions..." />
+      </div>
+    );
   }
 
-  hasContentToShow = targetArr.length > 0 && category === "All" ||
-    targetArr.some((record: any) => record.category === category);
+  if (isErrorCreatedProjects || isErrorSubmissions) {
+    const errorMessage = isErrorCreatedProjects
+      ? "Error loading created projects."
+      : "Error loading submissions.";
+    throw new Error(errorMessage);
+  }
+
+  let hasContentToShow = false;
+  let targetArr = [];
+  if(isSuccessCreatedProjects && isSuccessSubmissions){
+    switch (submissionType) {
+      case "Created Projects":
+        targetArr = createdProjects;
+        break;
+      case "Tracked Projects":
+        targetArr = createdProjects.filter((project: ProjectType & { isTracking: boolean }) => project.isTracking);
+        break;
+      case "Projects Marked as Done":
+        targetArr = createdProjects.filter((project: ProjectType & { isMarkedAsDone: boolean }) => 
+          project.isMarkedAsDone);
+        break;
+      case "Project Submissions":
+        targetArr = submissions;
+        break;
+      default:
+        hasContentToShow = false;
+    }
+    hasContentToShow = targetArr.length > 0 && (category === "All" ||
+      targetArr.some((record: any) => record.category === category));
+  }
 
   return (
     <div className="pt-6 px-3 w-full mx-auto flex flex-col">
