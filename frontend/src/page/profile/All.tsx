@@ -1,6 +1,8 @@
 import React from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
 
 import RadioGroup from "@/component/projects/radioGroup";
 import { ProfileContent } from "./Profile";
@@ -9,16 +11,14 @@ import { SkillContent } from "./Skill";
 import { SettingContent } from "./Setting";
 import { canViewProfile } from "@/component/friend/friendsService";
 import {FriendsOwnerContent, FriendsVisitorContent} from "@/component/friend/friendContent";
-import MutualFriends from "@/component/friend/mutualFriend";
 import FriendsDrawer from "@/component/friend/drawerFriend";
 
 export const All: React.FC = () => {
     
     const { userId } = useParams();
     // Load the active user from localStorage
-    const activeUserRaw = localStorage.getItem("activeUser");
-    const activeUser = activeUserRaw ? JSON.parse(activeUserRaw) : null;
-    if(!activeUser){
+    const currentUser = useSelector((state: RootState) => state.profile);
+    if(!currentUser){
         return(
             <div className="text-white p-10">
             <h1>You must be logged in to view your profile.</h1>
@@ -26,17 +26,19 @@ export const All: React.FC = () => {
             </div>
         );
     }
-    const profileUserId = userId ? Number(userId) : activeUser.userId;
-    const isOwner = activeUser.userId === profileUserId;
+    const viewUserId = userId ? Number(userId) : currentUser.userId;
+    const isOwner = currentUser.userId === viewUserId;
+    const isAdmin = currentUser?.role?.toLowerCase() === "admin";
+    const canView = isOwner || canViewProfile(currentUser.userId, viewUserId);
 
-    const canView = isOwner || canViewProfile(activeUser.userId, profileUserId);
-
-    const click = isOwner? ["All", "Profile","Activity", "Skill", "Setting"]: ["All", "Profile" ,"Activity", "Skill"];
+    const click = isAdmin? ["All", "Profile", "Setting"]:isOwner? ["All", "Profile","Activity", "Skill", "Setting"]: ["All", "Profile" ,"Activity", "Skill"];
     const [category, setCategory] = useState<string>(click[0]);
     function handleCategoryChange(value: string){
         setCategory(value);
     }
     const [friendsOpen, setfriendsOpen] = useState(false);
+
+    
 
     return (
     <div className="flex">
@@ -62,16 +64,16 @@ export const All: React.FC = () => {
                 {canView && (
                     <>
                     {(category === "All" || category === "Profile") && (
-                        <ProfileContent userId={profileUserId} />
+                        <ProfileContent userId={viewUserId} />
                         
                     )}
 
-                    {(category === "All" || category === "Activity") && (
-                        <ActivityContent userId={profileUserId} />
+                    {(category === "All" || category === "Activity") && !isAdmin && (
+                        <ActivityContent userId={viewUserId} />
                     )}
 
-                    {(category === "All" || category === "Skill") && (
-                        <SkillContent userId={profileUserId} editable={isOwner} />
+                    {(category === "All" || category === "Skill") && !isAdmin &&(
+                        <SkillContent userId={viewUserId} editable={isOwner} />
                     )}
 
                     {isOwner && (category === "All" || category === "Setting") && (
@@ -81,7 +83,7 @@ export const All: React.FC = () => {
                 )}
                 
             </div>
-                {activeUser && (
+                {!isAdmin && currentUser && (
                 <>
                     {/* Floating button */}
                     <button
@@ -98,8 +100,8 @@ export const All: React.FC = () => {
                     onClose={() => setfriendsOpen(false)}
                     title={isOwner? "Friends": "Mutual Friends"}
                     >
-                        {isOwner?(<FriendsOwnerContent userId={activeUser.userId}/>): (
-                            <FriendsVisitorContent viewerId={activeUser.userId} profileUserId={profileUserId}/>
+                        {isOwner?(<FriendsOwnerContent userId={currentUser.userId}/>): (
+                            <FriendsVisitorContent viewerId={currentUser.userId} profileUserId={viewUserId}/>
                         )}
                     </FriendsDrawer>
                 </>

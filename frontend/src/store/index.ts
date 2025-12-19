@@ -9,6 +9,8 @@ import linkReducer from "./linksSlice";
 import projectTrackingReducer from "./projectTrackingSlice";
 import recommendationReducer from "./recommendationSlice";
 import careerReducer from "./careerSlice";
+import announcementSlice from "./announcementSlice";
+import overviewImagesReducer from "./overviewImageSlices";
 // Import your reducers here
 // Example: import userReducer from "./slices/userSlice";
 
@@ -48,6 +50,8 @@ export const store = configureStore({
     projectTracking: projectTrackingReducer,
     recommendations: recommendationReducer,
     career: careerReducer,
+    announcement: announcementSlice,
+    overviewImages: overviewImagesReducer,
   } as any,
   preloadedState,
 });
