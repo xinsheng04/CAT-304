@@ -32,7 +32,6 @@ export const SearchableMultiSelect: React.FC<SearchableMultiSelectProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  console.log("Selected Items:", selectedItems);
 
   const filteredItems = items.filter(
     (item) =>
@@ -88,12 +87,12 @@ export const SearchableMultiSelect: React.FC<SearchableMultiSelectProps> = ({
           className="w-full"
         />
 
-        {isOpen && filteredItems.length > 0 && (
+        {isOpen && (
           <div
             ref={dropdownRef}
             className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto"
           >
-            {filteredItems.map((item) => (
+            {filteredItems.length > 0 ? filteredItems.map((item) => (
               <button
                 key={item[idtag]}
                 type="button"
@@ -102,7 +101,9 @@ export const SearchableMultiSelect: React.FC<SearchableMultiSelectProps> = ({
               >
                 {renderItem(item)}
               </button>
-            ))}
+            )) : (
+              <div className="px-4 py-3 text-gray-400">No items found</div>
+            )}
           </div>
         )}
       </div>

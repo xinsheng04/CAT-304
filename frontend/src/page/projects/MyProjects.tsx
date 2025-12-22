@@ -17,20 +17,17 @@ export const MyProjects: React.FC = () => {
   const selections = ["All", ...categoryList];
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState(selections[0]);
-  const [submissionType, setSubmissionType] = useState<"Created Projects" | "Tracked Projects" | 
-  "Projects Marked as Done" | "Project Submissions">("Created Projects");
+  const [submissionType, setSubmissionType] = useState<"Created Projects" | "Tracked Projects" |
+    "Projects Marked as Done" | "Project Submissions">("Created Projects");
   const userId = useSelector((state: any) => state.profile.userId);
 
-  const { data: createdProjects = [], isLoading: isLoadingCreatedProjects, 
+  const { data: createdProjects = [], isLoading: isLoadingCreatedProjects,
     isError: isErrorCreatedProjects, isSuccess: isSuccessCreatedProjects } = useGetAllBasicDetailsOnly(userId);
-  const { data: submissions = [], isLoading: isLoadingSubmissions, 
+  const { data: submissions = [], isLoading: isLoadingSubmissions,
     isError: isErrorSubmissions, isSuccess: isSuccessSubmissions } = useGetAllSubmissionsByCreator(userId);
 
   function handleCategoryChange(value: string) {
     setCategory(value);
-  }
-  function navigateToDetails(path: string, destId: number) {
-    navigate(`/${path}/${destId}`);
   }
 
   if (isLoadingCreatedProjects || isLoadingSubmissions) {
@@ -50,7 +47,7 @@ export const MyProjects: React.FC = () => {
 
   let hasContentToShow = false;
   let targetArr = [];
-  if(isSuccessCreatedProjects && isSuccessSubmissions){
+  if (isSuccessCreatedProjects && isSuccessSubmissions) {
     switch (submissionType) {
       case "Created Projects":
         targetArr = createdProjects;
@@ -59,7 +56,7 @@ export const MyProjects: React.FC = () => {
         targetArr = createdProjects.filter((project: ProjectType & { isTracking: boolean }) => project.isTracking);
         break;
       case "Projects Marked as Done":
-        targetArr = createdProjects.filter((project: ProjectType & { isMarkedAsDone: boolean }) => 
+        targetArr = createdProjects.filter((project: ProjectType & { isMarkedAsDone: boolean }) =>
           project.isMarkedAsDone);
         break;
       case "Project Submissions":
@@ -96,7 +93,7 @@ export const MyProjects: React.FC = () => {
           />
         </div>
       </div>
-      <div className="w-[82%] fixed bottom-0 top-70 px-10 grid grid-cols-[200px_1fr] gap-10">
+      <div className="w-[82%] fixed top-70 bottom-0 px-10 grid grid-cols-[200px_1fr] gap-10">
         <RadioGroup
           options={selections}
           selected={category}
@@ -104,65 +101,59 @@ export const MyProjects: React.FC = () => {
           isHorizontal={false}
           className="w-50"
         />
-        {submissionType === "Project Submissions" ? (
-          hasContentToShow ? (
-            <div className="pt-5 flex flex-col gap-2">
-              {submissions.map((submission: any) => {
-                const project = createdProjects.find((proj: ProjectType) => proj.projectId === submission.projectId);
-                if (!project) return null;
-                if (category !== "All" && project.category !== category) return null;
-                if (query && !submission.title.toLowerCase().includes(query.toLowerCase()) &&
-                  !project.title.toLowerCase().includes(query.toLowerCase()) &&
-                  !project.shortDescription.toLowerCase().includes(query.toLowerCase())) {
-                  return null;
-                }
-                return (
-                  <SubmissionCard key={submission.submissionId}
-                    creator={submission.creator}
-                    date={submission.postedOn}
-                    title={submission.title}
-                    repoLink={submission.repoLink}
-                    onClick={() => navigateToDetails("project/submission", submission.submissionId)}
-                  />
-                );
-              })}
-            </div>
+        <div className="overflow-y-scroll mt-1 pb-20 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {submissionType === "Project Submissions" ? (
+            hasContentToShow ? (
+              <div className="pt-5 flex flex-col gap-2">
+                {submissions.map((submission: any) => {
+                  const project = createdProjects.find((proj: ProjectType) => proj.projectId === submission.projectId);
+                  if (!project) return null;
+                  if (category !== "All" && project.category !== category) return null;
+                  if (query && !submission.title.toLowerCase().includes(query.toLowerCase()) &&
+                    !project.title.toLowerCase().includes(query.toLowerCase()) &&
+                    !project.shortDescription.toLowerCase().includes(query.toLowerCase())) {
+                    return null;
+                  }
+                  return (
+                    <SubmissionCard key={submission.submissionId}
+                      creator={submission.creator}
+                      date={submission.postedOn}
+                      title={submission.title}
+                      repoLink={submission.repoLink}
+                      onClick={() => navigate(`/project/${submission.projectId}/submission/${submission.submissionId}`)}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-white font-light text-4xl text-center mt-10">
+                No {category === "All" ? "" : category} submissions found
+              </p>
+            )
           ) : (
-            <p className="text-white font-light text-4xl text-center mt-10">
-              No {category === "All" ? "" : category} submissions found
-            </p>
-          )
-        ) : (
-          hasContentToShow ? (
-            <div className="pt-5 grid grid-cols-3 gap-2 scroll-auto">
-              {targetArr.map((project: any) => {
-                if (category !== "All" && project.category !== category) return null;
-                if (query && !project.title.toLowerCase().includes(query.toLowerCase()) &&
-                  !project.shortDescription.toLowerCase().includes(query.toLowerCase())) {
-                  return null;
-                }
-                return (
-                  <ProjectCard 
-                  key={project.projectId} 
-                  projectId={project.projectId} 
-                  title={project.title}
-                  shortDescription={project.shortDescription}
-                  difficulty={project.difficulty}
-                  category={project.category}
-                  trackCount={project.trackCount}
-                  submissionCount={project.submissionCount}
-                  creatorName={project.creatorName}
-                  onClick={() => navigateToDetails("project", project.projectId)}
-                  />
-                );
-              })}
-            </div>
-          ) : (
-            <p className="text-white font-light text-4xl text-center mt-10">
-              No {category === "All" ? "" : category} projects found
-            </p>
-          )
-        )}
+            hasContentToShow ? (
+              <div className="pt-5 grid grid-cols-3 gap-2 auto-rows-max">
+                {targetArr.map((project: any) => {
+                  if (category !== "All" && project.category !== category) return null;
+                  if (query && !project.title.toLowerCase().includes(query.toLowerCase()) &&
+                    !project.shortDescription.toLowerCase().includes(query.toLowerCase())) {
+                    return null;
+                  }
+                  return (
+                    <ProjectCard
+                      key={project.projectId}
+                      project={project}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-white font-light text-4xl text-center mt-10">
+                No {category === "All" ? "" : category} projects found
+              </p>
+            )
+          )}
+        </div>
       </div>
     </div>
   );

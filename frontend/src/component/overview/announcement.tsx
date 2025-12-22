@@ -14,7 +14,7 @@ export default function Announcement() {
   const isAdmin = user?.role === "Admin" || user?.role === "admin";
 
   if (announcements.length === 0) {
-    return <p className="text-gray-400">No announcements yet</p>;
+    return <p className="text-white/95 text-3xl h-20 font-semibold italic">No announcements yet</p>;
   }
   const handleDelete= (id: number) => {  
     const confirmDelete= window.confirm("Are you sure you want to delete this announcement?");
@@ -25,7 +25,7 @@ export default function Announcement() {
   const visibleAnnounce = expand? announcements: announcements.slice(0, MAX_ANNOUNCE);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 bg-black/40">
       {visibleAnnounce.map((a: any) => (
         <div
           key={a.id}

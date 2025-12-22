@@ -61,9 +61,7 @@ const Recommendation: React.FC<RecommendationProps> =
 
                             <ProjectCard 
                                 key={project.projectId}
-                                {...project}
-                                creatorName={project.creatorName}
-                                onClick={() => navigateDetails && navigateDetails(project.projectId)}
+                                project={project}
                             />
                         </div>
                     ))}

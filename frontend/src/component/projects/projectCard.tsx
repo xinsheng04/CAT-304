@@ -4,32 +4,22 @@ import submission_icon from "../../assets/projects/submission_icon_2.png";
 import { TagPill } from "@/component/tag";
 import { commonIconStyles } from "@/lib/styles";
 import { ellipsifyText } from "@/lib/utils";
+import { useNavigate } from "react-router";
 
 type ProjectCardProps = {
-  projectId: number;
-  title: string;
-  shortDescription: string;
-  difficulty: string;
-  category: string;
-  trackCount: number;
-  submissionCount: number;
-  creatorName: string;
-  onClick?: () => void;
+  project: any;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ projectId, title, shortDescription, 
-  difficulty, category, trackCount, submissionCount, creatorName, onClick }) => {
-  // const {creatorId, title, shortDescription, difficulty, category, trackCount, submissionCount} = 
-  // useSelector((state: any) => {
-  //   return state.projects.projectsList.find((project: any) => project.projectId === projectId);
-  // });
+const ProjectCard: React.FC<ProjectCardProps> = ({ project}) => {
+  const navigate = useNavigate();
+  const {projectId=null, title, shortDescription, difficulty, category, trackCount, submissionCount, creatorName} = project;
   const customIconStyles = `${commonIconStyles} inline-block mr-1`;
   return (
     <Card
       key={projectId}
       className="p-5 h-58 cursor-pointer border-none bg-gray-800 block pl-3 rounded-lg shadow-md 
-    hover:shadow-lg transition-shadow duration-300"
-      onClick={onClick}
+    hover:shadow-lg hover:scale-102 transform transition duration-300"
+      onClick={() => navigate(`/project/${projectId}`)}
     >
       <CardTitle className="text-2xl text-white text-left mb-0.5">
         {title}
