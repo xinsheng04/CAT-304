@@ -69,7 +69,7 @@ export const ProjectDetails: React.FC = () => {
   }
 
   return (
-    <div className="text-left mt-2 pt-3 space-y-2 pl-9 bg-gray-800/20 rounded-2xl shadow-2xl w-7xl mx-auto h-fit min-h-[90vh] mb-10">
+    <div className="text-left mt-2 pt-3 space-y-2 pl-9 bg-gray-800/40 rounded-2xl shadow-2xl w-7xl mx-auto h-fit min-h-[90vh] mb-10">
       <h1 className="text-left mt-2 text-4xl font-extralight text-white">{project?.title}</h1>
       <p className="text-white text-[1.5rem] font-light">{project?.shortDescription}</p>
       <div className="text-white text-[1.2rem]">

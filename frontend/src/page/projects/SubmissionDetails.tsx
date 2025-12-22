@@ -52,7 +52,7 @@ const SubmissionDetails: React.FC = () => {
   }
 
   return (
-    <div className="text-left mt-2 pt-3 space-y-2 pl-9 bg-gray-800/20 rounded-2xl shadow-2xl w-7xl mx-auto h-full">
+    <div className="text-left mt-2 pt-3 space-y-2 pl-9 bg-gray-800/40 rounded-2xl shadow-2xl w-7xl mx-auto h-full">
       <h1 className="text-left mt-2 text-4xl font-extralight text-white">{submission?.title}</h1>
       <p className="text-white text-[1.5rem] font-light">Submission by: {submission.creatorName}</p>
       <p className="text-white text-[1.2rem]">

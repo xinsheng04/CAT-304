@@ -4,19 +4,19 @@
 }
 
 .commonMarkDownClass h1 {
-  font-size: 3.8rem;
+  font-size: 2.5rem;
   font-weight: bold;
   margin: 1rem 0 0.5rem 0;
 }
 
 .commonMarkDownClass h2 {
-  font-size: 2.8rem;
+  font-size: 2rem;
   font-weight: bold;
-  margin: 0.8rem 0 0.4rem 0;
+  margin: 0.5rem 0 0.4rem 0;
 }
 
 .commonMarkDownClass h3 {
-  font-size: 2rem;
+  font-size: 1.6rem;
   font-weight: 600;
   margin: 0.6rem 0 0.3rem 0;
 }
