@@ -1,19 +1,26 @@
 import { supabaseAuth } from "../../config.js";
 
 export const userLogout = async (req, res) => {
-  const token = req.headers.authorization?.replace("Bearer ", "");
+  try {
+    const token = req.headers.authorization?.replace("Bearer ", "");
 
-  if (!token) {
-    return res.status(401).json({ message: "No token provided" });
-  }
+    // Logout should ALWAYS succeed
+    if (!token) {
+      return res.status(200).json({ message: "Already logged out" });
+    }
 
-  // Invalidate Supabase session
-  const { error } = await supabaseAuth.auth.signOut();
+    const { data, error } =
+      await supabaseAuth.auth.getUser(token);
 
-  if (error) {
-    console.error("Supabase logout error:", error.message);
+    if (!data?.user) {
+      return res.status(200).json({ message: "Already logged out" });
+    }
+
+    await supabaseAuth.auth.admin.signOut(data.user.id);
+
+    return res.status(200).json({ message: "Logout successful" });
+  } catch (err) {
+    console.error("Logout error:", err);
     return res.status(500).json({ message: "Logout failed" });
   }
-
-  return res.status(200).json({ message: "Logout successful" });
 };

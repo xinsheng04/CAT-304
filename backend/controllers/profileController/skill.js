@@ -5,64 +5,126 @@ export const getAllSkills = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("skills")
-      .select("skill")
+      .select("skill_id, skill")
       .order("skill");
 
     if (error) throw error;
 
     if (!data || data.length === 0) {
-      console.warn("⚠️ No skills found in table");
+      console.warn(" No skills found in table");
       return res.json([]); // Return empty array safely
     }
 
     // ✅ Extract plain string array
-    const skillsList = data.map((row) => row.skill);
+    const skillsList = data.map(row => ({
+      id: row.skill_id,
+      name: row.skill,
+    }));
 
-    console.log("✅ Skills fetched from Supabase:", skillsList);
+    console.log("Skills fetched from Supabase:", skillsList);
     return res.json(skillsList);
   } catch (err) {
-    console.error("❌ getAllSkills error:", err.message);
+    console.error("getAllSkills error:", err.message);
     return res.status(500).json({ message: err.message });
   }
 };
+// export const getAllSkills = async (req, res) => {
+//   try {
+//     const { data, error } = await supabase
+//       .from("skills")
+//       .select("skill_id, skill")
+//       .order("skill");
+
+//     if (error) throw error;
+
+//     if (!data || data.length === 0) {
+//       console.warn(" No skills found in table");
+//       return res.json([]); // Return empty array safely
+//     }
+
+//     // Extract plain string array
+//     const skillsList = data.map((row) => row.skill);
+
+//     console.log("✅ Skills fetched from Supabase:", skillsList);
+//     return res.json(skillsList);
+//   } catch (err) {
+//     console.error("getAllSkills error:", err.message);
+//     return res.status(500).json({ message: err.message });
+//   }
+// };
 
 
 /* Get user skills */
+// export const getUserSkills = async (req, res) => {
+//   const { userId } = req.params;
+
+//   const { data, error } = await supabase
+//     .from("userProfiles")
+//     .select("skills")
+//     .eq("user_id", userId)
+//     .maybeSingle();
+
+//   if (error) {
+//     console.error("Supabase error:", error.message);
+//     return res.status(500).json({ message: error.message });
+//   }
+
+//   if (!data) {
+//     console.warn("User not found:", userId);
+//     return res.status(404).json({ message: "User not found" });
+//   }
+
+//   let skills = [];
+
+//   if (Array.isArray(data.skills)) {
+//     skills = data.skills;
+//   } else if (typeof data.skills === "string") {
+//     try {
+//       skills = JSON.parse(data.skills);
+//     } catch {
+//       skills = [];
+//     }
+//   }
+
+//   console.log("Final skills sent to frontend:", skills);
+//   return res.json(skills);
+// };
 export const getUserSkills = async (req, res) => {
   const { userId } = req.params;
 
-  const { data, error } = await supabase
+  // 1️ Get skill IDs from profile
+  const { data: profile, error: profileError } = await supabase
     .from("userProfiles")
     .select("skills")
-    .eq("id", userId)
+    .eq("user_id", userId)
     .maybeSingle();
 
-  if (error) {
-    console.error("Supabase error:", error.message);
-    return res.status(500).json({ message: error.message });
+  if (profileError) {
+    return res.status(500).json({ message: profileError.message });
   }
 
-  if (!data) {
-    console.warn("User not found:", userId);
-    return res.status(404).json({ message: "User not found" });
+  if (!profile || !Array.isArray(profile.skills) || profile.skills.length === 0) {
+    return res.json([]); //  no skills is valid
   }
 
-  let skills = [];
+  // 2️ Fetch full skill objects
+  const { data: skills, error: skillsError } = await supabase
+    .from("skills")
+    .select("skill_id, skill")
+    .in("skill_id", profile.skills);
 
-  if (Array.isArray(data.skills)) {
-    skills = data.skills;
-  } else if (typeof data.skills === "string") {
-    try {
-      skills = JSON.parse(data.skills);
-    } catch {
-      skills = [];
-    }
+  if (skillsError) {
+    return res.status(500).json({ message: skillsError.message });
   }
 
-  console.log("Final skills sent to frontend:", skills);
-  return res.json(skills);
+  // 3 Normalize response
+  const result = skills.map(s => ({
+    id: s.skill_id,
+    name: s.skill,
+  }));
+
+  return res.json(result);
 };
-
 
 /* Update user skills */
 export const updateUserSkills = async (req, res) => {
@@ -75,7 +137,7 @@ export const updateUserSkills = async (req, res) => {
   const { data, error } = await supabase
     .from("userProfiles")
     .update({ skills })
-    .eq("id", userId)
+    .eq("user_id", userId)
     .select("skills")
     .single();
 

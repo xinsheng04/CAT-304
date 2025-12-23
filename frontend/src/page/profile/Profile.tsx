@@ -68,24 +68,35 @@ export function ProfileContent() {
   const userId = useSelector((state: any) => state.profile.userId);
   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   if(!userId){
+  //   navigate("/login");
+  //   return;
+  //   }
+  //   const loadProfile = async () => {
+  //     try{
+  //       const res = await getMyProfile();
+  //       setProfile(res);
+  //     } catch (error) {
+  //       console.error("Failed to load profile:", error);
+  //     }
+  //   };
+  //   loadProfile();
+  // }, [userId,navigate]);
   useEffect(() => {
-    const loadProfile = async () => {
-      try{
-        const res = await getMyProfile(userId);
-        setProfile(res);
-      } catch (error) {
-        console.error("Failed to load profile:", error);
-      }
-    };
-    loadProfile();
-  }, [userId]);
+      const loadProfile = async () => {
+        try {
+          const res = await api.get("/profile/me");
+          setProfile(res.data);
+        } catch {
+          alert("Please login to view your profile");
+          
+        }
+      };
+          loadProfile();
+      }, []);
 
-  if(!userId){
-    navigate("/login");
-    return null;
-  }
-
-  if (userId && !profile) {
+  if (!profile) {
     return (
       <div className="text-white text-center py-20">
         Loading profile...
@@ -113,9 +124,9 @@ export function ProfileContent() {
     <div>
       <label className="block text-center text-indigo-600 text-6xl font-bold pt-1 mt-2 -mb-15 ">Profile</label>
       <div className="w-full flex justify-center items-center py-20">
-        <div className="w-[600px] bg-gray-800/70 backdrop-blur-lg border border-white/30 rounded-3xl shadow-xl p-10 space-y-8">
+        <div className="w-150 bg-gray-800/70 backdrop-blur-lg border border-white/30 rounded-3xl shadow-xl p-10 space-y-8">
           <div className="flex flex-col items-center space-y-4">
-            <img src={profile.avatar} alt="" className="w-50 h-50 rounded-full border-4 border-white/50 object-cover shadow-lg bg-fuchsia-200" />
+            <img src={profile.avatar || "/src/assets/profile/default_avatar.png"} alt="" className="w-50 h-50 rounded-full border-4 border-white/50 object-cover shadow-lg bg-fuchsia-200" />
             {isEditing && !showAvatar && (
               <button className="text-sm text-indigo-400 hover:text-purple-200" onClick={() => setShowAvatar(true)}>
                 Change Picture

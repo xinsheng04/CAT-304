@@ -8,17 +8,18 @@ const Navbar: React.FC = () => {
     // const [activeItem, setActiveItem] = useState('Overview'); // Default to 'Overview'
     const location = useLocation();
     const currentPath = location.pathname.replace("/", "").toLowerCase() || 'overview';
-    const userId = useSelector((state: any) => state.profile.userId);
+    // const userId = useSelector((state: any) => state.profile.userId);
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const isLoggedIn = !!localStorage.getItem("access_token");
+    // const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const handleMenuItemClick = () => setIsMenuOpen(false);
-    useEffect(() => {
-        const checkLogin = async () => {
-            setIsLoggedIn(userId != null);
-        };
-        checkLogin();
-    }, [location.pathname]); // recheck when route changes
+    // useEffect(() => {
+    //     const checkLogin = async () => {
+    //         setIsLoggedIn(userId != null);
+    //     };
+    //     checkLogin();
+    // }, [location.pathname]); // recheck when route changes
 
     return (
         <nav className="bg-indigo-950 backdrop-blur-sm text-white flex justify-between items-center fixed top-0 left-0 right-0 z-10 h-16 px-4">

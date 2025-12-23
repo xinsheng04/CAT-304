@@ -9,7 +9,7 @@ export const forgotPassword = async (req, res) => {
 
   const { data, error } = await supabase
     .from("userProfiles")
-    .select("id")
+    .select("user_id")
     .eq("email", email)
     .single();
 
@@ -31,7 +31,7 @@ export const resetPassword = async (req, res) => {
 
   const {data, error} = await supabase
     .from("userProfiles")
-    .select("id")
+    .select("user_id")
     .eq("email",email)
     .single();
     console.log("FOUND USER ID:", data.id);

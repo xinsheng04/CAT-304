@@ -1,7 +1,7 @@
 import SkillOptions from "@/page/profile/SkillOptions";
 
 type skillOptionsProps ={
-  userId: number;
+  userId: string;
   editable: boolean;
 };
 

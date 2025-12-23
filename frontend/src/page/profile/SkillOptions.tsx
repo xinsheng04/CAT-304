@@ -1,27 +1,26 @@
 import { useEffect, useState } from "react";
-import {
-  getSkillOptions,
-  getUserSkills,
-  saveUserSkills,
-} from "@/api/profile/skillAPI";
+import { getSkillOptions, getUserSkills, saveUserSkills } from "@/api/profile/skillAPI";
 import { getMyProfile } from "@/api/profile/profileAPI";
+import Api from "@/api/index";
 import { useSelector } from "react-redux";
-
+type Skill = {
+  id: string;
+  name: string;
+};
 export default function SkillOptions({ editable }: { editable: boolean }) {
-  const [userId, setUserId] = useState<string | null>(
-    useSelector((state: any) => state.profile.userId)
-  );
-  const [options, setOptions] = useState<string[]>([]);
-  const [skills, setSkills] = useState<string[]>([]);
-  const [draft, setDraft] = useState<string[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [options, setOptions] = useState<Skill[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [draft, setDraft] = useState<Skill[]>([]);
   const [editing, setEditing] = useState(false);
 
-  // 🧩 1️⃣ Fetch current user from backend
+  //1 Fetch current user from backend
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await getMyProfile(userId);
-        setUserId(res.data.id);
+        //const res = await getMyProfile();
+        const res = await Api.get("/profile/me");
+        setUserId(res.data.user_id);
       } catch (err) {
         console.error("Failed to fetch current user:", err);
       }
@@ -30,42 +29,58 @@ export default function SkillOptions({ editable }: { editable: boolean }) {
     fetchUser();
   }, []);
 
-  // 🧩 2️⃣ Load user skills once we have the userId
+  // 2 Load user skills once we have the userId
   useEffect(() => {
-    if (!userId) return;
+  if (!userId) return;
 
-    const loadSkills = async () => {
-      
-      try {
-        const [opt, userSkills] = await Promise.all([
-          getSkillOptions(),
-          getUserSkills(userId),
-        ]);
-        console.log("userSkills from backend:", userSkills, typeof userSkills);
+  let cancelled = false;
 
-        setOptions(opt);
-        setSkills(userSkills);
-      } catch (err) {
+  const loadSkills = async () => {
+    try {
+      const [opt, userSkills] = await Promise.all([
+        getSkillOptions(),
+        getUserSkills(userId),
+      ]);
+
+      if (cancelled) return;
+
+      setOptions(opt);
+      setSkills(userSkills);
+    } catch (err) {
+      if (!cancelled) {
         console.error("Failed to load skills:", err);
       }
-    };
+    }
+  };
 
-    loadSkills();
-  }, [userId]);
+  loadSkills();
 
-  // 🧩 3️⃣ Toggle skill selection locally
-  const toggle = (skill: string) => {
-    setDraft((prev) =>
-      prev.includes(skill)
-        ? prev.filter((s) => s !== skill)
-        : [...prev, skill]
+  return () => {
+    cancelled = true;
+  };
+}, [userId]);
+
+  // 3 Toggle skill selection locally
+  // const toggle = (skill: string) => {
+  //   setDraft((prev) =>
+  //     prev.includes(skill)
+  //       ? prev.filter((s) => s !== skill)
+  //       : [...prev, skill]
+  //   );
+  // };
+  const toggle = (skill: Skill) => {
+  setDraft((prev) =>
+    prev.some((s) => s.id === skill.id)
+      ? prev.filter((s) => s.id !== skill.id)
+      : [...prev, skill]
     );
   };
 
-  // 🧩 4️⃣ Save to backend
+  // 4 Save to backend
   const save = async () => {
     if (!userId) return;
-    await saveUserSkills(userId, draft);
+    const skillIds = draft.map((s) => s.id);
+    await saveUserSkills(userId, skillIds);
     setSkills(draft);
     setEditing(false);
   };
@@ -85,10 +100,10 @@ export default function SkillOptions({ editable }: { editable: boolean }) {
           {Array.isArray(skills) && skills.length > 0 ? (
             skills.map((skill) => (
               <span
-                key={skill}
+                key={`skill-${skill.id}`}
                 className="bg-purple-500 text-white px-3 py-1 rounded-full"
               >
-                {skill}
+                {skill.name}
               </span>
             ))
           ) : (
@@ -119,15 +134,15 @@ export default function SkillOptions({ editable }: { editable: boolean }) {
           <div className="flex flex-wrap gap-2">
             {options.map((skill) => (
               <span
-                key={skill}
+                key={`skill-${skill.id}`}
                 onClick={() => toggle(skill)}
                 className={`px-3 py-1 rounded-full cursor-pointer ${
-                  draft.includes(skill)
+                  draft.some((s) => s.id === skill.id)
                     ? "bg-blue-500 text-white"
                     : "bg-gray-300"
                 }`}
               >
-                {skill}
+                {skill.name}
               </span>
             ))}
           </div>
