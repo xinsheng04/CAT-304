@@ -10,7 +10,6 @@ export const requireAuth = async (req, res, next) => {
     if (!decoded?.sub) {
       return res.status(401).json({ message: "Invalid token structure" });
     }
-    console.log("AUTH HEADER:", req.headers.authorization);
 
     req.user = {
       id: decoded.sub,

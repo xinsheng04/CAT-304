@@ -26,15 +26,15 @@ export const userLogin = async (req, res) =>{
     let { data: profile, error:profileError } = await supabase
     .from("userProfiles")
     .select("*")
-    .eq("id", user.id)
+    .eq("user_id", user.id)
     .maybeSingle();
 
-  // 2️⃣ If profile does NOT exist → create it
+  // 2 If profile does NOT exist, create it
   if (!profile) {
     const { data: newProfile, error: insertError } = await supabase
       .from("userProfiles")
       .insert({
-        id: user.id,
+        user_id: user.id,
         email: user.email,
         username: user.email.split("@")[0],
         role: "user",
