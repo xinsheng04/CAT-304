@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useGetSingleLink } from '@/api/roadmaps/linkAPI';
 import { useGetSingleRoadmap } from '@/api/roadmaps/roadmapAPI';
 import { useCreateLinkRecord, useDeleteLinkRecord } from '@/api/roadmaps/recordAPI';
+import { getActiveUserField } from '@/lib/utils';
 
 
 // Type and data structure
@@ -15,15 +16,10 @@ const LinkCard : React.FC<LinkCardProps> = ({
 }) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const userID = localStorage.getItem("userID");
+    const userID = getActiveUserField("userId");
     const { roadmapID, roadmapSlug, chapterID, chapterSlug } = useParams<{ roadmapID: string, roadmapSlug: string,  chapterID: string, chapterSlug: string }>();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [localLinkItem, setLocalLinkItem] = useState<any>(null);
 
-    useEffect(() => {
-        const userID = localStorage.getItem("userID");
-        setIsLoggedIn(userID && userID !== "0" ? true : false);
-    }, [location]); // re-check when route changes
 
     const { data: roadmapItem, isLoading: roadmapLoading } = useGetSingleRoadmap(Number(roadmapID), userID);
     const { data: linkItem, isLoading: linkLoading } = useGetSingleLink(Number(chapterID), selectedNodeID, userID)
@@ -44,10 +40,10 @@ const LinkCard : React.FC<LinkCardProps> = ({
     const directLink = (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
-        if(isLoggedIn && !localLinkItem.isViewed){
+        if(!userID && !localLinkItem.isViewed){
             setLocalLinkItem({ ...localLinkItem, isViewed: true });
             viewMutation.mutate(
-                { userID: Number(userID), recordID: Number(selectedNodeID) },
+                { userID: userID!, recordID: Number(selectedNodeID) },
                 { onError: () => setLocalLinkItem({ ...localLinkItem, isViewed: false })}
             );
         }
@@ -57,7 +53,7 @@ const LinkCard : React.FC<LinkCardProps> = ({
     const handleToggleViewed = (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
-        if (!isLoggedIn) {
+        if (!userID) {
             navigate("/Login", { state: { from: location.pathname } });
             return;
         }
@@ -65,14 +61,14 @@ const LinkCard : React.FC<LinkCardProps> = ({
         if (!localLinkItem.isViewed){
             setLocalLinkItem({ ...localLinkItem, isViewed: true });
             viewMutation.mutate(
-                { userID: Number(userID), recordID: Number(selectedNodeID) },
+                { userID: userID!, recordID: Number(selectedNodeID) },
                 { onError: () => setLocalLinkItem({ ...localLinkItem, isViewed: false })}
             );
         }
         else {
             setLocalLinkItem({ ...localLinkItem, isViewed: false });
             unviewMutation.mutate(
-                { userID: Number(userID), recordID: Number(selectedNodeID) },
+                { userID: userID!, recordID: Number(selectedNodeID) },
                 { onError: () => setLocalLinkItem({ ...localLinkItem, isViewed: true })}
             )
         }
@@ -99,7 +95,7 @@ const LinkCard : React.FC<LinkCardProps> = ({
                 {localLinkItem.title}
             </div>
             
-            {creator != Number(userID) ? (
+            {creator != userID ? (
             // Viewed Indicator
             <div onClick={handleToggleViewed} className="ml-4 cursor-pointer">
                 {localLinkItem.isViewed ? (
@@ -119,7 +115,7 @@ const LinkCard : React.FC<LinkCardProps> = ({
     );
     return (
         <>
-        {creator == Number(userID) ? (
+        {creator == userID ? (
             // If creator → internal edit link
                 <Link to={`/roadmap/${roadmapID}/${roadmapSlug}/${chapterID}/${chapterSlug}/${localLinkItem.nodeID}/edit`}
                 state={{ backgroundLocation: location }}

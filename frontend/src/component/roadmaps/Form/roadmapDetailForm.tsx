@@ -6,6 +6,7 @@ import { validateDescription, validateTitle } from "../../validateFormBox";
 import { defaultImageSrc, bin, IMAGE_KEYWORD_MAP} from "../../../lib/image";
 import { update_Activity } from "@/component/activity/activity_tracker";
 import { useCreateRoadmap, useDeleteRoadmap, useGetSingleRoadmap, useUpdateRoadmap } from "@/api/roadmaps/roadmapAPI";
+import { getActiveUserField } from "@/lib/utils";
 
 interface RoadmapDetailFormProps{
     mode: "add" | "edit";
@@ -15,7 +16,7 @@ interface RoadmapDetailFormProps{
 const RoadmapDetailForm: React.FC<RoadmapDetailFormProps> = ({
     mode, selectedRoadmapID}) => {
         const navigate = useNavigate();
-        const userID = localStorage.getItem("userID");
+        const userID = getActiveUserField("userId");
 
         const { data: roadmapItem, isLoading } = useGetSingleRoadmap(Number(selectedRoadmapID), userID);
         if ( isLoading ) return null;
@@ -64,7 +65,7 @@ const RoadmapDetailForm: React.FC<RoadmapDetailFormProps> = ({
             } 
             if (mode === 'add'){
                 createRoadmapMutation.mutate({
-                    creatorID: Number(userID),
+                    creatorID: userID!,
                     imageSrc:currentImageSrc,
                     title: queryTitle,
                     description: queryDescription,
@@ -75,7 +76,8 @@ const RoadmapDetailForm: React.FC<RoadmapDetailFormProps> = ({
             }
             if (mode === 'edit'){
                 updateRoadmapMutation.mutate({
-                    creatorID: Number(userID),
+                    //need refine later for admin
+                    creatorID: userID!,
                     imageSrc:currentImageSrc,
                     title: queryTitle,
                     description: queryDescription,

@@ -1,7 +1,7 @@
 export interface RoadmapType {
     roadmapID: number;
     roadmapSlug: string;
-    creatorID: number;
+    creatorID: string;
     imageSrc: string;
     title: string;
     description: string;

@@ -4,6 +4,7 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { useGetSingleChapter } from '@/api/roadmaps/chapterAPI';
 import { useGetSingleRoadmap } from '@/api/roadmaps/roadmapAPI';
 import { useGetChapterLinks } from '@/api/roadmaps/linkAPI';
+import { getActiveUserField } from '@/lib/utils';
 
 interface linkListProps{
     selectedChapterId: number
@@ -11,7 +12,7 @@ interface linkListProps{
 
 const LinkList: React.FC<linkListProps> = ({ selectedChapterId }) => {
 const location = useLocation();
-const userID = localStorage.getItem("userID");
+const userID = getActiveUserField("userId");
 const { roadmapID } = useParams<{ roadmapID: string }>();
 const { data: roadmapItem, isLoading: roadmapLoading } = useGetSingleRoadmap(Number(roadmapID), userID);
 const { data: chapterItem, isLoading : chapterLoading } = useGetSingleChapter(Number(roadmapID),selectedChapterId, userID);
@@ -35,7 +36,7 @@ return (
             <h3 className="text-3xl font-semibold text-white text-left">
                 Links for {chapterTitle}
             </h3>
-            {((Number(userID) === creator) && 
+            {((userID === creator) && 
                 <Link to={`/roadmap/${roadmapID}/${roadmapSlug}/${selectedChapterId}/${chapterSlug}/add-node`} 
                     state={{ backgroundLocation: location }}>
                     <button className=' px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 transition'>

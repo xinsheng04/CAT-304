@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Api from '../index.ts';
 
 type RecordPayload = {
-  userID: number;
+  userID: string;
   recordID: number;
 };
 

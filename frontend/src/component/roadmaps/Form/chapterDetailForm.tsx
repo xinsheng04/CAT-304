@@ -6,6 +6,7 @@ import { difficultyOptions, roadmapCategoryOptions } from "@/lib/types";
 import { validateTitle, validateOrder, validateDifficulty, validateCategory, validatePrerequisite } from "../../validateFormBox";
 import { defaultImageSrc, bin } from "../../../lib/image";
 import { useCreateChapter, useDeleteChapter, useGetSingleChapter, useUpdateChapter } from "@/api/roadmaps/chapterAPI";
+import { getActiveUserField } from "@/lib/utils";
 
 interface ChapterDetailFormProps{
     mode: "add" | "edit";
@@ -15,7 +16,7 @@ interface ChapterDetailFormProps{
 const ChapterDetailForm: React.FC<ChapterDetailFormProps> = ({
     mode, selectedChapterID}) => {
         const navigate = useNavigate();
-        const userID = localStorage.getItem("userID");
+        const userID = getActiveUserField("userId");
         const {roadmapID} = useParams<{ roadmapID: string}>();
 
         const { data: chapterItem, isLoading} = useGetSingleChapter(Number(roadmapID), Number(selectedChapterID), userID);
