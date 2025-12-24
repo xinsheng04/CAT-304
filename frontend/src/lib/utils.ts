@@ -37,6 +37,19 @@ export function generateSlug(text: string): string {
     .replace(/^-+|-+$/g, ''); // Remove leading and trailing hyphens
 }
 
+export function getActiveUserField(field: string): any {
+  const data = localStorage.getItem("activeUser");
+  if (!data) return null;
+  try {
+    const user = JSON.parse(data);
+    return user ? user[field] : null;
+  } 
+  catch (error) {
+    console.error("Error parsing user from localStorage", error);
+    return null;
+  }
+}
+
 // export function uint8ToBase64(bytes: Uint8Array): string {
 //   let binary = "";
 //   const chunkSize = 0x8000;

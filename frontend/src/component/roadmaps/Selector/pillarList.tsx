@@ -6,6 +6,7 @@ import type { PillarType } from '@/lib/roadmapModuleTypes.ts';
 import { useGetSingleRoadmap } from '@/api/roadmaps/roadmapAPI.ts';
 import { useGetRoadmapChapters } from '@/api/roadmaps/chapterAPI.ts';
 import { useGetRoadmapRecommendation } from '@/api/roadmaps/recommendationAPI.ts';
+import { getActiveUserField } from '@/lib/utils.ts';
 
 
 interface PillarListProps {
@@ -14,7 +15,7 @@ interface PillarListProps {
 
 const PillarList: React.FC<PillarListProps> = ({ selectedRoadmapId }) => {
 
-const userID = localStorage.getItem("userID");
+const userID = getActiveUserField("userId");
 const { roadmapID } = useParams<{ roadmapID: string }>();
 const navigate = useNavigate();
 const [openChapterId, setOpenChapterId] = useState<number | null>(null);
@@ -41,7 +42,7 @@ function navigateToProjectDetails(projectId: number) {
 
 // Helper function to check if a pillar has project in recommended data
 function hasProjects(pillar: PillarType): boolean {
-    if(Number(userID) === creator) return true;
+    if(userID === creator) return true;
     const filterRecommendedData = recommendedData.filter(data => (data.sourceId === pillar.chapterID && data.sourceType === "chapter"));
     const uniqueChapterIds = [...new Set(filterRecommendedData.map(data => data.sourceId))];
     if(uniqueChapterIds.includes(pillar.chapterID)) return true;
@@ -50,7 +51,7 @@ function hasProjects(pillar: PillarType): boolean {
 
 // Helper function to check if a roadmap has career in recommended data
 function hasCareer(): boolean {
-    if(Number(userID) === creator) return true;
+    if(userID === creator) return true;
     const filterRecommendedData = recommendedData.filter(data => (data.sourceId === selectedRoadmapId && data.sourceType === "roadmap"));
     const uniqueRoadmapIds = [... new Set(filterRecommendedData.map(data => data.sourceId))];
     if(uniqueRoadmapIds.includes(selectedRoadmapId)) return true;
@@ -69,7 +70,7 @@ function toggleProjectsVisibility(chapterID: number) {
                 <h3 className="text-3xl font-semibold text-white text-left">
                     Chapters for {roadmapTitle}
                 </h3>
-                {((Number(userID) === creator) && 
+                {((userID === creator) && 
                 <Link to={`/roadmap/${selectedRoadmapId}/${roadmapSlug}/add-chapter`}>
                     <button className=' px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 transition'>
                         Add chapter

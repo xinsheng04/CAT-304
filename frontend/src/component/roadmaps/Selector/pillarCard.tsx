@@ -4,6 +4,7 @@ import down from "../../../assets/image/down.png"
 import { useGetSingleChapter } from '@/api/roadmaps/chapterAPI';
 import { useGetChapterLinks } from '@/api/roadmaps/linkAPI';
 import { useCreateChapterRecord, useDeleteChapterRecord } from '@/api/roadmaps/recordAPI';
+import { getActiveUserField } from '@/lib/utils';
 
 // Type and data structure
 export interface PillarCardProps {
@@ -21,15 +22,9 @@ const PillarCard : React.FC<PillarCardProps> = ({
     const navigate = useNavigate();
     
     // use link to get roadmap slug
-    const userID = localStorage.getItem("userID");
+    const userID = getActiveUserField("userId");
     const { roadmapID, roadmapSlug } = useParams<{ roadmapID: string, roadmapSlug: string }>();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [localChapterItem, setLocalChapterItem] = useState<any>(null);
-
-    useEffect(() => {
-        const userID = localStorage.getItem("userID");
-        setIsLoggedIn(userID && userID !== "0" ? true : false);
-    }, [location]); // re-check when route changes
 
     const { data: chapterItem , isLoading: chapterLoading } = useGetSingleChapter(Number(roadmapID), selectedChapterID, userID);
 
@@ -58,14 +53,14 @@ const PillarCard : React.FC<PillarCardProps> = ({
         if (viewPercentage === 100 && !localChapterItem.isViewed) {
             setLocalChapterItem({ ...localChapterItem, isViewed: true });
             viewMutation.mutate(
-                { userID: Number(userID), recordID: Number(selectedChapterID) },
+                { userID: userID!, recordID: Number(selectedChapterID) },
                 { onError: () => setLocalChapterItem({ ...localChapterItem, isViewed: false })}
             );
         }
         else {
             setLocalChapterItem({ ...localChapterItem, isViewed: false });
             unviewMutation.mutate(
-                { userID: Number(userID), recordID: Number(selectedChapterID) },
+                { userID: userID!, recordID: Number(selectedChapterID) },
                 { onError: () => setLocalChapterItem({ ...localChapterItem, isViewed: true })}
             );
         }
@@ -78,7 +73,7 @@ const PillarCard : React.FC<PillarCardProps> = ({
     const handleToggleViewed = (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
-        if (!isLoggedIn) {
+        if (!userID) {
             navigate("/Login", { state: { from: location.pathname } });
             return;
         }
@@ -86,14 +81,14 @@ const PillarCard : React.FC<PillarCardProps> = ({
         if (!localChapterItem.isViewed){
             setLocalChapterItem({ ...localChapterItem, isViewed: true });
             viewMutation.mutate(
-                { userID: Number(userID), recordID: Number(selectedChapterID) },
+                { userID: userID!, recordID: Number(selectedChapterID) },
                 { onError: () => setLocalChapterItem({ ...localChapterItem, isViewed: false })}
             );
         }
         else {
             setLocalChapterItem({ ...localChapterItem, isViewed: false });
             unviewMutation.mutate(
-                { userID: Number(userID), recordID: Number(selectedChapterID) },
+                { userID: userID!, recordID: Number(selectedChapterID) },
                 { onError: () => setLocalChapterItem({ ...localChapterItem, isViewed: true })}
             )
         }

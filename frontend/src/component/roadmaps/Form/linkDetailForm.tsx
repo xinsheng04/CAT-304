@@ -5,6 +5,7 @@ import FormBar from "../../formBox";
 import { validateTitle, validateOrder, validateLink } from "@/component/validateFormBox";
 import { defaultImageSrc, bin } from "../../../lib/image";
 import { useCreateLink, useDeleteLink, useGetSingleLink, useUpdateLink } from "@/api/roadmaps/linkAPI";
+import { getActiveUserField } from "@/lib/utils";
 
 interface LinkDetailFormProps{
     mode: "add" | "edit";
@@ -14,7 +15,7 @@ interface LinkDetailFormProps{
 const LinkDetailForm: React.FC<LinkDetailFormProps> = ({
     mode, selectedLinkID}) => {
         const navigate = useNavigate();
-        const userID = localStorage.getItem("userID");
+        const userID = getActiveUserField("userId");
         const { chapterID } = useParams<{ chapterID: string}>();
 
         const { data: linkItem, isLoading } = useGetSingleLink(Number(chapterID), Number(selectedLinkID), userID);

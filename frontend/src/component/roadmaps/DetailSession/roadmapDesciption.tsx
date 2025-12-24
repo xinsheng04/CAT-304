@@ -7,21 +7,14 @@ import { Heart, X } from 'lucide-react';
 import { useGetSingleRoadmap } from "@/api/roadmaps/roadmapAPI";
 import { IMAGE_MAP, defaultImageSrc } from "@/lib/image";
 import { useGetRoadmapChapters } from "@/api/roadmaps/chapterAPI";
-import { useGetSingleUser } from "@/api/roadmaps/userAPI";
 import { useCreateFavourite, useDeleteFavourite } from "@/api/roadmaps/recordAPI";
+import { getActiveUserField } from "@/lib/utils";
 
 const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({ selectedRoadmapID }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const userID = localStorage.getItem("userID");
-
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const userID = getActiveUserField("userId");
     const [localRoadmapItem, setLocalRoadmapItem] = useState<any>(null);
-
-    useEffect(() => {
-        const userID = localStorage.getItem("userID");
-        setIsLoggedIn(userID && userID !== "0" ? true : false);
-    }, [location]); // re-check when route changes
 
     const { data: roadmapItem, isLoading: roadmapLoading } = useGetSingleRoadmap(selectedRoadmapID, userID);
 
@@ -31,18 +24,18 @@ const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({ selectedRoadmapID 
         }
     }, [roadmapItem]);
 
-    const { data: userData, isLoading: userLoading } = useGetSingleUser(localRoadmapItem?.creatorID);
-    const username = userData?.username ?? 'Unknown Username';
+    // const { data: userData, isLoading: userLoading } = useGetSingleUser(localRoadmapItem?.creatorID);
+    // const username = userData?.username ?? 'Unknown Username';
     const { data: pillarsData = [], isLoading: pillarsLoading } = useGetRoadmapChapters(selectedRoadmapID, userID);
 
     const favouriteMutation = useCreateFavourite();
     const unfavouriteMutation = useDeleteFavourite();
 
-    if (roadmapLoading || pillarsLoading || userLoading ) return null;
-    if (!localRoadmapItem || !userData || !pillarsData ) return <p className="text-white text-center mt-10">Roadmap not found</p>;
+    if (roadmapLoading || pillarsLoading ) return null;
+    if (!localRoadmapItem || !pillarsData ) return <p className="text-white text-center mt-10">Roadmap not found</p>;
 
     const handleToggleFavourite = () => {
-        if (!isLoggedIn) {
+        if (!userID) {
             navigate("/Login", { state: { from: location.pathname } });
             return;
         }
@@ -50,14 +43,14 @@ const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({ selectedRoadmapID 
         if (!localRoadmapItem.isFavourite) {
             setLocalRoadmapItem({ ...localRoadmapItem, isFavourite: true });
             favouriteMutation.mutate(
-                { userID: Number(userID), recordID: Number(selectedRoadmapID) },
+                { userID: userID!, recordID: Number(selectedRoadmapID) },
                 { onError: () => setLocalRoadmapItem({ ...localRoadmapItem, isFavourite: false })}
             );
         } 
         else {
             setLocalRoadmapItem({ ...localRoadmapItem, isFavourite: false });
             unfavouriteMutation.mutate(
-                { userID: Number(userID), recordID: Number(selectedRoadmapID) },
+                { userID: userID!, recordID: Number(selectedRoadmapID) },
                 { onError: () => setLocalRoadmapItem({ ...localRoadmapItem, isFavourite: true })}
             );
         }
@@ -88,7 +81,7 @@ const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({ selectedRoadmapID 
                             className="w-full h-full object-cover"
                             onError={(e) => e.currentTarget.src = defaultImageSrc}
                         />
-                        {(Number(userID) !== localRoadmapItem.creatorID) && (
+                        {(userID !== localRoadmapItem.creatorID) && (
                             <button
                                 className="absolute top-3 left-3 p-2 bg-black/40 rounded-full hover:bg-black/60 transition"
                                 onClick={handleToggleFavourite}
@@ -105,7 +98,7 @@ const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({ selectedRoadmapID 
 
                     <h2 className="text-3xl font-bold mb-4 text-left">{localRoadmapItem.title}</h2>
 
-                    {(Number(userID) !== localRoadmapItem.creatorID)
+                    {(userID !== localRoadmapItem.creatorID)
                         ? <button
                             className="w-full bg-gray-900/80 hover:bg-gray-900 rounded-lg font-semibold transition shadow-xl"
                             onClick={handleToggleFavourite}
@@ -127,11 +120,11 @@ const RoadmapDescription: React.FC<RoadmapItemCardProps> = ({ selectedRoadmapID 
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-6 text-left">
-                        {(Number(userID) !== localRoadmapItem.creatorID) && (
+                        {(userID !== localRoadmapItem.creatorID) && (
                             <div>
                                 <h3 className="font-semibold">Creator</h3>
                                 <Link to={`/profile/${localRoadmapItem.creatorID}`}>
-                                    <p className="mt-1 text-gray-300">{username}</p>
+                                    <p className="mt-1 text-gray-300">{localRoadmapItem.creatorID}</p>
                                 </Link>
                             </div>
                         )}
