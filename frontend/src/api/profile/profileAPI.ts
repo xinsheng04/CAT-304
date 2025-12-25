@@ -2,11 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import Api from "../index";
 
 export const getMyProfile  = async () => {
-  // if (!userId) {
-  //   console.warn("getMyProfile called without valid userId");
-  //   return null;
-  // }
-  // const res = await Api.get(`/profile/getProfileData/${userId}`);
   const res = await Api.get("/profile/me");
   return res.data;
 };
