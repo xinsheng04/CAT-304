@@ -15,10 +15,13 @@ const router = express.Router();
 // ************************************************************
 
 // Get all projects (not including recommendations and submissions)
+router.get('/projects/getAllBasicDetailsOnly', getAllBasicDetailsOnly);
 router.get('/projects/getAllBasicDetailsOnly/:userId', getAllBasicDetailsOnly);
 // Get project by title, including recommendations, tracking data (user) and submissions (surface data)
+router.get('/projects/getByTitleComplete/:title', getByTitleComplete);
 router.get('/projects/getByTitleComplete/:title/:userId', getByTitleComplete);
 // Get project by projectId including recommendations, tracking data (user) and submissions (surface data)
+router.get('/projects/getByIdComplete/:projectId', getByIdComplete);
 router.get('/projects/getByIdComplete/:projectId/:userId', getByIdComplete);
 
 // Create, Update, Delete project
@@ -38,6 +41,7 @@ router.delete('/projects/delete/:projectId', deleteProject);
 router.get('/projects/:projectId/submissions/getAllSubmissions', getAllSubmissions);
 router.get('/projects/:userId/submissions/getAllSubmissionsByUser', getAllSubmissionsByUser);
 // Get specific submission for a project (full details)
+router.get('/projects/:projectId/submissions/getSubmissionById', getSubmissionById);
 router.get('/projects/:projectId/submissions/getSubmissionById/:submissionId', getSubmissionById);
 
 // Submit project with full details

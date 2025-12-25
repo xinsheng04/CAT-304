@@ -5,13 +5,13 @@ import RadioGroup from "../../component/projects/radioGroup.tsx";
 import type { ProjectType } from "../../lib/projectModuleTypes.ts";
 import { useGetAllBasicDetailsOnly } from "@/api/projects/projectsAPI.ts";
 import { useGetAllSubmissionsByCreator } from "@/api/projects/submissionsAPI.ts";
-import { useSelector } from "react-redux";
+import { loadUserInfo } from "@/lib/utils.ts";
 import { categoryList } from "@/lib/types.ts";
 import { useNavigate } from "react-router";
 import ProjectCard from "../../component/projects/projectCard.tsx";
 import SubmissionCard from "@/component/projects/submissionCard.tsx";
 import { LoadingIcon } from "@/component/LoadingIcon";
-
+import { NotLoggedIn } from "@/component/NotLoggedIn";
 export const MyProjects: React.FC = () => {
   const navigate = useNavigate();
   const selections = ["All", ...categoryList];
@@ -19,13 +19,16 @@ export const MyProjects: React.FC = () => {
   const [category, setCategory] = useState(selections[0]);
   const [submissionType, setSubmissionType] = useState<"Created Projects" | "Tracked Projects" |
     "Projects Marked as Done" | "Project Submissions">("Created Projects");
-  const userId = useSelector((state: any) => state.profile.userId);
+  const userId = loadUserInfo()?.userId || null;
 
   const { data: createdProjects = [], isLoading: isLoadingCreatedProjects,
     isError: isErrorCreatedProjects, isSuccess: isSuccessCreatedProjects } = useGetAllBasicDetailsOnly(userId);
   const { data: submissions = [], isLoading: isLoadingSubmissions,
     isError: isErrorSubmissions, isSuccess: isSuccessSubmissions } = useGetAllSubmissionsByCreator(userId);
 
+  if(!userId){
+    return <NotLoggedIn />;
+  }
   function handleCategoryChange(value: string) {
     setCategory(value);
   }
@@ -44,13 +47,18 @@ export const MyProjects: React.FC = () => {
       : "Error loading submissions.";
     throw new Error(errorMessage);
   }
+  let filteredProjects = [];
+
+  if(isSuccessCreatedProjects){
+    filteredProjects = createdProjects.filter((project: any) => project.creatorId === userId);
+  }
 
   let hasContentToShow = false;
   let targetArr = [];
   if (isSuccessCreatedProjects && isSuccessSubmissions) {
     switch (submissionType) {
       case "Created Projects":
-        targetArr = createdProjects;
+        targetArr = filteredProjects;
         break;
       case "Tracked Projects":
         targetArr = createdProjects.filter((project: ProjectType & { isTracking: boolean }) => project.isTracking);
@@ -105,7 +113,7 @@ export const MyProjects: React.FC = () => {
           {submissionType === "Project Submissions" ? (
             hasContentToShow ? (
               <div className="pt-5 flex flex-col gap-2">
-                {submissions.map((submission: any) => {
+                {filteredProjects.map((submission: any) => {
                   const project = createdProjects.find((proj: ProjectType) => proj.projectId === submission.projectId);
                   if (!project) return null;
                   if (category !== "All" && project.category !== category) return null;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { loadUserInfo } from "@/lib/utils";
 import { useParams } from "react-router";
 import { useGetCommitHistory } from "@/api/getCommitHistory";
 import { useGetSubmissionById } from "@/api/projects/submissionsAPI";
@@ -19,7 +19,7 @@ const SubmissionDetails: React.FC = () => {
   const { projectId, submissionId } = useParams<{ projectId: string; submissionId: string }>();
   const [displaySection, setDisplaySection] = useState<displaySectionType>("Commits History");
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const userName = useSelector((state: any) => state.profile.username);
+  const username = loadUserInfo()?.username || null;
 
   const {
     data: submission,
@@ -65,7 +65,7 @@ const SubmissionDetails: React.FC = () => {
 
       <GitHubLink repoUrl={submission?.repoLink || ""} title="This submission contains a GitHub repository link." />
       {
-        submission.creatorName === userName &&
+        submission.creatorName === username &&
         <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
           <DialogTrigger asChild>
             <Button

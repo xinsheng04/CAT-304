@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import projectsReducer from "./projectsSlice";
 import submissionsReducer from "./submissionsSlice";
-import userListReducer from "./userListSlice";
+// import userListReducer from "./userListSlice";
 import profileReducer from "./profileSlice";
 import roadmapReducer from "./roadmapSlice";
 import pillarReducer from "./pillarsSlice";
@@ -42,7 +42,7 @@ export const store = configureStore({
     // Example: user: userReducer,
     projects: projectsReducer,
     submissions: submissionsReducer,
-    userList: userListReducer,
+    // userList: userListReducer,
     profile: profileReducer,
     roadmap: roadmapReducer,
     chapter: pillarReducer,

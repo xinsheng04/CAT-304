@@ -109,7 +109,8 @@ export const ProjectInteractive: React.FC<ProjectInteractiveProps> = ({ userId, 
             isMarkedAsDone: isMarkedAsDone,
           })
         }}
-        className={`cursor-pointer bg-black text-white px-4 rounded-none hover:bg-blue-300 hover:text-black data-[state=on]:bg-blue-600 data-[state=on]:text-white`}
+        disabled={!userId}
+        className={`${!userId ? "cursor-not-allowed" : "cursor-pointer"} bg-black text-white px-4 rounded-none hover:bg-blue-300 hover:text-black data-[state=on]:bg-blue-600 data-[state=on]:text-white`}
       >
         Track this project
       </Toggle>
@@ -122,7 +123,8 @@ export const ProjectInteractive: React.FC<ProjectInteractiveProps> = ({ userId, 
             isMarkedAsDone: !isMarkedAsDone,
           })
         }}
-        className={`cursor-pointer bg-black text-white px-4 rounded-r-2xl rounded-l-none hover:bg-green-300 hover:text-black data-[state=on]:bg-green-600 data-[state=on]:text-white`}
+        disabled={!userId}
+        className={`${!userId ? "cursor-not-allowed" : "cursor-pointer"} bg-black text-white px-4 rounded-r-2xl rounded-l-none hover:bg-green-300 hover:text-black data-[state=on]:bg-green-600 data-[state=on]:text-white`}
       >
         Mark as Done
       </Toggle>
