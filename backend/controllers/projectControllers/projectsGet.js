@@ -25,9 +25,16 @@ project_details: {
 */
 export const getAllBasicDetailsOnly = async (req, res) => {
   const { userId } = req.params;
-  
-  const { data: projects, error } = await supabase
-    .rpc('get_projects_with_tracking', { user_id: userId });
+
+  let returnObj = {};
+
+  if(!userId || userId === undefined){
+    returnObj = await supabase.rpc('get_projects_without_tracking');
+  } else{
+    returnObj = await supabase
+      .rpc('get_projects_with_tracking', { user_id: userId });
+  }
+  const { data: projects, error } = returnObj;
 
   if (error) return res.status(500).json({ error: error.message || "Failed to fetch projects" });
 
@@ -77,7 +84,7 @@ export const getByTitleComplete = async (req, res) => {
 
   // Fetch creator username separately
   const { data: creator } = await supabase
-    .from("Users")
+    .from("userProfiles")
     .select("username")
     .eq("userId", project.creatorId)
     .maybeSingle();
@@ -90,13 +97,17 @@ export const getByTitleComplete = async (req, res) => {
     .eq("sourceType", "project")
     .maybeSingle();
 
-  // Get tracking data for the specified user
-  const { data: trackingData } = await supabase
-    .from("Project_Tracking")
-    .select("isTracking, isMarkedAsDone")
-    .eq("projectId", project.projectId)
-    .eq("userId", req.params.userId)
-    .maybeSingle();  // Won't throw error if user hasn't tracked the project
+  // Get tracking data for the specified user (if userId provided)
+  let trackingData = {};
+  if(req.params.userId){
+    trackingData = await supabase
+      .from("Project_Tracking")
+      .select("isTracking, isMarkedAsDone")
+      .eq("projectId", project.projectId)
+      .eq("userId", req.params.userId)
+      .maybeSingle();  // Won't throw error if user hasn't tracked the project
+    trackingData = trackingData.data || {};
+  }
 
   return res.json({
     ...project,
@@ -151,7 +162,7 @@ export const getByIdComplete = async (req, res) => {
 
   // Fetch creator username separately
   const { data: creator } = await supabase
-    .from("Users")
+    .from("userProfiles")
     .select("username")
     .eq("userId", project.creatorId)
     .maybeSingle();
@@ -163,13 +174,18 @@ export const getByIdComplete = async (req, res) => {
     .eq("sourceId", project.projectId)
     .eq("sourceType", "project");
 
-  // Get tracking data for the specified user
-  const { data: trackingData } = await supabase
-    .from("Project_Tracking")
-    .select("isTracking, isMarkedAsDone")
-    .eq("projectId", project.projectId)
-    .eq("userId", req.params.userId)
+  // Get tracking data for the specified user (if userId provided)
+
+  let trackingData = {};
+  if(req.params.userId){
+    trackingData = await supabase
+      .from("Project_Tracking")
+      .select("isTracking, isMarkedAsDone")
+      .eq("projectId", project.projectId)
+      .eq("userId", req.params.userId)
     .single();
+    trackingData = trackingData.data || {};
+  }
 
   return res.json({
     ...project,

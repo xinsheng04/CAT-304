@@ -7,13 +7,14 @@ import {
 } from "@/component/shadcn/field";
 import { useRef, useState } from "react";
 import { useCallback } from "react";
+import { loadUserInfo } from "@/lib/utils";
+import { useGetRoadmaps } from "@/api/roadmaps/roadmapAPI";
 import { SearchableMultiSelect } from "@/component/projects/searchableMultiSelect";
 import { Input } from "@/component/shadcn/input";
 import { Select, SelectTrigger, SelectValue, SelectItem, SelectContent } from "@/component/shadcn/select";
 import { Textarea } from "@/component/shadcn/textarea";
 import { Button } from "@/component/shadcn/button";
 import { categoryList } from "@/lib/types";
-import { useSelector } from "react-redux";
 import { useCreateProject, useUpdateProject } from "@/api/projects/projectsAPI";
 import { useGetAllRecommendations } from "@/api/projects/recommendationsAPI";
 import type { ExtendedProjectType } from "@/lib/projectModuleTypes";
@@ -27,10 +28,14 @@ type ProjectFormProps = {
 
 export const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, projectId, close }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const userId = useSelector((state: any) => state.profile.userId);
+  const userId = loadUserInfo()?.userId || null;
   const { mutateAsync: createProject, status: formSubmissionStatus, error: formSubmissionError } = useCreateProject(userId);
   const { mutateAsync: updateProject, status: formUpdateStatus, error: formUpdateError } = useUpdateProject(projectId || -1);
   const { data: allRecommendations = [], status: getAllRecStatus, error: getAllRecError } = useGetAllRecommendations(projectId || -1);
+  const {data: roadmaps, isSuccess: isSuccessRoadmaps} = useGetRoadmaps();
+
+  if(!isSuccessRoadmaps) 
+    return <LoadingIcon text="Loading Roadmaps..." iconClass="flex-col" />;
 
   const roadmapsFetched = getAllRecStatus === "success" 
   && allRecommendations.filter(rec => rec.sourceType === "roadmap" || rec.targetType === "roadmap" 
@@ -51,8 +56,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, projectId
     careers: getAllRecStatus === "success" ? careersFetched : [],
   });
 
-  const creatorId = useSelector((state: any) => state.profile.userId);
-  const roadmaps = useSelector((state: any) => state.roadmap.roadmapList);
+  const creatorId = loadUserInfo()?.userId || null;
   const careers: any[] = []; // Placeholder careers array
 
   const handleSubmit = useCallback(async () => {

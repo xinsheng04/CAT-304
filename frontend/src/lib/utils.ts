@@ -1,6 +1,17 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
+// Load from local storage
+export function loadUserInfo() {
+  try {
+    const raw = localStorage.getItem("userInfo");
+    if (!raw) return undefined;
+    return JSON.parse(raw);
+  } catch {
+    return undefined;
+  }
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

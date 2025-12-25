@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { loadUserInfo } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "@/lib/utils";
 import { commonMarkDownClass } from "@/lib/styles";
@@ -16,13 +16,14 @@ import { GitHubLink } from "@/component/projects/gitHubLink";
 import { ProjectInteractive } from "@/component/projects/projectInteractive";
 import { LoadingIcon } from "@/component/LoadingIcon";
 import { Button } from "@/component/shadcn/button";
+import { NotLoggedIn } from "@/component/NotLoggedIn";
 
 export const ProjectDetails: React.FC = () => {
   const navigate = useNavigate();
   const [submissionDialogOpen, setSubmissionDialogOpen] = useState(false);
   let { projectId: projectIdParam } = useParams<{ projectId: string }>();
   const projectId = Number(projectIdParam);
-  const userId = useSelector((state: any) => state.profile.userId);
+  const userId = loadUserInfo()?.userId || null;
 
   const { 
     data: project, 
@@ -130,15 +131,13 @@ export const ProjectDetails: React.FC = () => {
               return (
                 <div className="grid grid-cols-1 gap-3.5">
                   {
-                    isLoadingSubmissions && <LoadingIcon text="Loading Submissions..." />
-                  }
-                  {
-                    isErrorSubmissions && <p className="text-red-500">
-                      Error loading submissions. Please try again later.
-                    </p>
-                  }
-                  {
-                    communitySubmissions.length === 0 ? (
+                    isLoadingSubmissions ? (
+                      <LoadingIcon text="Loading Submissions..." />
+                    ) : isErrorSubmissions ? (
+                      <p className="text-red-500">
+                        Error loading submissions. Please try again later.
+                      </p>
+                    ) : communitySubmissions.length === 0 ? (
                       mySubmissions.length === 0 ? (
                       <NoSolutions
                         title="No Community Submissions Yet"
@@ -179,8 +178,10 @@ export const ProjectDetails: React.FC = () => {
             case "My Submissions":
               return (
                 <div>
-                  {
-                    mySubmissions.length === 0 ? (
+                  { 
+                    userId === null ? (
+                      <NotLoggedIn />
+                    ) : mySubmissions.length === 0 ? (
                       <NoSolutions
                         title="Looks like you have not contributed yet!"
                         description="Share your solution with the community by submitting it below."

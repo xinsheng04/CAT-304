@@ -9,7 +9,7 @@ import { Input } from "@/component/shadcn/input";
 import { Button } from "@/component/shadcn/button";
 import { Form } from "@/component/form";
 import { useState, useRef } from "react";
-import { useSelector } from "react-redux";
+import { loadUserInfo } from "@/lib/utils";
 import { useCreateSubmission } from "@/api/projects/submissionsAPI";
 // import { uint8ToBase64, convertFileToUInt8 } from "@/lib/utils";
 import { update_Activity } from "@/component/activity/activity_tracker";
@@ -25,7 +25,7 @@ type SubmissionFormProps = {
 export const SubmissionForm: React.FC<SubmissionFormProps> = ({ openAsCreateForm, close, initialData, projectId }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileInput, setFileInput] = useState<File | null>(null);
-  const creatorId = useSelector((state: any) => state.profile.userId);
+  const creatorId = loadUserInfo()?.userId || null;
   const { mutateAsync: createSubmission, status: createSubmissionStatus, error: createSubmissionError } = useCreateSubmission(creatorId, projectId);
   // Currently creatorId is bugged
   // const creatorId = useSelector((state: any) => state.profile.userId); 

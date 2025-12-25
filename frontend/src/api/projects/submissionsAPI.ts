@@ -6,6 +6,9 @@ import type { InitialSubmissionType, SubmissionType } from '../../lib/projectMod
 export function useCreateSubmission(creatorId: number, projectId: number) {
   return useMutation({
     mutationFn: async (submission: InitialSubmissionType) => {
+      if(!creatorId){
+        throw new Error('You must be logged in to submit a submission.');
+      }
       const response = await Api.post(`/projects/${projectId}/submissions/submit`, {
         ...submission,
         creatorId,
@@ -43,6 +46,9 @@ export function useGetAllSubmissionsByCreator(creatorId: number) {
   return useQuery({
     queryKey: ['submissions', 'byCreatorId', creatorId],
     queryFn: async (): Promise<SubmissionType[]> => {
+      if(!creatorId){
+        return [];
+      }
       const response = await Api.get(`/projects/${creatorId}/submissions/getAllSubmissionsByUser`);
       return response.data.submissions;
     }

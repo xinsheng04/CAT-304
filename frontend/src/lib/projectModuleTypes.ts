@@ -7,7 +7,7 @@ export type ProjectType = {
   shortDescription: string;
   difficulty: Difficulty;
   category: Category;
-  creatorId: number;
+  creatorId: string;
   lastUpdated: string;
   startingRepoLink?: string;
   detailsFile: string;
@@ -35,7 +35,7 @@ export type InitialRecommendation = Omit<RecommendationType, "recommendationId">
 
 // Project tracking types
 export type ProjectTrackingRecord = {
-  userId: number;
+  userId: string;
   projectId: number;
   isTracking: boolean;
   isMarkedAsDone: boolean;
@@ -46,7 +46,7 @@ export type ProjectTrackingRecord = {
 export type SubmissionType = {
   submissionId: number;
   projectId: number;
-  creatorId: number;
+  creatorId: string;
   postedOn: string;
   lastUpdated: string;
   title: string;

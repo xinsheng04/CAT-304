@@ -7,7 +7,7 @@ import dice_icon from "../../assets/projects/dice_icon.png";
 import folder_icon from "../../assets/projects/folder_icon.png";
 import RadioGroup from "../../component/projects/radioGroup.tsx";
 import type { ProjectType } from "../../store/projectsSlice.ts";
-import { useSelector } from "react-redux";
+import { loadUserInfo } from "@/lib/utils.ts";
 import { useGetAllBasicDetailsOnly } from "@/api/projects/projectsAPI.ts";
 import { categoryList } from "@/lib/types.ts";
 import { commonButtonStyles, commonIconStyles } from "../../lib/styles.ts";
@@ -25,7 +25,7 @@ import { FieldGroup } from "@/component/shadcn/field";
 import { commonBackgroundClass } from "@/lib/styles";
 
 export const Project: React.FC = () => {
-  const userId = useSelector((state: any) => state.profile.userId);
+  const userId = loadUserInfo()?.userId;
   const selections = ["All", ...categoryList];
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState(selections[0]);
@@ -76,7 +76,9 @@ export const Project: React.FC = () => {
               </Button>
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className={`${commonButtonStyles} h-10`}>+ Add a project</Button>
+                  {
+                    userId && <Button className={`${commonButtonStyles} h-10`}>+ Add a project</Button>
+                  }
                 </DialogTrigger>
                 <DialogContent className={`${commonBackgroundClass} flex flex-col sm:gap-0`}>
                   <DialogHeader>
