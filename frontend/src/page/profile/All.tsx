@@ -1,8 +1,6 @@
 import React from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/store";
 
 import RadioGroup from "@/component/projects/radioGroup";
 import { ProfileContent } from "./Profile";
@@ -15,8 +13,8 @@ import FriendsDrawer from "@/component/friend/drawerFriend";
 
 export const All: React.FC = () => {
     const { userId } = useParams();
-    // Load the active user from localStorage
-    const currentUser = useSelector((state: RootState) => state.profile);
+    const activeUserRaw = localStorage.getItem("activeUser");
+    const currentUser = activeUserRaw ? JSON.parse(activeUserRaw) : null; 
     if(!currentUser){
         return(
             <div className="text-white p-10">
@@ -25,7 +23,7 @@ export const All: React.FC = () => {
             </div>
         );
     }
-    const viewUserId = userId ? Number(userId) : currentUser.userId;
+    const viewUserId = userId ?? currentUser.userId;
     const isOwner = currentUser.userId === viewUserId;
     const isAdmin = currentUser?.role?.toLowerCase() === "admin";
     const canView = isOwner || canViewProfile(currentUser.userId, viewUserId);
