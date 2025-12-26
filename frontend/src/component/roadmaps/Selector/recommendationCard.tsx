@@ -20,7 +20,7 @@ const RecommendationCard: React.FC<RecommendProps> =({
     const [localCheckedRecommendation, setLocalCheckedRecommendation] = useState(false);
 
     const { data: recommendedData = [], isLoading: recommendedLoading } = useGetRoadmapRecommendation();
-    const { data: projects , isLoading: projectLoading } = useGetByIdComplete(selectedId, 100007)
+    const { data: projects , isLoading: projectLoading } = useGetByIdComplete(selectedId, userID!)
     const { data: careers, isLoading: careerLoading } = useGetSingleCareer(selectedId);
 
     const recommendMutation = useCreateRoadmapRecommendation();

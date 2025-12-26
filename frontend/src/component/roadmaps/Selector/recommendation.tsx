@@ -25,7 +25,7 @@ const Recommendation: React.FC<RecommendationProps> =
 
 
     const { data: recommendedData = [], isLoading: recommendedLoading} = useGetRoadmapRecommendation();
-    const { data: projects = [], isLoading: projectLoading } = useGetAllBasicDetailsOnly(100007);
+    const { data: projects = [], isLoading: projectLoading } = useGetAllBasicDetailsOnly(userID!);
     const { data: careers = [], isLoading: careerLoading } = useGetAllCareers();
     const { data: pillar, isLoading: chapterLoading } = useGetSingleChapter(Number(roadmapID), selectedID, userID);
 
