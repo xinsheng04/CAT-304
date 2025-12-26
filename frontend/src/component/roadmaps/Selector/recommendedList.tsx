@@ -22,8 +22,8 @@ const RecommendedList: React.FC<recommendationListProps> = ({mode, selectedID, s
     
     // Find the chapter/pillar to determine categories (and optionally difficulty)
     if (mode === "project"){
-        const { data: chapter, isLoading: chapterLoading } = useGetSingleChapter(Number(roadmapID), selectedID, userID);
-        const { data: projects = [], isLoading: projectLoading } = useGetAllBasicDetailsOnly(100007)
+        const { data: chapter, isLoading: chapterLoading } = useGetSingleChapter(Number(roadmapID), selectedID, userID!);
+        const { data: projects = [], isLoading: projectLoading } = useGetAllBasicDetailsOnly(userID)
         if ( chapterLoading || projectLoading ) <span className="text-amber-50 text-3xl">Loading Data...</span>
         if ( !chapter || !projects ) return <p className="text-gray-400 text-center mt-4">Recommended project not found.</p>;
 
