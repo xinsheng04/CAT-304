@@ -1,3 +1,4 @@
+import e from "cors";
 import { supabase } from "../../config.js";
 
 // Create project
@@ -13,7 +14,7 @@ Input:
     lastUpdated: string;
     startingRepoLink?: string;
     detailsFile?: Uint8Array | string;
-    recommendations: [ { recommendation1_details }, { recommendation2_details }, ... ];
+    recommendations: [ { targetId: number, targetType: string }, { targetId: number, targetType: string }, ... ];
   }
 
 Output: {
@@ -22,7 +23,21 @@ Output: {
 */
 
 export const createProject = async (req, res) => {
-  const { recommendations, ...projectData } = req.body;
+  // Ensure we have a JSON body to avoid destructuring errors
+  if (!req.body || typeof req.body !== "object") {
+    return res.status(400).json({ error: "Request body must be JSON with required fields" });
+  }
+
+  // Safely destructure with defaults
+  const { recommendations = [], ...projectData } = req.body;
+
+  // Basic required field validation
+  const requiredFields = ["title", "shortDescription", "difficulty", "category", "creatorId"];
+  const missingFields = requiredFields.filter((f) => projectData[f] === undefined);
+  if (missingFields.length > 0) {
+    return res.status(400).json({ error: `Missing required fields: ${missingFields.join(", ")}` });
+  }
+  projectData.lastUpdated = new Date().toISOString();
 
   // Insert project
   const { data: newProject, error: projectError } = await supabase
@@ -31,23 +46,25 @@ export const createProject = async (req, res) => {
     .select()
     .single();
 
-  if (projectError) return res.status(500).json({ error: projectError });
+  if (projectError) return res.status(500).json({ error: projectError.message || "Failed to create project" });
 
   // Insert recommendations if provided
   if (recommendations && recommendations.length > 0) {
     const recommendationsWithProjectId = recommendations.map(rec => ({
       ...rec,
-      projectId: newProject.projectId
+      sourceId: newProject.projectId,
+      sourceType: 'project',
+      createdAt: new Date().toISOString()
     }));
 
     const { error: recError } = await supabase
       .from("Recommendations")
       .insert(recommendationsWithProjectId);
 
-    if (recError) return res.status(500).json({ error: recError });
+    if (recError) return res.status(500).json({ error: recError.message || "Project created but failed to add recommendations" });
   }
 
-  return res.status(201).json(newProject);
+  return res.status(201).json({ message: "SUCCESS" });
 };
 
 // Put tracking data (user level) for the project
@@ -61,9 +78,13 @@ Input:
   Output: None
 */
 
-export const putTrackingData = async(req, res) => {
+export const putTrackingData = async (req, res) => {
   const { projectId, userId } = req.params;
-  const trackingData = req.body;
+  // Guard against missing/invalid JSON body
+  const trackingData = (req.body && typeof req.body === "object") ? req.body : null;
+  if (!trackingData) {
+    return res.status(400).json({ error: "Request body must be JSON with tracking fields" });
+  }
 
   // Upsert tracking data
   const { error: trackingError } = await supabase
@@ -73,8 +94,8 @@ export const putTrackingData = async(req, res) => {
       userId,
       ...trackingData
     });
-  if (trackingError) return res.status(500).json({ error: trackingError });
-  return res.status(200).json({ message: "Tracking data updated successfully" });
+  if (trackingError) return res.status(500).json({ error: trackingError.message || "Failed to update tracking data" });
+  return res.status(200).json({ message: "SUCCESS" });
 }
 
 // Update project details
@@ -88,20 +109,50 @@ Input:
     category?: Category;
     startingRepoLink?: string;
     detailsFile?: Uint8Array | string;
+    recommendations?: [ { targetId: number, targetType: string }, { targetId: number, targetType: string }, ... ];
   }
 Output: None
 */
 
 export const updateProject = async (req, res) => {
   const { projectId } = req.params;
-  const updateData = req.body;
+  const { recommendations, ...updateData } = req.body;
   // Supabase trigger will handle lastUpdated field
   const { error: updateError } = await supabase
     .from("Projects")
     .update(updateData)
     .eq("projectId", projectId);
-  if (updateError) return res.status(500).json({ error: updateError });
-  return res.status(200).json({ message: "Project updated successfully" });
+  if (updateError) return res.status(500).json({ error: updateError.message || "Failed to update project" });
+
+  // Update recommendations if provided
+  if (recommendations && recommendations.length > 0) {
+    // Delete all existing recommendations for this project
+    const { error: deleteError } = await supabase
+      .from("Recommendations")
+      .delete()
+      .eq("sourceId", projectId)
+      .eq("sourceType", "project");
+    
+    if (deleteError) return res.status(500).json({ error: deleteError.message || "Failed to delete old recommendations" });
+
+    // Insert all new recommendations
+    const recommendationsWithProjectId = recommendations.map(rec => {
+      delete rec.existing; // Remove the existing flag before inserting
+      return {
+        ...rec,
+        sourceId: projectId,
+        sourceType: 'project',
+        createdAt: new Date().toISOString()
+      }
+    });
+
+    const { error: insertError } = await supabase
+      .from("Recommendations")
+      .insert(recommendationsWithProjectId);
+
+    if (insertError) return res.status(500).json({ error: insertError.message || "Failed to add recommendations" });
+  }
+  return res.status(200).json({ message: "SUCCESS" });
 }
 
 // Delete project
@@ -114,13 +165,21 @@ Output: None
 
 export const deleteProject = async (req, res) => {
   const { projectId } = req.params;
+  // Cannot delete if there are submissions
+  const { data: submissions, error: submissionError } = await supabase
+    .from("Submissions")
+    .select("submissionId")
+    .eq("projectId", projectId)
+    .limit(1);
+  if (submissionError) return res.status(500).json({ error: submissionError.message || "Failed to check submissions" });
+  if (submissions && submissions.length > 0) return res.status(400).json({ error: "Cannot delete project with existing submissions" });
 
   // Delete project
   const { error: deleteError } = await supabase
     .from("Projects")
     .delete()
     .eq("projectId", projectId);
-  if (deleteError) return res.status(500).json({ error: deleteError });
+  if (deleteError) return res.status(500).json({ error: deleteError.message || "Failed to delete project" });
 
-  return res.status(200).json({ message: "Project deleted successfully" });
+  return res.status(200).json({ message: "SUCCESS" });
 }

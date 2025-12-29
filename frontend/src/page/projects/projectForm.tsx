@@ -5,45 +5,77 @@ import {
   FieldGroup,
   FieldLabel
 } from "@/component/shadcn/field";
+import { toast } from "sonner";
 import { useRef, useState } from "react";
+import { useCallback } from "react";
+import { loadUserInfo } from "@/lib/utils";
+import { useGetRoadmaps } from "@/api/roadmaps/roadmapAPI";
 import { SearchableMultiSelect } from "@/component/projects/searchableMultiSelect";
 import { Input } from "@/component/shadcn/input";
 import { Select, SelectTrigger, SelectValue, SelectItem, SelectContent } from "@/component/shadcn/select";
 import { Textarea } from "@/component/shadcn/textarea";
 import { Button } from "@/component/shadcn/button";
 import { categoryList } from "@/lib/types";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch } from "@/store"; // Import AppDispatch from your store
-import { uint8ToBase64, convertFileToUInt8 } from "@/lib/utils";
-import { addProjectAndRecommendations } from "@/store/projectsSlice";
-import type { ExtendedProjectType } from "@/store/projectsSlice";
+import { useCreateProject, useUpdateProject } from "@/api/projects/projectsAPI";
+import { useGetAllRecommendations } from "@/api/projects/recommendationsAPI";
+import type { ExtendedProjectType } from "@/lib/projectModuleTypes";
+import { useGetAllCareers } from "@/api/careers/careerAPI";
+import { LoadingIcon } from "@/component/LoadingIcon";
+import type { ItemType } from "@/component/projects/searchableMultiSelect";
 
 type ProjectFormProps = {
   initialData?: any;
+  projectId?: number;
   close: () => void;
 }
 
-export const ProjectForm: React.FC<ProjectFormProps> = ({initialData, close }) => {
+const requiredInputs = ["title", "difficulty", "category", "shortDescription"];
+
+export const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, projectId, close }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const userId = loadUserInfo()?.userId || null;
+  const { mutateAsync: createProject, status: formSubmissionStatus, error: formSubmissionError } = useCreateProject(userId);
+  const { mutateAsync: updateProject, status: formUpdateStatus, error: formUpdateError } = useUpdateProject(projectId || -1);
+  const { data: allRecommendations = [], status: getAllRecStatus, error: getAllRecError } = useGetAllRecommendations(projectId || -1);
+  const { data: roadmaps, isSuccess: isSuccessRoadmaps } = useGetRoadmaps();
+  // const { data: careers, isSuccess: isSuccessCareers } = useGetAllCareers(); // Placeholder for careers fetching
+  const careers: any = [];
+  const isSuccessCareers = true; // Placeholder for careers fetching
+
+  // Only deletable are those set by project side
+  const roadmapsFetched = getAllRecStatus === "success"
+    && allRecommendations.filter(rec => rec.targetType === "roadmap" || rec.targetType === "chapter") || [];
+  const careersFetched = getAllRecStatus === "success"
+    && allRecommendations.filter(rec => rec.targetType === "career") || [];
+
+  // Convert to item type
+  const roadmapsAsItems: ItemType[] = roadmapsFetched.map((rec: any) => ({
+    referenceId: rec.targetId,
+    referenceType: "roadmap",
+    title: rec.title,
+    existing: true
+  }));
+  const careersAsItems: ItemType[] = careersFetched.map((rec: any) => ({
+    referenceId: rec.targetId,
+    referenceType: "career",
+    title: rec.careerName,
+    existing: true
+  }));
+
   const [fileInput, setFileInput] = useState<File | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [formData, setFormData] = useState<any>({
     title: initialData?.title || "",
     difficulty: initialData?.difficulty || "",
-    category: initialData?.category || categoryList[0],
+    category: initialData?.category || "",
     shortDescription: initialData?.shortDescription || "",
     detailsFile: initialData?.detailsFile || null,
     startingRepoLink: initialData?.startingRepoLink || "",
-    roadmaps: initialData?.roadmaps || [],
-    careers: initialData?.careers || [],
+    roadmaps: getAllRecStatus === "success" ? roadmapsAsItems : [],
+    careers: getAllRecStatus === "success" ? careersAsItems : [],
   });
-  const dispatchThunk = useDispatch<AppDispatch>();
-  const creatorId = useSelector((state: any) => state.profile.userId);
-  const roadmaps = useSelector((state: any) => state.roadmap.roadmapList);
-  // const careers = useSelector((state: any) => state.careers.careerList);
-  const careers: any[] = []; // Placeholder careers array
 
-  async function handleSubmit() { 
+  const handleSubmit = useCallback(async () => {
     // Create a deep copy to avoid any reference issues
     const finalFormData: ExtendedProjectType = {
       title: formData.title,
@@ -52,20 +84,50 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({initialData, close }) =
       shortDescription: formData.shortDescription,
       startingRepoLink: formData.startingRepoLink,
       detailsFile: formData.detailsFile,
-      roadmaps: formData.roadmaps,
-      careers: formData.careers,
-      creatorId: creatorId
+      recommendations: [],
+      creatorId: userId || undefined,
     };
-    
+    if(!requiredInputs.every(input => finalFormData[input as keyof ExtendedProjectType] !== "")){
+      toast.error("Title, Difficulty, Category, and Short Description are required fields.");
+      return;
+    }
+    const combinedSelections = [...formData.roadmaps, ...formData.careers];
+    finalFormData.recommendations = combinedSelections.map((item: any) => {
+      return (
+        {
+          targetId: item.referenceId,
+          targetType: item.referenceType,
+          existing: item.existing
+        }
+      )
+    });
+
     // Handle file separately if it exists
     if (fileInput) {
-      const uint8Array = await convertFileToUInt8(fileInput);
-      finalFormData.detailsFile = uint8ToBase64(uint8Array);
+      const text = await fileInput.text();
+      finalFormData.detailsFile = text;
+    }
+    let response;
+    // Remove unchanged fields if updating (initial data given)
+    if (initialData && initialData.projectId) {
+      for (const key in finalFormData) {
+        if (finalFormData[key as keyof ExtendedProjectType] === initialData[key]) {
+          delete finalFormData[key as keyof ExtendedProjectType];
+        }
+      }
+      response = await updateProject(finalFormData);
+    } else {
+      response = await createProject(finalFormData);
+    }
+
+    if (response.message === "SUCCESS") {
+      toast.success(`Project ${initialData ? "updated" : "created"} successfully!`);
+      close();
+    } else {
+      toast.error(`Failed to ${initialData ? "update" : "create"} the project. ${response.message}`);
     }
     
-    dispatchThunk(addProjectAndRecommendations(finalFormData));
-    close();
-  }
+  }, [formData, fileInput, createProject, close, userId]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target;
@@ -75,8 +137,24 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({initialData, close }) =
     }));
   }
 
+  const lookAt = initialData ? formUpdateStatus : formSubmissionStatus;
+  const formError = initialData ? formUpdateError : formSubmissionError;
+
+  switch (lookAt) {
+    case "pending":
+      return <LoadingIcon text={` ${initialData ? "Updating" : "Submitting"} Project...`} iconClass="flex-col" />;
+    case "error":
+      const errorMsg = (formError as any)?.response?.data?.error || "Unknown error occurred";
+      return <div className="text-red-500 text-center mt-4">
+        Error {initialData ? "updating" : "submitting"} project. {String(errorMsg)}
+      </div>;
+  }
+
+  if (!isSuccessRoadmaps || !isSuccessCareers)
+    return <LoadingIcon text="Loading Data..." iconClass="flex-col" />;
+
   return (
-    <form className="w-full max-w-2xl mx-auto p-4 sm:p-6">
+    <form id={"project-form"} className="w-full max-w-2xl mx-auto p-4 sm:p-6">
       {(() => {
         switch (currentPage) {
           case 1:
@@ -87,7 +165,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({initialData, close }) =
                     readOnly
                     hidden
                     name="creatorId"
-                    value={creatorId}
+                    value={userId || undefined}
                   />
                   <FieldLabel>Project Title</FieldLabel>
                   <FieldContent>
@@ -191,16 +269,24 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({initialData, close }) =
             return (
               <FieldGroup>
                 <FieldSet className="gap-4 sm:gap-3">
+                  {
+                    initialData && getAllRecError && (
+                      <div className="text-red-500">
+                        Error loading recommendations: {String((getAllRecError as any)?.response?.data?.error || "Unknown error")}
+                      </div>
+                    )
+                  }
                   <SearchableMultiSelect
                     label="Related Roadmaps"
+                    openFor="roadmap"
+                    isEditing={!!initialData}
                     description="Link this project to relevant learning roadmaps"
                     placeholder="Search and select roadmaps..."
                     items={roadmaps}
-                    selectedItems={formData.roadmaps}
-                    onSelect={(roadmaps) => 
+                    chosenItems={formData.roadmaps}
+                    onSelect={(roadmaps) =>
                       setFormData((prev: any) => ({ ...prev, roadmaps }))
                     }
-                    maxSelections={5}
                     renderItem={(roadmap) => (
                       <div>
                         <p className="font-medium text-white">{roadmap.title}</p>
@@ -220,14 +306,15 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({initialData, close }) =
                 <FieldSet className="gap-4 sm:gap-3">
                   <SearchableMultiSelect
                     label="Related Careers"
+                    openFor="career"
+                    isEditing={!!initialData}
                     description="Link this project to relevant career paths"
                     placeholder="Search and select careers..."
                     items={careers}
-                    selectedItems={formData.careers}
+                    chosenItems={formData.careers}
                     onSelect={(careers) =>
                       setFormData((prev: any) => ({ ...prev, careers }))
                     }
-                    maxSelections={5}
                     renderItem={(career) => (
                       <div>
                         <p className="font-medium text-white">{career.name}</p>

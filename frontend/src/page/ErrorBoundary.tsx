@@ -10,7 +10,7 @@ export const ErrorBoundary: React.FC = () => {
       <h1 className="text-[10rem] ">:&#40;</h1>
       <p className="text-[2rem] w-[50%] text-left mb-2">UpCode ran into some unexpected problems. Why don't you return to the home page for now?</p>
       <pre className="py-4 rounded-lg overflow-x-auto">
-          {error instanceof Error ? error.message : String(error)}
+          {error instanceof Error && error.message ? error.message : String(error)}
       </pre>
       <Button className="mt-6 flex items-center gap-2 py-6 px-3 cursor-pointer bg-gray-800 hover:bg-gray-950" onClick={() => navigate('/')}>
         <img src={Door_Symbol} alt="<-" className="w-10 h-auto" />

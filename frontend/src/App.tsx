@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
-import { Overview } from "./page/Overview";
+import { Overview } from "./page/overview/Overview";
 import { Roadmap } from "./page/roadmaps/Roadmap";
 import { RoadmapDetails } from "./page/roadmaps/RoadmapDetails";
 import { Project } from "./page/projects/Project";
@@ -30,6 +30,8 @@ import AdminDashboard from "./page/admin/ad_dashboard";
 import Admin_Users from "./page/admin/ad_user";
 import Admin_Roadmaps from "./page/admin/ad_roadmap";
 import Admin_Projects from "./page/admin/ad_project";
+import VerifyRole from "./page/profile/verifyRole";
+import CareerDetailsModal from "@/page/career/CareerInfoSub";
 import Admin_Analytics from "./page/admin/ad_analytics";
 import { AddCareer } from "./page/career/AddCareer";
 
@@ -74,7 +76,10 @@ const router = createBrowserRouter([
           { index: true, element: <Project /> },
           { path: ":projectId", element: <ProjectDetails /> },
           { path: "myProjects", element: <MyProjects /> },
-          { path: "submission/:submissionId", element: <SubmissionDetails /> },
+          {
+            path: ":projectId/submission/:submissionId",
+            element: <SubmissionDetails />,
+          },
         ],
       },
       {
@@ -95,6 +100,7 @@ const router = createBrowserRouter([
       { path: "signup", element: <Signup_Pg /> },
       { path: "forgot-password", element: <ForgotPassword_Pg /> },
       { path: "reset-password", element: <ResetPassword_Pg /> },
+      { path: "request-verification", element: <VerifyRole /> },
       // fallback route still optional; errorElement will catch unknown paths
       { path: "*", element: <ErrorBoundary /> },
     ],
@@ -108,7 +114,6 @@ const router = createBrowserRouter([
       { path: "users_admin", element: <Admin_Users /> },
       { path: "roadmaps_admin", element: <Admin_Roadmaps /> },
       { path: "projects_admin", element: <Admin_Projects /> },
-      { path: "analytics_admin", element: <Admin_Analytics /> },
     ],
   },
 ]);

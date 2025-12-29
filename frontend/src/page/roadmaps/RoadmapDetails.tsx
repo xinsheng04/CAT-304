@@ -1,28 +1,44 @@
 import React, { useEffect, useRef } from "react";
 import RoadmapDescription from "../../component/roadmaps/DetailSession/roadmapDesciption";
-import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import PillarList from "@/component/roadmaps/Selector/pillarList";
-import { update_Activity } from "@/component/activity/activity_tracker";
-import type { RoadmapType } from "@/store/roadmapSlice";
-
+import { trackNewActivity } from "@/component/activity/activity_tracker";
+import { useGetSingleRoadmap } from "@/api/roadmaps/roadmapAPI";
+import { Spinner } from "@/component/shadcn/spinner";
+import { getActiveUserField } from "@/lib/utils";
+import { useGetMyProfile } from "@/api/profile/profileAPI";
 export const RoadmapDetails: React.FC = () => {
-    const roadmapData = useSelector((state: any) => state.roadmap.roadmapList) as RoadmapType[];
     const { roadmapID } = useParams<{ roadmapID: string }>(); // get id from URL
-    const roadmapItem = roadmapData.find(r => r.roadmapID === Number(roadmapID)); // find the data by id
-    //for profile usage
+    const userID = getActiveUserField("userId");
     const hasCountedRef = useRef(false);
+    //for profile usage
+    const { data: userProfile, isLoading: isProfileLoading } = useGetMyProfile();
+
     useEffect(() => {
         if (!roadmapID) return;
-        if(hasCountedRef.current) return;
-        update_Activity(activity => {
-            // count once
-            activity.opened.main_topic[roadmapID] =
-            (activity.opened.main_topic[roadmapID] || 0) + 1;
-        },{ type: "roadmap", id: roadmapID });
-        
+        // Wait for profile to load before deciding to track
+        if (isProfileLoading) return; 
+        if (hasCountedRef.current) return;
+        // If Admin mark it as "counted" (to stop retries) but not track.
+        if (userProfile?.role === 'admin') {
+            hasCountedRef.current = true;
+            return; 
+        }
+        // If user, track it.
+        trackNewActivity("roadmap", roadmapID);
         hasCountedRef.current = true;
-    }, [roadmapID]);
+
+    }, [roadmapID, userProfile, isProfileLoading]);
+
+    const { data: roadmapItem, isLoading } = useGetSingleRoadmap(Number(roadmapID), userID);
+    if (isLoading) {
+        return(
+        <div className="flex h-screen -translate-y-12 w-full items-center justify-center">
+            <Spinner className="size-20 text-amber-50" />
+            <span className="text-amber-50 text-3xl">Loading Roadmap...</span>
+        </div>
+        )
+    };
 
     if (!roadmapItem) return <p className="text-white text-center mt-10">Roadmap not found</p>;
     return (

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
-import FormBar, { type SelectorOption } from "../formBox";
-import { validateTitle, validateCategory } from "../validateFormBox";
-import { defaultImageSrc, bin } from "../image";
+import FormBar, { type SelectorOption } from "../../formBox";
+import { validateTitle, validateCategory } from "../../validateFormBox";
+import { defaultImageSrc, bin } from "../../../lib/image";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "@/store";
 import { addCareer, editCareer, deleteCareer } from "@/store/careerSlice";
@@ -193,7 +193,7 @@ const CareerDetailForm: React.FC<CareerDetailFormProps> = ({
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form id={"career-form"} onSubmit={handleSubmit}>
         <div className="flex flex-col md:flex-row gap-8">
           {/* Left Section: Title, Description, Map */}
           <div className="w-full md:w-1/2">

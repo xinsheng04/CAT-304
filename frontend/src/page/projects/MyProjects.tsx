@@ -2,60 +2,92 @@ import React from "react";
 import SearchBar from "@/component/searchBar";
 import { useState } from "react";
 import RadioGroup from "../../component/projects/radioGroup.tsx";
-import type { ProjectType } from "../../store/projectsSlice.ts";
-import { useSelector } from "react-redux";
+import type { ProjectType } from "../../lib/projectModuleTypes.ts";
+import { useGetAllBasicDetailsOnly } from "@/api/projects/projectsAPI.ts";
+import { useGetAllSubmissionsByCreator } from "@/api/projects/submissionsAPI.ts";
+import { loadUserInfo } from "@/lib/utils.ts";
 import { categoryList } from "@/lib/types.ts";
 import { useNavigate } from "react-router";
 import ProjectCard from "../../component/projects/projectCard.tsx";
 import SubmissionCard from "@/component/projects/submissionCard.tsx";
-
-
+import { LoadingIcon } from "@/component/LoadingIcon";
+import { NotLoggedIn } from "@/component/NotLoggedIn";
+const selections = ["All", ...categoryList];
+const categories = [{
+  value: "created",
+  label: "Created Projects",
+}, {
+  value: "tracked",
+  label: "Tracked Projects",
+}, {
+  value: "done",
+  label: "Projects Marked as Done",
+}, {
+  value: "submissions",
+  label: "Project Submissions",
+}]
 export const MyProjects: React.FC = () => {
   const navigate = useNavigate();
-  const selections = ["All", ...categoryList];
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState(selections[0]);
-  const [submissionType, setSubmissionType] = useState<"Created Projects" | "Tracked Projects" | "Projects Marked as Done" | "Project Submissions">("Created Projects");
-  // const userId = useSelector((state: any) => state.profile.userId);
-  const userId = 1; // Temporary fix until auth is done
+  const [submissionType, setSubmissionType] = useState<"created" | "tracked" | "done" | "submissions">("created");
+  const userId = loadUserInfo()?.userId || null;
 
-  const createdProjects = useSelector((state: any) => state.projects.projectsList)
-    .filter((project: ProjectType) => project.creatorId === userId);
-  const trackedProjects = useSelector((state: any) => state.projectTracking.records)
-    .filter((record: any) => record.userId === userId && record.isTracking);
-  const markedAsDoneProjects = useSelector((state: any) => state.projectTracking.records)
-    .filter((record: any) => record.userId === userId && record.isMarkedAsDone);
-  const submissions = useSelector((state: any) => state.submissions.submissionsList)
-    .filter((submission: any) => submission.creatorId === userId);
+  const { data: createdProjects = [], isLoading: isLoadingCreatedProjects,
+    isError: isErrorCreatedProjects, isSuccess: isSuccessCreatedProjects } = useGetAllBasicDetailsOnly(userId);
+  const { data: submissions = [], isLoading: isLoadingSubmissions,
+    isError: isErrorSubmissions, isSuccess: isSuccessSubmissions } = useGetAllSubmissionsByCreator(userId);
 
+  if(!userId){
+    return <NotLoggedIn />;
+  }
   function handleCategoryChange(value: string) {
     setCategory(value);
   }
-  function navigateToDetails(path: string, destId: number) {
-    navigate(`/${path}/${destId}`);
+
+  if (isLoadingCreatedProjects || isLoadingSubmissions) {
+    return (
+      <div className="mt-2 pt-3 space-y-2 pl-9 bg-gray-800/20 rounded-2xl shadow-2xl w-7xl mx-auto h-[90vh] overflow-hidden">
+        <LoadingIcon text="Loading Projects and Submissions..." />
+      </div>
+    );
+  }
+
+  if (isErrorCreatedProjects || isErrorSubmissions) {
+    const errorMessage = isErrorCreatedProjects
+      ? "Error loading created projects."
+      : "Error loading submissions.";
+    throw new Error(errorMessage);
+  }
+  let filteredProjects = [];
+
+  if(isSuccessCreatedProjects){
+    filteredProjects = createdProjects.filter((project: any) => project.creatorId === userId);
   }
 
   let hasContentToShow = false;
   let targetArr = [];
-  switch (submissionType) {
-    case "Created Projects":
-      targetArr = createdProjects;
-      break;
-    case "Tracked Projects":
-      targetArr = trackedProjects;
-      break;
-    case "Projects Marked as Done":
-      targetArr = markedAsDoneProjects;
-      break;
-    case "Project Submissions":
-      targetArr = submissions;
-      break;
-    default:
-      hasContentToShow = false;
+  if (isSuccessCreatedProjects && isSuccessSubmissions) {
+    switch (submissionType) {
+      case "created":
+        targetArr = filteredProjects;
+        break;
+      case "tracked":
+        targetArr = createdProjects.filter((project: ProjectType & { isTracking: boolean }) => project.isTracking);
+        break;
+      case "done":
+        targetArr = createdProjects.filter((project: ProjectType & { isMarkedAsDone: boolean }) =>
+          project.isMarkedAsDone);
+        break;
+      case "submissions":
+        targetArr = submissions;
+        break;
+      default:
+        hasContentToShow = false;
+    }
+    hasContentToShow = targetArr.length > 0 && (category === "All" ||
+      targetArr.some((record: any) => record.category === category));
   }
-
-  hasContentToShow = targetArr.length > 0 && category === "All" ||
-    targetArr.some((record: any) => record.category === category);
 
   return (
     <div className="pt-6 px-3 w-full mx-auto flex flex-col">
@@ -71,7 +103,7 @@ export const MyProjects: React.FC = () => {
         </div>
         <div className="mx-auto">
           <RadioGroup
-            options={["Created Projects", "Tracked Projects", "Projects Marked as Done", "Project Submissions"]}
+            options={categories}
             selected={submissionType}
             onClick={(value) => setSubmissionType(value)}
             isHorizontal={true}
@@ -81,7 +113,7 @@ export const MyProjects: React.FC = () => {
           />
         </div>
       </div>
-      <div className="w-[82%] fixed bottom-0 top-70 px-10 grid grid-cols-[200px_1fr] gap-10">
+      <div className="w-[82%] fixed top-70 bottom-0 px-10 grid grid-cols-[200px_1fr] gap-10">
         <RadioGroup
           options={selections}
           selected={category}
@@ -89,56 +121,59 @@ export const MyProjects: React.FC = () => {
           isHorizontal={false}
           className="w-50"
         />
-        {submissionType === "Project Submissions" ? (
-          hasContentToShow ? (
-            <div className="pt-5 flex flex-col gap-2">
-              {submissions.map((submission: any) => {
-                const project = createdProjects.find((proj: ProjectType) => proj.projectId === submission.projectId);
-                if (!project) return null;
-                if (category !== "All" && project.category !== category) return null;
-                if (query && !submission.title.toLowerCase().includes(query.toLowerCase()) &&
-                  !project.title.toLowerCase().includes(query.toLowerCase()) &&
-                  !project.shortDescription.toLowerCase().includes(query.toLowerCase())) {
-                  return null;
-                }
-                return (
-                  <SubmissionCard key={submission.submissionId}
-                    creator={submission.creator}
-                    date={submission.postedOn}
-                    title={submission.title}
-                    repoLink={submission.repoLink}
-                    onClick={() => navigateToDetails("project/submission", submission.submissionId)}
-                  />
-                );
-              })}
-            </div>
+        <div className="overflow-y-scroll mt-1 pb-20 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {submissionType === "submissions" ? (
+            hasContentToShow ? (
+              <div className="pt-5 flex flex-col gap-2">
+                {filteredProjects.map((submission: any) => {
+                  const project = createdProjects.find((proj: ProjectType) => proj.projectId === submission.projectId);
+                  if (!project) return null;
+                  if (category !== "All" && project.category !== category) return null;
+                  if (query && !submission.title.toLowerCase().includes(query.toLowerCase()) &&
+                    !project.title.toLowerCase().includes(query.toLowerCase()) &&
+                    !project.shortDescription.toLowerCase().includes(query.toLowerCase())) {
+                    return null;
+                  }
+                  return (
+                    <SubmissionCard key={submission.submissionId}
+                      creator={submission.creator}
+                      date={submission.postedOn}
+                      title={submission.title}
+                      repoLink={submission.repoLink}
+                      onClick={() => navigate(`/project/${submission.projectId}/submission/${submission.submissionId}`)}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-white font-light text-4xl text-center mt-10">
+                No {category === "All" ? "" : category} submissions found
+              </p>
+            )
           ) : (
-            <p className="text-white font-light text-4xl text-center mt-10">
-              No {category === "All" ? "" : category} submissions found
-            </p>
-          )
-        ) : (
-          hasContentToShow ? (
-            <div className="pt-5 grid grid-cols-3 gap-2 scroll-auto">
-              {targetArr.map((project: ProjectType) => {
-                if (category !== "All" && project.category !== category) return null;
-                if (query && !project.title.toLowerCase().includes(query.toLowerCase()) &&
-                  !project.shortDescription.toLowerCase().includes(query.toLowerCase())) {
-                  return null;
-                }
-                return (
-                  <ProjectCard key={project.projectId} projectId={project.projectId}
-                    onClick={() => navigateToDetails("project", project.projectId)}
-                  />
-                );
-              })}
-            </div>
-          ) : (
-            <p className="text-white font-light text-4xl text-center mt-10">
-              No {category === "All" ? "" : category} projects found
-            </p>
-          )
-        )}
+            hasContentToShow ? (
+              <div className="pt-5 grid grid-cols-3 gap-2 auto-rows-max">
+                {targetArr.map((project: any) => {
+                  if (category !== "All" && project.category !== category) return null;
+                  if (query && !project.title.toLowerCase().includes(query.toLowerCase()) &&
+                    !project.shortDescription.toLowerCase().includes(query.toLowerCase())) {
+                    return null;
+                  }
+                  return (
+                    <ProjectCard
+                      key={project.projectId}
+                      project={project}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-white font-light text-4xl text-center mt-10">
+                No {category === "All" ? "" : category} projects found
+              </p>
+            )
+          )}
+        </div>
       </div>
     </div>
   );
