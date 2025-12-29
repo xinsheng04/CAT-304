@@ -1,3 +1,4 @@
+import axios from "axios";
 import Api from "./index.ts";
 import { useQuery} from "@tanstack/react-query";
 
@@ -6,7 +7,6 @@ export function useGetCommitHistory(repoLink: string) {
     queryKey: ["commitHistory", repoLink],
     queryFn: () => {
       const { owner, repo } = parseGitHubRepoLink(repoLink);
-      console.log("Fetching commits for:", owner, repo);
       return fetchAllCommits(owner, repo);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -17,8 +17,10 @@ export function useGetMainRepoLanguage(repoLink: string) {
   return useQuery({
     queryKey: ["mainRepoLanguage", repoLink],
     queryFn: async () => {
+      if(repoLink === null || repoLink === undefined || repoLink === ""){
+        return "";
+      }
       const { owner, repo } = parseGitHubRepoLink(repoLink);
-      console.log("Fetching main language for:", owner, repo);
       const url = `https://api.github.com/repos/${owner}/${repo}`;
       const response = await Api.get(url, {
         headers: { 
@@ -41,51 +43,71 @@ export function parseGitHubRepoLink(repoLink: string): { owner: string; repo: st
 }
 
 
+
 export async function fetchAllCommits(owner: string, repo: string) {
   const perPage = 100;
   let page = 1;
   let allCommits: any[] = [];
 
-  try{
+  try {
     while (true) {
-      const url = `https://api.github.com/repos/${owner}/${repo}/commits`;
-      const response = await Api.get(url, {
-        params: {
-          per_page: perPage,
-          page: page,
-        },
-        headers: { 
-          Accept: "application/vnd.github+json" 
-        },
-      });
+      const response = await Api.get(
+        `https://api.github.com/repos/${owner}/${repo}/commits`,
+        {
+          params: { per_page: perPage, page },
+          headers: {
+            Accept: "application/vnd.github+json",
+          },
+        }
+      );
 
-      // changed: response.data is already an array of commits
       const commits = response.data;
-      
-      // changed: check if array is empty, then map and transform
-      if (!Array.isArray(commits) || commits.length === 0) {
-        break;
-      }
-      
-      // changed: map each commit to extract only hash, message, date
-      const transformedCommits = commits.map(commit => ({
-        hash: commit.sha,
+
+      if (!Array.isArray(commits) || commits.length === 0) break;
+
+      const transformedCommits = commits.map((commit: any) => ({
+        hash: commit.sha.substring(0, 6),
         message: commit.commit.message,
         date: commit.commit.author.date,
+        link: commit.html_url,
       }));
-      
-      allCommits = allCommits.concat(transformedCommits);
-      page += 1;
+
+      allCommits.push(...transformedCommits);
+      page++;
     }
-    
-    if(allCommits.length === 0){
-      throw new Error("No commits found.");
+
+    if (allCommits.length === 0) {
+      throw new Error("NO_COMMITS");
     }
-    console.log(`Fetched ${allCommits.length} commits for ${owner}/${repo}`);
-    console.log(allCommits);
+
     return allCommits;
-  } catch(error){
-    console.error("Error fetching commits:", error);
-    throw error;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status;
+
+      if (status === 401) {
+        throw new Error(
+          "This repository is private or inaccessible. Please make sure the repository is public."
+        );
+      }
+
+      if (status === 403) {
+        throw new Error(
+          "GitHub API rate limit exceeded. Please try again later."
+        );
+      }
+
+      if (status === 404) {
+        throw new Error(
+          "Repository not found. Please check the owner and repository name."
+        );
+      }
+    }
+
+    if (error instanceof Error && error.message === "NO_COMMITS") {
+      throw new Error("No commits found for this repository.");
+    }
+
+    throw new Error("Failed to fetch commits from GitHub.");
   }
 }

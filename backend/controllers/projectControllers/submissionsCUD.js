@@ -5,7 +5,6 @@ import { supabase } from "../../config.js";
 Input:
   Params: None
   Body: {
-    projectId: number;
     creatorId: number;
     title: string;
     repoLink: string;
@@ -15,13 +14,16 @@ Output: None
 */
 
 export const submitProject = async (req, res) => {
-  const { projectId, creatorId, title, repoLink, rationaleFile } = req.body;
+  const { projectId } = req.params;
+  const { creatorId, title, repoLink, rationaleFile } = req.body;
+  const postedOn = new Date().toISOString();
+  const lastUpdated = postedOn;
   const { error } = await supabase
     .from("Submissions")
-    .insert([{ projectId, creatorId, title, repoLink, rationaleFile }]);
+    .insert([{ projectId, creatorId, title, postedOn, lastUpdated, repoLink, rationaleFile }]);
 
-  if (error) return res.status(500).json({ error });
-  return res.status(201).json({ message: "Submission created successfully" });
+  if (error) return res.status(500).json({ error: error.message });
+  return res.status(201).json({ message: "SUCCESS" });
 }
 
 // Controller to update project submission
@@ -45,7 +47,7 @@ export const updateSubmission= async (req, res) => {
     .update(updateData)
     .eq("submissionId", submissionId);
   if (error) return res.status(500).json({ error });
-  return res.status(200).json({ message: "Submission updated successfully" });
+  return res.status(200).json({ message: "SUCCESS" });
 }
 
 // Controller to delete project submission
@@ -63,5 +65,5 @@ export const deleteSubmission = async (req, res) => {
     .delete()
     .eq("submissionId", submissionId);
   if (error) return res.status(500).json({ error });
-  return res.status(200).json({ message: "Submission deleted successfully" });
+  return res.status(200).json({ message: "SUCCESS" });
 }

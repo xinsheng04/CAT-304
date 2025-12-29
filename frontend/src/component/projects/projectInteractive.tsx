@@ -3,8 +3,9 @@ import { Button } from "@/component/shadcn/button";
 import { FieldGroup } from "@/component/shadcn/field";
 import { ProjectForm } from "../../page/projects/projectForm";
 import { SubmissionForm } from "../../page/projects/submissionForm";
-import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
+import { usePutTrackingData, useDeleteProject } from "@/api/projects/projectsAPI";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogTrigger,
@@ -12,7 +13,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/component/shadcn/dialog";
+import { toast } from "sonner";
 import { commonBackgroundClass } from "@/lib/styles";
 
 interface ProjectInteractiveProps {
@@ -21,26 +24,66 @@ interface ProjectInteractiveProps {
   project: any;
   submissionDialogOpen: boolean;
   setSubmissionDialogOpen: (value: boolean) => void;
+  isAdmin?: boolean;
 }
 
-export const ProjectInteractive: React.FC<ProjectInteractiveProps> = ({ userId, projectId, project, submissionDialogOpen, setSubmissionDialogOpen }) => {
-  const dispatch = useDispatch();
+export const ProjectInteractive: React.FC<ProjectInteractiveProps> = ({ userId, projectId, project,
+  submissionDialogOpen, setSubmissionDialogOpen, isAdmin = false }) => {
+  const navigate = useNavigate();
+  const { mutateAsync: putTrackingData } = usePutTrackingData(userId, projectId);
+  const { mutateAsync: deleteProject, isPending: isDeleting } = useDeleteProject(projectId);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const trackingData = useSelector((state: any) =>
-    state.projectTracking.records.find(
-      (record: any) => record.userId === userId && record.projectId === projectId
-    )
-  ) || { isTracking: false, isMarkedAsDone: false };
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isTracking, setIsTracking] = useState(project?.isTracking || false);
+  const [isMarkedAsDone, setIsMarkedAsDone] = useState(project?.isMarkedAsDone || false);
+
+  const isCreator = userId === project?.creatorId;
+  const hasManagementAccess = isCreator || isAdmin;
+
+  async function handleDeleteProject() {
+    const response = await deleteProject();
+    if (response.message === "SUCCESS") {
+      toast.success("Project deleted successfully.");
+      navigate("/project");
+    } else {
+      toast.error(`Failed to delete the project. ${response.message}`);
+    }
+    setDeleteDialogOpen(false);
+  }
+
+  async function handleTrackingToggle(aspect: "tracking" | "done") {
+    let response;
+    if(aspect === "tracking"){
+      setIsTracking(!isTracking);
+      response = await putTrackingData({
+        isTracking: !isTracking,
+        isMarkedAsDone: isMarkedAsDone,
+      });
+    } else{
+      setIsMarkedAsDone(!isMarkedAsDone);
+      response = await putTrackingData({
+        isTracking: isTracking,
+        isMarkedAsDone: !isMarkedAsDone,
+      });
+    }
+    if (response.message === "SUCCESS") {
+      if(aspect === "tracking"){
+        toast.success(`${!isTracking ? "Started" : "Stopped"} tracking this project.`);
+      } else {
+        toast.success(`Project marked as ${!isMarkedAsDone ? "done" : "not done"}.`);
+      }
+    }
+  }
 
   return (
     <div className="flex h-auto items-center mt-5 bg-black/50 text-sm w-fit rounded-2xl">
-      {
-        userId === project?.creatorId && (
+      <>
+        {isCreator && (
           <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
             <DialogTrigger asChild>
               <Button
                 variant="outline"
-                className="cursor-pointer rounded-none rounded-l-2xl"
+                className="cursor-pointer rounded-none rounded-l-2xl hover:bg-green-600 hover:border-green-600 hover:text-white"
               >! Edit Project</Button>
             </DialogTrigger>
             <DialogContent className={commonBackgroundClass}>
@@ -53,18 +96,49 @@ export const ProjectInteractive: React.FC<ProjectInteractiveProps> = ({ userId, 
               <FieldGroup className={commonBackgroundClass}>
                 <ProjectForm
                   initialData={project}
+                  projectId={projectId}
                   close={() => setEditDialogOpen(false)}
                 />
               </FieldGroup>
             </DialogContent>
           </Dialog>
-        )
-      }
+        )}
+
+        {hasManagementAccess && (
+          <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                className={`cursor-pointer rounded-none hover:bg-red-600 hover:border-red-600 hover:text-white ${!isCreator ? "rounded-l-2xl" : ""
+                  }`}
+              >
+                Delete Project
+              </Button>
+            </DialogTrigger>
+            <DialogContent className={commonBackgroundClass}>
+              <DialogHeader>
+                <DialogTitle>Delete Project</DialogTitle>
+                {
+                  isDeleting ? <DialogDescription>Deleting project...</DialogDescription> : (
+                    <DialogDescription>
+                      Are you sure you want to delete this project? This action cannot be undone.
+                    </DialogDescription>
+                  )
+                }
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} className="text-black">Cancel</Button>
+                <Button variant="destructive" onClick={handleDeleteProject} disabled={isDeleting}>Delete</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+      </>
       <Dialog open={submissionDialogOpen} onOpenChange={setSubmissionDialogOpen}>
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            className={`cursor-pointer rounded-none ${userId !== project?.creatorId && "rounded-l-2xl"}`}
+            className={`cursor-pointer rounded-none hover:bg-blue-600 hover:border-blue-600 hover:text-white ${!hasManagementAccess ? "rounded-l-2xl" : ""}`}
           >+ Add a Submission</Button>
         </DialogTrigger>
         <DialogContent className={commonBackgroundClass}>
@@ -85,34 +159,22 @@ export const ProjectInteractive: React.FC<ProjectInteractiveProps> = ({ userId, 
         </DialogContent>
       </Dialog>
       <Toggle
-        pressed={trackingData?.isTracking}
-        onPressedChange={() => {
-          dispatch({
-            type: 'projectTracking/setTrackingStatus', payload: {
-              userId: userId,
-              projectId: projectId,
-              isTracking: !trackingData?.isTracking,
-              isMarkedAsDone: trackingData?.isMarkedAsDone,
-            }
-          });
+        pressed={isTracking}
+        onPressedChange={async () => {
+          handleTrackingToggle("tracking");
         }}
-        className={`cursor-pointer bg-black text-white px-4 rounded-none hover:bg-blue-300 hover:text-black data-[state=on]:bg-blue-600 data-[state=on]:text-white`}
+        disabled={!userId}
+        className={`${!userId ? "cursor-not-allowed" : "cursor-pointer"} bg-black text-white px-4 rounded-none hover:bg-blue-300 hover:text-black data-[state=on]:bg-blue-600 data-[state=on]:text-white`}
       >
         Track this project
       </Toggle>
       <Toggle
-        pressed={trackingData?.isMarkedAsDone}
+        pressed={isMarkedAsDone}
         onPressedChange={() => {
-          dispatch({
-            type: 'projectTracking/setTrackingStatus', payload: {
-              userId: userId,
-              projectId: projectId,
-              isTracking: trackingData?.isTracking,
-              isMarkedAsDone: !trackingData?.isMarkedAsDone,
-            }
-          });
+          handleTrackingToggle("done");
         }}
-        className={`cursor-pointer bg-black text-white px-4 rounded-r-2xl rounded-l-none hover:bg-green-300 hover:text-black data-[state=on]:bg-green-600 data-[state=on]:text-white`}
+        disabled={!userId}
+        className={`${!userId ? "cursor-not-allowed" : "cursor-pointer"} bg-black text-white px-4 rounded-r-2xl rounded-l-none hover:bg-green-300 hover:text-black data-[state=on]:bg-green-600 data-[state=on]:text-white`}
       >
         Mark as Done
       </Toggle>

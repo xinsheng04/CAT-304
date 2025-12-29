@@ -1,142 +1,117 @@
 import { useEffect, useState } from "react";
-
-type SkillOptionsProps = {
-  userId: number;
-  editable: boolean;
+import { getSkillOptions, getUserSkills, saveMySkills } from "@/api/profile/skillAPI";
+type Skill = {
+  id: string;
+  name: string;
 };
-
-export default function SkillOptions({ userId, editable }: SkillOptionsProps) {
-  const defaultSkills = [
-    "Python", 
-    "C++", 
-    "JavaScript", 
-    "React", 
-    "HTML", 
-    "CSS",
-    "Node.js", 
-    "UI/UX", 
-    "SQL", 
-    "R", 
-    "Supabase",
-    "TypeScript", 
-    "Java", 
-    "C", 
-    "C#"
-  ];
-
-  const profileKey = `userProfile_${userId}`;
-
-  const [skills, setSkills] = useState<string[]>([]);
-  const [draftSkills, setDraftSkills] = useState<string[]>([]);
-  const [selecting, setSelecting] = useState(false);
-
-  /* Load skills whenever userId changes */
+export default function SkillOptions({ userId, editable }: { userId: string, editable: boolean }) {
+  const [options, setOptions] = useState<Skill[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [draft, setDraft] = useState<Skill[]>([]);
+  const [editing, setEditing] = useState(false);
+  // Load user skills once we have the userId
   useEffect(() => {
-    const stored = localStorage.getItem(profileKey);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      setSkills(parsed.skills ?? []);
-    } else {
-      setSkills([]);
-    }
-    setSelecting(false);
-  }, [profileKey]);
+    let cancelled = false;
 
-  const toggleSkill = (skill: string) => {
-    setDraftSkills(prev =>
-      prev.includes(skill)
-        ? prev.filter(s => s !== skill)
-        : [...prev, skill]
+    const loadSkills = async () => {
+      try {
+        // Check loading Me or a Friend
+        const [opt, userSkills] = await Promise.all([
+          getSkillOptions(),
+          getUserSkills(userId) 
+        ]);
+
+        if (cancelled) return;
+        setOptions(opt);
+        setSkills(userSkills);
+      } catch (err) {
+        console.error("Failed to load skills:", err);
+      }
+    };
+
+    if (userId) loadSkills(); // Only load if we have an ID
+
+    return () => { cancelled = true; };
+  }, [userId]);
+
+  const toggle = (skill: Skill) => {
+  setDraft((prev) =>
+    prev.some((s) => s.id === skill.id)
+      ? prev.filter((s) => s.id !== skill.id)
+      : [...prev, skill]
     );
   };
 
-  const handleSave = () => {
-    const stored = localStorage.getItem(profileKey)
-    if (!stored) return;
-
-    const profile = JSON.parse(stored);
-    const updatedProfile = { ...profile, role: profile.role ?? "" ,skills: draftSkills };
-
-    localStorage.setItem(profileKey, JSON.stringify(updatedProfile));
-    setSkills(draftSkills);
-    setSelecting(false);
-
-    window.dispatchEvent(new Event("profile-updated"));
-    alert("Skills saved succesfuly!");
-  };
-
-
-  const handleCancel = () => {
-    setSelecting(false);
-    setDraftSkills([]);
+  // Save to backend
+  const save = async () => {
+    const skillIds = draft.map((s) => s.id);
+    await saveMySkills(skillIds);
+    setSkills(draft);
+    setEditing(false);
   };
 
   return (
-    <div className="space-y-4 ml-4">
-      {/* Display text when no skills added */}
-      <div className="flex flex-wrap gap-2">
-         {skills.length === 0 && (
-          <span className="text-gray-400 italic">
-            {editable ? "You haven’t added any skills yet": "No skills added yet"}
-          </span>
-        )}
+    <div className="space-y-4">
+      {/* Display skills */}
+        <div className="flex flex-wrap gap-2">
+          {Array.isArray(skills) && skills.length > 0 ? (
+            skills.map((skill) => (
+              <span
+                key={`skill-${skill.id}`}
+                className="bg-purple-500 text-white px-3 py-1 rounded-full"
+              >
+                {skill.name}
+              </span>
+            ))
+          ) : (
+            <span className="text-gray-400 italic">
+              {editable ? "You haven’t added any skills yet" : "No skills added"}
+            </span>
+          )}
 
-        {/* Display skills */}
-        {skills.map(skill => (
-          <span
-            key={skill}
-            className="px-4 py-1.5 text-sm bg-purple-500 text-white rounded-full"
-          >
-            {skill}
-          </span>
-        ))}
-
-        {/* Owner-only add button */}
-        {editable && (
-          <span
-            onClick={() => {
-              setDraftSkills(skills);
-              setSelecting(true);
-            }}
-            className="px-3 py-1 text-sm bg-gray-300 hover:bg-gray-400 cursor-pointer rounded-full"
-          >
-            + New
-          </span>
-        )}
+          {editable && (
+            <span
+              onClick={() => {
+                setDraft([...skills]);
+                setEditing(true);
+              }}
+              className="px-3 py-1 bg-gray-300 cursor-pointer rounded-full"
+            >
+              + New
+            </span>
+          )}
       </div>
-
-      {/* Skill picker */}
-      {editable && selecting && (
-        <div className="p-4 bg-gray-300/70 rounded-lg space-y-4">
-          <h3 className="font-semibold">Choose Skills</h3>
+      
+      {editable && editing && (
+        <div className="bg-gray-200 p-4 rounded">
+          <h3 className="font-semibold mb-2">Choose Skills</h3>
 
           <div className="flex flex-wrap gap-2">
-            {defaultSkills.map(skill => {
-              const active = draftSkills.includes(skill);
-              return (
-                <span
-                  key={skill}
-                  onClick={() => toggleSkill(skill)}
-                  className={`px-4 py-1.5 rounded-full cursor-pointer ${
-                    active? "bg-blue-500 text-white": "bg-gray-200 text-black"}`}>
-                  {skill}
-                </span>
-              );
-            })}
+            {options.map((skill) => (
+              <span
+                key={`skill-${skill.id}`}
+                onClick={() => toggle(skill)}
+                className={`px-3 py-1 rounded-full cursor-pointer ${
+                  draft.some((s) => s.id === skill.id)
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-300"
+                }`}
+              >
+                {skill.name}
+              </span>
+            ))}
           </div>
 
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-2 mt-4">
             <button
-            type= "button"
-              onClick={handleCancel}
-              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded"
+              onClick={() => setEditing(false)}
+              className="px-3 py-1 bg-red-500 text-white rounded"
             >
               Cancel
             </button>
             <button
-              type= "button"
-              onClick={handleSave}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded"
+              onClick={save}
+              className="px-3 py-1 bg-green-500 text-white rounded"
             >
               Save
             </button>

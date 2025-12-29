@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import { useGetRoadmaps } from "@/api/roadmaps/roadmapAPI";
+import { useGetAllChapters } from "@/api/roadmaps/chapterAPI";
+import { useGetAllLinks } from "@/api/roadmaps/linkAPI";
 import RoadmapSidebar from "../../component/roadmaps/sidebar";
 import RoadmapItemList from "../../component/roadmaps/Selector/roadmapList";
 import SectionBlock from "../../component/roadmaps/sectionBlock";
 import SearchBar from "../../component/searchBar";
 import { generateTags } from "../../component/roadmaps/groupTag";
-import { useSelector } from "react-redux";
+import { Spinner } from "@/component/shadcn/spinner";
+import { getActiveUserField } from "@/lib/utils";
 
 export type Section = {
   id: string;
@@ -33,12 +37,20 @@ const sections: Section[] = [
 
 export const Roadmap: React.FC = () => {
   const [query, setQuery] = useState("");
-  const userID = localStorage.getItem("userID");
-  const isLoggedIn = userID && userID !== "0";
+  const userID = getActiveUserField("userId");
 
-  const roadmapData = useSelector((state: any) => state.roadmap.roadmapList);
-  const pillarsData = useSelector((state: any) => state.chapter.pillarList);
-  const linksData = useSelector((state: any) => state.link.linkList);
+  const { data: roadmapData = [], isLoading: roadmapLoading } = useGetRoadmaps(userID);
+  const { data: pillarsData = [], isLoading: pillarLoading } = useGetAllChapters(userID);
+  const { data: linksData = [], isLoading: linkLoading } = useGetAllLinks(userID);
+
+  if ( roadmapLoading || pillarLoading || linkLoading ) {
+    return(
+      <div className="flex h-screen -translate-y-2 w-full items-center justify-center">
+        <Spinner className="size-20 text-amber-50" />
+        <span className="text-amber-50 text-3xl">Loading Roadmaps...</span>
+      </div>
+    )
+  }
 
   const getRecentlyViewedRoadmaps = (sourceData: any[]) => {
     return sourceData.filter((roadmap: any) => {const roadmapID = Number(roadmap.roadmapID);
@@ -70,21 +82,21 @@ export const Roadmap: React.FC = () => {
 
   const getItemsForSection = (section: Section) => {
     // User own designs
-    if (section.id === "your-design" && isLoggedIn && userID) {
+    if (section.id === "your-design" && userID) {
       return filteredRoadmapData.filter(
-        (item: any) => item.creatorID === Number(userID)
+        (item: any) => item.creatorID === userID
       );
     }
 
     // New content that is not created by the user
-    if (section.id === "whats-new" && isLoggedIn && userID) {
+    if (section.id === "whats-new" && userID) {
       return filteredRoadmapData.filter(
-        (item: any) => item.creatorID !== Number(userID)
+        (item: any) => item.creatorID !== userID
       );
     }
 
     // Recently viewed roadmaps
-    if (section.id === "recently-viewed" && isLoggedIn) {
+    if (section.id === "recently-viewed") {
       return getRecentlyViewedRoadmaps(filteredRoadmapData);
     }
 
@@ -106,7 +118,7 @@ export const Roadmap: React.FC = () => {
 
   const availableSections = sections.filter((section) => {
     // Hide certain sections for guest users
-    if (!isLoggedIn && ["recently-viewed", "your-design"].includes(section.id)) {
+    if (!userID && ["recently-viewed", "your-design"].includes(section.id)) {
       return false;
     }
 

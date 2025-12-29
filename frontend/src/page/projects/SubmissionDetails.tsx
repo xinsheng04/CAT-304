@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { loadUserInfo } from "@/lib/utils";
 import { useParams } from "react-router";
 import { useGetCommitHistory } from "@/api/getCommitHistory";
-import { formatDate, base64ToString } from "@/lib/utils";
+import { useGetSubmissionById } from "@/api/projects/submissionsAPI";
+import { formatDate } from "@/lib/utils";
 import RadioGroup from "@/component/projects/radioGroup";
-import ReactMarkdown from "react-markdown";
+import RenderMD from "@/component/RenderMD/RenderMD";
 import { Button } from "../../component/shadcn/button";
 import { SubmissionForm } from "./submissionForm";
 import { ellipsifyText } from "@/lib/utils";
@@ -12,38 +13,51 @@ import { FieldGroup } from "@/component/shadcn/field";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/component/shadcn/dialog";
 import { commonBackgroundClass, commonMarkDownClass } from "@/lib/styles";
 import { GitHubLink } from "@/component/projects/gitHubLink";
+import { LoadingIcon } from "@/component/LoadingIcon";
 
 const SubmissionDetails: React.FC = () => {
-  const { submissionId } = useParams<{ submissionId: string }>();
+  const { projectId, submissionId } = useParams<{ projectId: string; submissionId: string }>();
 
-  const submission = useSelector((state: any) => state.submissions.submissionsList.find((sub: any) => sub.submissionId === Number(submissionId)));
+  type displaySectionType = "commits" | "rationale";
+  const [displaySection, setDisplaySection] = useState<displaySectionType>("commits");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const username = loadUserInfo()?.username || null;
+
+  const {
+    data: submission,
+    isLoading: submissionIsLoading,
+    isError: submissionIsError,
+    error: submissionError
+  } = useGetSubmissionById(Number(projectId), Number(submissionId));
   const {
     data: commitHistory,
     isLoading: commitsIsLoading,
     isError: getCommitsIsError,
     error: getCommitsError
   } = useGetCommitHistory(submission?.repoLink || "");
-  const creatorId = submission.creatorId;
-  const creatorName = useSelector((state: any) => state.userList.userList.find((user: any) => user.userId === creatorId))?.username;
-  const userName = useSelector((state: any) => state.profile.username);
-  const projectId = submission?.projectId;
-  const projectTitle = useSelector((state: any) =>
-    state.projects.projectsList.find((proj: any) => proj.projectId === projectId)
-  )?.title;
 
-  type displaySectionType = "Commits History" | "Rationale File";
-  const [displaySection, setDisplaySection] = useState<displaySectionType>("Commits History");
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  if (submissionIsLoading) {
+    return (
+      <div className="mt-2 pt-3 space-y-2 pl-9 bg-gray-800/20 rounded-2xl shadow-2xl w-7xl mx-auto h-fit min-h-[90vh] mb-10 overflow-hidden">
+        <LoadingIcon text="Loading Submission Details..." />
+      </div>
+    )
+  }
+
+  if (submissionIsError) {
+    throw new Error(`Error loading submission: ${submissionError?.message}`);
+  }
+
   function handleDisplaySectionChange(value: displaySectionType) {
     setDisplaySection(value);
   }
 
   return (
-    <div className="text-left mt-2 pt-3 space-y-2 pl-9 bg-gray-800/20 rounded-2xl shadow-2xl w-7xl mx-auto h-full">
+    <div className="text-left mt-2 pt-3 space-y-2 pl-9 bg-gray-800/40 rounded-2xl shadow-2xl w-7xl mx-auto h-full">
       <h1 className="text-left mt-2 text-4xl font-extralight text-white">{submission?.title}</h1>
-      <p className="text-white text-[1.5rem] font-light">Submission by: {creatorName}</p>
+      <p className="text-white text-[1.5rem] font-light">Submission by: {submission.creatorName}</p>
       <p className="text-white text-[1.2rem]">
-        Project: {projectTitle} | Created By: {submission?.creator}
+        Project: {submission.projectTitle} | Created By: {submission.creatorName}
       </p>
       <p className="text-white text-[1rem]">
         <span>Submitted On: {submission?.postedOn && formatDate(new Date(submission.postedOn))} </span>
@@ -52,7 +66,7 @@ const SubmissionDetails: React.FC = () => {
 
       <GitHubLink repoUrl={submission?.repoLink || ""} title="This submission contains a GitHub repository link." />
       {
-        creatorName === userName &&
+        submission.creatorName === username &&
         <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
           <DialogTrigger asChild>
             <Button
@@ -70,7 +84,7 @@ const SubmissionDetails: React.FC = () => {
             <FieldGroup className={commonBackgroundClass}>
               <SubmissionForm
                 close={() => setEditDialogOpen(false)}
-                projectId={projectId || ""}
+                projectId={submission.projectId || ""}
                 openAsCreateForm={false}
                 initialData={submission}
               />
@@ -80,7 +94,10 @@ const SubmissionDetails: React.FC = () => {
       }
       <div className="flex justify-start items-center gap-5">
         <RadioGroup
-          options={["Commits History", "Rationale File"]}
+          options={[
+            { label: "Commits History", value: "commits" },
+            { label: "Rationale File", value: "rationale" }
+          ]}
           selected={displaySection}
           onClick={handleDisplaySectionChange}
           isHorizontal={true}
@@ -91,10 +108,13 @@ const SubmissionDetails: React.FC = () => {
       </div>
 
       <div className="text-white mt-4 mb-10">
-        {displaySection === "Commits History" && (
+        {displaySection === "commits" && (
           <div>
             <div className="prose prose-invert max-w-none mt-4 text-white text-left">
-              {commitsIsLoading && <p>Loading commit history...</p>}
+              {commitsIsLoading &&
+                <div className="mt-2 pt-3 space-y-2 pl-9 bg-gray-800/20 rounded-2xl shadow-2xl w-7xl mx-auto h-[90vh] overflow-hidden">
+                  <LoadingIcon text="Loading Commit Histories..." />
+                </div>}
               {getCommitsIsError && <p>{getCommitsError.message}</p>}
             </div>
             {
@@ -111,8 +131,12 @@ const SubmissionDetails: React.FC = () => {
                     </thead>
                     <tbody>
                       {commitHistory.map((commit: any, idx: number) => (
-                        <tr key={commit.hash} className={`border-b border-gray-600 hover:bg-gray-700/50 transition-colors ${idx % 2 === 0 ? 'bg-gray-800' : 'bg-gray-600'}`}>
-                          <td className="px-4 py-3 font-mono text-xs text-green-400">{ellipsifyText(commit.hash)}</td>
+                        <tr key={commit.hash} className={`border-b border-gray-600 hover:bg-black transition-colors ${idx % 2 === 0 ? 'bg-gray-800' : 'bg-gray-600'}`}>
+                          <td className="px-4 py-3 font-mono text-xs text-green-400">
+                            <a href={commit.link} target="_blank" rel="noopener noreferrer" key={commit.hash}>
+                              {ellipsifyText(commit.hash)}
+                            </a>
+                          </td>
                           <td className="px-4 py-3 text-sm text-gray-100 truncate max-w-xs">{commit.message}</td>
                           <td className="px-4 py-3 text-sm text-gray-400 whitespace-nowrap">{formatDate(new Date(commit.date))}</td>
                         </tr>
@@ -126,11 +150,11 @@ const SubmissionDetails: React.FC = () => {
             }
           </div>
         )}
-        {displaySection === "Rationale File" && (
+        {displaySection === "rationale" && (
           <div className={`prose prose-invert max-w-none mt-4 text-white text-left ${commonMarkDownClass}`}>
-              <ReactMarkdown>
-                {submission?.rationaleFile ? base64ToString(submission.rationaleFile) : "No project details available."}
-              </ReactMarkdown>
+            <RenderMD>
+              {submission?.rationaleFile || "No project details available."}
+            </RenderMD>
           </div>
         )}
       </div>

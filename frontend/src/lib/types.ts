@@ -3,7 +3,7 @@ import type { SelectorOption } from "@/component/formBox";
 export type Difficulty = "Beginner" | "Intermediate" | "Advanced";
 
 export type Category = "Web Development" | "Mobile Apps" | "Machine Learning" | "Game Development" | "Data Science";
-export const categoryList: Category[] = ["Web Development", "Mobile Apps", "Machine Learning", "Game Development", "Data Science"];
+export const categoryList: any[] = ["Web Development", "Mobile Apps", "Machine Learning", "Game Development", "Data Science", "DevOps", "Cloud Computing", "Cybersecurity", "Embedded Systems", "AR/VR", "Blockchain", "IoT", "NLP", "Data Engineering", "Database Management", "Frontend", "Backend", "Fullstack"];
 
 export type Dashboard = "Profile" | "Activity" | "Skill" | "Setting";
 export const dashboardList: Dashboard[] = ["Profile", "Skill", "Activity", "Setting"];
@@ -26,7 +26,6 @@ export const roadmapCategoryOptions: SelectorOption[] = [
     { value: 'Csharp', label: 'C# / .NET' },
     { value: 'GoLang', label: 'Go (Golang)' },
     { value: 'Rust', label: 'Rust' },
-    { value: 'DevOps', label: 'DevOps' },
     { value: 'Database SQL', label: 'Databases (SQL/NoSQL)' },
     { value: 'Data Structures', label: 'Data Structures & Algorithms (DSA)' },
     { value: 'React', label: 'React.js' },
@@ -42,7 +41,6 @@ export const roadmapCategoryOptions: SelectorOption[] = [
     { value: 'Docker_K8s', label: 'Docker & Kubernetes' },
     { value: 'Cloud AWS', label: 'Cloud Development (AWS)' },
     { value: 'Cloud Azure', label: 'Cloud Development (Azure)' },
-    { value: 'Machine Learning', label: 'Machine Learning' },
     { value: 'Data Science', label: 'Data Science' },
     { value: 'Big Data', label: 'Big Data Engineering' },
     { value: 'Deep Learning', label: 'Deep Learning' },
@@ -51,4 +49,5 @@ export const roadmapCategoryOptions: SelectorOption[] = [
     { value: 'iOS Native', label: 'iOS (Swift/Objective-C)' },
     { value: 'React Native', label: 'React Native' },
     { value: 'Flutter', label: 'Flutter / Dart' },
-]
+];
+

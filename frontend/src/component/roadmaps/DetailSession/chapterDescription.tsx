@@ -1,13 +1,13 @@
 import React from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import { TagPill } from "../../tag";
 import type { Tag } from "../../tag";
 import { X } from 'lucide-react';
-import { useSelector } from "react-redux";
-import type { UserListType } from "@/store/userListSlice";
-import type { RoadmapType } from "@/store/roadmapSlice";
-import type { PillarType } from "@/store/pillarsSlice";
-import type { LinkType } from "@/store/linksSlice";
+import { useGetSingleChapter } from "@/api/roadmaps/chapterAPI";
+import { useGetSingleRoadmap } from "@/api/roadmaps/roadmapAPI";
+import { IMAGE_MAP, defaultImageSrc } from "@/lib/image";
+import { getActiveUserField } from "@/lib/utils";
+import { useGetSingleProfile } from "@/api/profile/profileAPI";
 
 interface PillarDescription {
     selectedChapterID: number;
@@ -17,29 +17,21 @@ const ChapterDescription: React.FC<PillarDescription> = ({
     selectedChapterID
 }) => {
     const navigate = useNavigate();
-    const userID = localStorage.getItem("userID");
-    const userData = useSelector((state: any) => state.userList.userList) as UserListType[];
-    const roadmapData = useSelector((state: any) => state.roadmap.roadmapList) as RoadmapType[];
-    const pillarData = useSelector((state: any) => state.chapter.pillarList) as PillarType[];
-    const linksData = useSelector((state: any) => state.link.linkList) as LinkType[];
-    const chapterItem = pillarData.find(p => p.chapterID === selectedChapterID);
-    if (!chapterItem) return <p className="text-white text-center mt-10">Chapter not found</p>;
-    const imageSrc = roadmapData.find(r => r.roadmapID === chapterItem.roadmapID)?.imageSrc || 'placeholder-image.jpg';
-    const creator = roadmapData.find(r => r.roadmapID === chapterItem.roadmapID)?.creatorID || 'Unknown Creator';
-    const username = userData.find(user => user.userId === creator)?.username || 'Unknown Username';
-    const roadmapSlug = roadmapData.find(r => r.roadmapID === chapterItem.roadmapID)?.roadmapSlug || 'Unknown Roadmap Slug';
+    const userID = getActiveUserField("userId");
+    const { roadmapID } = useParams<{ roadmapID: string }>();
 
-    const filterLinksData = linksData.filter(data => data.chapterID === selectedChapterID);
-    const uniqueModifiedDate = [Date.parse(chapterItem.modifiedDate),
-                                ...new Set(filterLinksData.map(data => Date.parse(data.modifiedDate)))];
-    let latestModifiedDate: string;
-    if (uniqueModifiedDate.length > 0) {
-        const maxTimestamp: number = Math.max(...uniqueModifiedDate);
-        const latestDateObject: Date = new Date(maxTimestamp);
-        latestModifiedDate = latestDateObject.toISOString().slice(0,10);
+    const { data: roadmapItem, isLoading: roadmapLoading } = useGetSingleRoadmap(Number(roadmapID), userID);
+    const creator = roadmapItem?.creatorID ?? 'Unknown Creator';
+    const { data: chapterItem , isLoading: chapterLoading } = useGetSingleChapter(Number(roadmapID),selectedChapterID,userID);
+    const { data: userProfile , isLoading: userLoading } = useGetSingleProfile(creator);
 
-    } 
-    else latestModifiedDate = chapterItem.modifiedDate ?? "";
+    if ( roadmapLoading || chapterLoading || userLoading) return null;
+    if ( !roadmapItem || !chapterItem || !userProfile ) return <p className="text-white text-center mt-10">Chapter not found</p>;
+
+    const imageSrc = roadmapItem?.imageSrc ?? 'Unknown Image'
+    const roadmapSlug = roadmapItem?.roadmapSlug ?? 'Unknown Roadmap Slug';
+    const username = userProfile?.username ?? 'Unknown username';
+    const displayImage = IMAGE_MAP[imageSrc] || imageSrc;
 
     const tags: Tag[] = [
         { type: 'Difficulty', label: chapterItem.difficulty },
@@ -64,15 +56,15 @@ const ChapterDescription: React.FC<PillarDescription> = ({
                 <div className="w-full md:w-[40%]">
                     <div className="relative h-70 bg-gray-700/30 rounded-md mb-4 overflow-hidden">
                         <img
-                            src={imageSrc}
+                            src={displayImage}
                             alt={chapterItem.title}
                             className="w-full h-full object-cover" 
                             onError={(e) => {
-                                e.currentTarget.src = 'placeholder-image.jpg'; 
+                                e.currentTarget.src = defaultImageSrc; 
                             }}
                         />
                     </div>
-                    {(Number(userID) === creator) && 
+                    {(userID === creator) && 
                     (<Link to={`/roadmap/${chapterItem.roadmapID}/${roadmapSlug}/${chapterItem.chapterID}/${chapterItem.chapterSlug}/edit`}>
                             <button 
                                 className="w-full bg-gray-900/80 hover:bg-gray-900 rounded-lg font-semibold transition shadow-xl"
@@ -85,7 +77,7 @@ const ChapterDescription: React.FC<PillarDescription> = ({
                 <div className="w-full md:w-[60%]">
                     {/* Tags Section */}
                     <div className="flex flex-wrap gap-2 down mb-6 text-black">
-                        {tags.filter(tag => tag.label.trim() !== "")
+                        {tags.filter(tag => tag.label?.trim() !== "")
                              .map((tag, index) => (
                             <TagPill key={index} tag={tag} />
                         ))}
@@ -94,7 +86,7 @@ const ChapterDescription: React.FC<PillarDescription> = ({
                     <h2 className="text-3xl font-bold mb-4 text-left">{chapterItem.title}</h2>
                     {/* Creator and  Modified date info */}
                     <div className="grid grid-cols-2 gap-4 mb-6 text-left">
-                        {((Number(userID) !== creator) && 
+                        {(userID !== creator && 
                         <div>
                             <h3 className="font-semibold text-left">Creator</h3>
                             <Link to={`/profile/${creator}`}>
@@ -103,7 +95,7 @@ const ChapterDescription: React.FC<PillarDescription> = ({
                         </div>)}
                         <div>
                             <h3 className="font-semibold text-left">Last Modified</h3>
-                            <p className="mt-1 text-gray-300">{latestModifiedDate}</p>
+                            <p className="mt-1 text-gray-300">{chapterItem.modifiedDate}</p>
                         </div>
                     </div>
                     {/* Description */}

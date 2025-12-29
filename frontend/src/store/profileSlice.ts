@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 type profileType = {
-  userId: number;
+  userId: string;
   username: string;
   email:string;
   role:string;
@@ -13,7 +13,7 @@ type profileType = {
 }
 
 const initialState: profileType = {
-  userId: 0, //default for testing
+  userId: "9a7cff22-20bb-4a6f-a32a-99a11609a57e", //default for testing
   username: "", //default for testing
   email:"",
   role:"",
@@ -24,7 +24,7 @@ const initialState: profileType = {
 };
 
 const profileSlice = createSlice({
-  name: "userInfo",
+  name: "profile",
   initialState,
   reducers: {
     login(state, action: PayloadAction<profileType>) {
@@ -38,7 +38,7 @@ const profileSlice = createSlice({
       state.token = action.payload.token ?? "";
     },
     logout(state) {
-      state.userId = NaN;
+      state.userId = "";
       state.username = "";
       state.email = "";
       state.role = "";
