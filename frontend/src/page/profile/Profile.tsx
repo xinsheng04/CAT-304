@@ -30,7 +30,7 @@ function ProfileRow({
       <div className="w-full flex items-center bg-white/50 px-4 py-2 rounded-full text-black gap-2">
         {icon && (
           <img src={icon}
-            className="w-5 h-5 opacity-20"
+            className="w-5 h-5 opacity-50"
             alt="icon"
           />
         )}

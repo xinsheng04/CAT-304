@@ -14,16 +14,16 @@ export const useGetRoadmaps = (userID?: string | null) => {
     });
 };
 
+export const getRoadmapsWithProgress = async (userID: string) => {
+    if (!userID) return [];
+    const response = await Api.get(`roadmaps/withProgress/${userID}`);
+    return response.data;
+};
+
 export const useGetRoadmapsWithProgress = (userID: string) => {
     return useQuery<any[]>({
         queryKey: ['roadmapsWithProgress', userID],
-        queryFn: async () => {
-            if(userID === null || userID === undefined){
-                return [];
-            }
-            const response = await Api.get(`roadmaps/withProgress/${userID}`);
-            return response.data;
-        },
+        queryFn: async () => getRoadmapsWithProgress(userID),
         enabled: !!userID,
     });
 }
