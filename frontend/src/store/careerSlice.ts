@@ -4,11 +4,10 @@ import Api from "../api/index";
 
 export interface CareerApplication {
   id: number;
-  user_id: string;
+  userId: string;
   career_id: number;
   status: "Pending" | "Accepted" | "Rejected";
   resume_link?: string;
-  portfolio_link?: string;
   applied_date: string;
   user?: { username: string };
 }
