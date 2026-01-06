@@ -7,6 +7,10 @@ export const updateCareer = async(req, res) => {
 
     const { careerID } = req.params;
     const updates = req.body;
+    
+    // Sanitize: Remove 'applications' derived field if present
+    delete updates.applications;
+    delete updates.career_id; // PK should not be updated usually
 
     if (!careerID) {
         return res.status(400).json({ message: 'Missing career ID.' });
@@ -16,7 +20,7 @@ export const updateCareer = async(req, res) => {
         const { data, error } = await supabase
             .from('Careers')
             .update(updates)
-            .eq('id', careerID)
+            .eq('career_id', careerID)
             .select();
 
         if (error) {

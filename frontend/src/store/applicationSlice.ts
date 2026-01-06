@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import Api from "@/api/index";
 
 export interface ApplicationItem {
-  id: number;
+  aplc_id: number;
   career_id: number;
   user_id: string;
   status: "Pending" | "Accepted" | "Rejected";
@@ -93,11 +93,13 @@ const applicationSlice = createSlice({
       })
       // Rescind
       .addCase(rescindApplicationAsync.fulfilled, (state, action) => {
-        state.applicationList = state.applicationList.filter(app => app.id !== action.payload);
+        // use aplc_id
+        state.applicationList = state.applicationList.filter(app => app.aplc_id !== action.payload);
       })
       // Update Details
       .addCase(updateApplicationDetailsAsync.fulfilled, (state, action) => {
-        const index = state.applicationList.findIndex(app => app.id === action.payload.id);
+        // use aplc_id
+        const index = state.applicationList.findIndex(app => app.aplc_id === action.payload.aplc_id);
         if (index !== -1) {
            state.applicationList[index] = action.payload;
         }

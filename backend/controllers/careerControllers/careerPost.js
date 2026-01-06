@@ -13,7 +13,9 @@ export const createCareer = async(req, res) => {
     }
 
     // Sanitize data
-    // delete careerData.id; // Allow manual ID because DB sequence is broken (id=2 exists)
+    delete careerData.applications; // Prevent error if frontend sends this
+    // delete careerData.career_id; // Allow manual ID if needed, or let DB handle it
+
     if (!careerData.prerequisites) careerData.prerequisites = [];
 
     // Ensure we are not sending undefined or null for required fields if they are missing

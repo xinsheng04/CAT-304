@@ -37,9 +37,10 @@ const prerequisiteOptions: string[] = [
   "Cybersecurity",
 ];
 
+
 interface CareerDetailFormProps {
   mode: "add" | "edit";
-  id?: number;
+  career_id?: number;
   title?: string;
   category?: string;
   level?: "Beginner" | "Intermediate" | "Advanced";
@@ -50,7 +51,7 @@ interface CareerDetailFormProps {
 
 const CareerDetailForm: React.FC<CareerDetailFormProps> = ({
   mode,
-  id,
+  career_id,
   title,
   category,
   level,
@@ -114,7 +115,7 @@ const CareerDetailForm: React.FC<CareerDetailFormProps> = ({
       if (mode === "add") {
          // Use manual ID to bypass broken DB sequence
          const newCareerPayload = {
-            id: Date.now(), // Generate unique ID
+            career_id: Date.now(), // Generate unique ID
             title: queryTitle,
             description: queryDescription,
             category: queryCategory,
@@ -127,9 +128,9 @@ const CareerDetailForm: React.FC<CareerDetailFormProps> = ({
         await dispatch(addCareerAsync(newCareerPayload as any));
       }
 
-      if (mode === "edit" && id !== undefined) {
+      if (mode === "edit" && career_id !== undefined) {
          const payload = {
-            id: id,
+            career_id: career_id,
             title: queryTitle,
             description: queryDescription,
             category: queryCategory,
@@ -151,9 +152,9 @@ const CareerDetailForm: React.FC<CareerDetailFormProps> = ({
 
   const handleDelete = async () => {
     try {
-      if (id !== undefined) {
+      if (career_id !== undefined) {
         if (window.confirm("Are you sure you want to delete this career? This action cannot be undone.")) {
-            await dispatch(deleteCareerAsync(id));
+            await dispatch(deleteCareerAsync(career_id));
             navigate(-2);
         }
       }

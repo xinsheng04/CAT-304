@@ -15,7 +15,7 @@ export const deleteCareer = async(req, res) => {
         const { error } = await supabase
             .from('Careers')
             .delete()
-            .eq('id', careerID);
+            .eq('career_id', careerID);
 
         if (error) {
             console.error('Error deleting career:', error);

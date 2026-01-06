@@ -6,6 +6,7 @@ import { TagPill } from "../../tag.tsx";
 import type { CareerItem } from "@/store/careerSlice";
 import { deleteCareerAsync } from "@/store/careerSlice";
 
+
 export interface CareerItemCardProps extends CareerItem {
   slug?: string; // for routing
   createdDate?: string;
@@ -19,7 +20,7 @@ export interface CareerItemCardProps extends CareerItem {
 const MAX_VISIBLE_TAGS = 3;
 
 export const CareerItemCard: React.FC<CareerItemCardProps> = ({
-  id,
+  career_id,
   slug,
   title,
   postedBy,
@@ -57,7 +58,7 @@ export const CareerItemCard: React.FC<CareerItemCardProps> = ({
   const canEdit = isOwnCareer; // Only owner should edit (?) or maybe Admin too? defaulting to owner for edit
 
   // Build route for details
-  const careerRoute = `/career/${id}/${
+  const careerRoute = `/career/${career_id}/${
     slug || title.toLowerCase().replace(/\s+/g, "-")
   }`;
 
@@ -139,7 +140,7 @@ export const CareerItemCard: React.FC<CareerItemCardProps> = ({
 
         {canEdit && (
           <button
-            onClick={() => navigate(`/career/edit/${id}`)}
+            onClick={() => navigate(`/career/edit/${career_id}`)}
             className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 transition"
           >
             Edit
@@ -150,7 +151,7 @@ export const CareerItemCard: React.FC<CareerItemCardProps> = ({
           <button
             onClick={() => {
                 if(window.confirm("Are you sure you want to delete this career?")) {
-                    dispatch(deleteCareerAsync(id) as any);
+                    dispatch(deleteCareerAsync(career_id) as any);
                 }
             }}
             className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-500 transition"

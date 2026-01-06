@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import Api from "../api/index";
 
 export interface CareerApplication {
-  id: number;
+  aplc_id: number;
   userId: string;
   career_id: number;
   status: "Pending" | "Accepted" | "Rejected";
@@ -13,7 +13,7 @@ export interface CareerApplication {
 }
 
 export interface CareerItem {
-  id: number;
+  career_id: number;
   title: string;
   description?: string;
   category: string;
@@ -56,6 +56,8 @@ export const fetchCareers = createAsyncThunk(
 export const addCareerAsync = createAsyncThunk(
   "career/addCareerAsync",
   async (newCareer: CareerItem) => {
+    // Backend expects data, ID generation is handled there or if frontend does it, use career_id
+    // Usually POST doesn't need ID, but if we do pass it:
     const res = await Api.post("/careers", newCareer);
     return res.data as CareerItem;
   }
@@ -66,7 +68,7 @@ export const editCareerAsync = createAsyncThunk(
   "career/editCareerAsync",
   async (updatedCareer: CareerItem) => {
     const res = await Api.put(
-      `/careers/${updatedCareer.id}`,
+      `/careers/${updatedCareer.career_id}`,
       updatedCareer
     );
     return res.data as CareerItem;
@@ -87,7 +89,7 @@ const careerSlice = createSlice({
   initialState,
   reducers: {
     markViewed(state, action: PayloadAction<number>) {
-      const item = state.careerList.find((c) => c.id === action.payload);
+      const item = state.careerList.find((c) => c.career_id === action.payload);
       if (item) item.isViewed = true;
     },
     addApplication(
@@ -98,7 +100,7 @@ const careerSlice = createSlice({
       }>
     ) {
       const career = state.careerList.find(
-        (c) => c.id === action.payload.careerId
+        (c) => c.career_id === action.payload.careerId
       );
       if (career) {
         if (!career.applications) career.applications = [];
@@ -145,7 +147,7 @@ const careerSlice = createSlice({
       .addCase(editCareerAsync.fulfilled, (state, action) => {
         state.status = "succeeded";
         const index = state.careerList.findIndex(
-          (c) => c.id === action.payload.id
+          (c) => c.career_id === action.payload.career_id
         );
         if (index !== -1) {
           state.careerList[index] = action.payload;
@@ -163,7 +165,7 @@ const careerSlice = createSlice({
       .addCase(deleteCareerAsync.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.careerList = state.careerList.filter(
-          (c) => c.id !== action.payload
+          (c) => c.career_id !== action.payload
         );
       })
       .addCase(deleteCareerAsync.rejected, (state, action) => {
