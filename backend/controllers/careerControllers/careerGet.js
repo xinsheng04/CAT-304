@@ -18,7 +18,7 @@ export const getCareerDetail = async(req, res) => {
                 *,
                 applications:Applications(*)
             `)
-            .eq('id', careerID)
+            .eq('career_id', careerID)
             .maybeSingle(); // Use maybeSingle to get one object or null
 
         if (careerError) {

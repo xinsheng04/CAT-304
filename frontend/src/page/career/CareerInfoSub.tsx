@@ -7,8 +7,9 @@ import { TagPill } from "@/component/tag";
 import { submitApplicationAsync, updateApplicationStatusAsync, rescindApplicationAsync, updateApplicationDetailsAsync, fetchUserApplications } from "@/store/applicationSlice";
 import { fetchCareers, deleteCareerAsync } from "@/store/careerSlice";
 
+
 const CareerInfoSub: React.FC<CareerItem> = ({
-  id,
+  career_id,
   title,
   company,
   postedBy,
@@ -49,7 +50,7 @@ const CareerInfoSub: React.FC<CareerItem> = ({
     
     try {
         await dispatch(submitApplicationAsync({
-            careerId: id!,
+            careerId: career_id!,
             userId: activeUser.userId,
             resumeLink: linkInput
         }) as any).unwrap();
@@ -76,7 +77,7 @@ const CareerInfoSub: React.FC<CareerItem> = ({
             {isCompany && activeUser.username === postedBy && (
               <>
                  <button 
-                    onClick={() => navigate(`/career/edit/${id}`)}
+                    onClick={() => navigate(`/career/edit/${career_id}`)}
                     className="px-3 py-1 bg-blue-600/80 hover:bg-blue-500 text-white rounded text-sm"
                  >
                     Edit
@@ -84,7 +85,7 @@ const CareerInfoSub: React.FC<CareerItem> = ({
                  <button 
                     onClick={() => {
                         if(window.confirm("Are you sure you want to delete this career?")) {
-                            dispatch(deleteCareerAsync(id) as any).then(() => navigate('/career'));
+                            dispatch(deleteCareerAsync(career_id) as any).then(() => navigate('/career'));
                         }
                     }}
                     className="px-3 py-1 bg-red-600/80 hover:bg-red-500 text-white rounded text-sm"
@@ -177,7 +178,7 @@ const CareerInfoSub: React.FC<CareerItem> = ({
                            onClick={() => {
                                const newLink = prompt("Update your Resume/Portfolio Link:", userApplication.resume_link || "");
                                if (newLink) {
-                                   dispatch(updateApplicationDetailsAsync({ applicationId: userApplication.id, resumeLink: newLink, portfolioLink: "" }) as any)
+                                   dispatch(updateApplicationDetailsAsync({ applicationId: userApplication.aplc_id, resumeLink: newLink, portfolioLink: "" }) as any)
                                      .then(() => {
                                          dispatch(fetchCareers() as any);
                                          dispatch(fetchUserApplications(activeUser.userId) as any);
@@ -191,7 +192,7 @@ const CareerInfoSub: React.FC<CareerItem> = ({
                         <button 
                            onClick={() => {
                                if (window.confirm("Are you sure you want to withdraw your application? This action cannot be undone.")) {
-                                   dispatch(rescindApplicationAsync(userApplication.id) as any)
+                                   dispatch(rescindApplicationAsync(userApplication.aplc_id) as any)
                                       .then(() => {
                                           dispatch(fetchCareers() as any);
                                           dispatch(fetchUserApplications(activeUser.userId) as any);
@@ -275,7 +276,7 @@ const CareerInfoSub: React.FC<CareerItem> = ({
                           {/* Allow changing status */}
                           {app.status !== "Accepted" && (
                             <button
-                              onClick={() => dispatch(updateApplicationStatusAsync({ applicationId: app.id, status: "Accepted" }) as any).then(() => dispatch(fetchCareers() as any))}
+                              onClick={() => dispatch(updateApplicationStatusAsync({ applicationId: app.aplc_id, status: "Accepted" }) as any).then(() => dispatch(fetchCareers() as any))}
                               className="px-2 py-1 bg-green-600/50 hover:bg-green-500 text-white rounded text-xs"
                               title="Set to Accepted"
                             >
@@ -284,7 +285,7 @@ const CareerInfoSub: React.FC<CareerItem> = ({
                           )}
                           {app.status !== "Rejected" && (
                             <button
-                              onClick={() => dispatch(updateApplicationStatusAsync({ applicationId: app.id, status: "Rejected" }) as any).then(() => dispatch(fetchCareers() as any))}
+                              onClick={() => dispatch(updateApplicationStatusAsync({ applicationId: app.aplc_id, status: "Rejected" }) as any).then(() => dispatch(fetchCareers() as any))}
                               className="px-2 py-1 bg-red-600/50 hover:bg-red-500 text-white rounded text-xs"
                               title="Set to Rejected"
                             >

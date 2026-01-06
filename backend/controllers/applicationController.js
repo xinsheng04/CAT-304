@@ -90,6 +90,7 @@ export const getCareerApplications = async (req, res) => {
     }
 }
 
+
 // 4. Update Application Status (Accept/Decline)
 export const updateApplicationStatus = async (req, res) => {
     const { applicationId } = req.params;
@@ -103,7 +104,7 @@ export const updateApplicationStatus = async (req, res) => {
         const { data, error } = await supabase
             .from('Applications')
             .update({ status })
-            .eq('id', applicationId)
+            .eq('aplc_id', applicationId)
             .select();
 
         if (error) throw error;
@@ -126,7 +127,7 @@ export const deleteApplication = async (req, res) => {
         const { data: app, error: fetchError } = await supabase
             .from('Applications')
             .select('*')
-            .eq('id', applicationId)
+            .eq('aplc_id', applicationId)
             .single();
 
         if (fetchError || !app) {
@@ -147,7 +148,7 @@ export const deleteApplication = async (req, res) => {
         const { error: deleteError } = await supabase
             .from('Applications')
             .delete()
-            .eq('id', applicationId);
+            .eq('aplc_id', applicationId);
 
         if (deleteError) {
              console.error("DELETE ERROR:", deleteError);
@@ -173,7 +174,7 @@ export const updateApplicationDetails = async (req, res) => {
         const { data: app, error: fetchError } = await supabase
             .from('Applications')
             .select('*')
-            .eq('id', applicationId)
+            .eq('aplc_id', applicationId)
             .single();
 
         if (fetchError || !app) return res.status(404).json({ message: 'Application not found.' });
@@ -186,7 +187,7 @@ export const updateApplicationDetails = async (req, res) => {
                 resume_link: resumeLink,
                 portfolio_link: portfolioLink
             })
-            .eq('id', applicationId)
+            .eq('aplc_id', applicationId)
             .select();
 
         if (error) throw error;

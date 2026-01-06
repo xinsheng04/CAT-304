@@ -56,15 +56,16 @@ export const Career: React.FC = () => {
     }
   }, [careerStatus, dispatch, activeUser?.userId]);
 
+
   const getRecentlyViewedCareers = (sourceData: any[]) => {
     return sourceData.filter((career: any) => {
-      const careerID = Number(career.id);
+      const careerID = Number(career.career_id);
       if (career.isViewed) return true;
       const apps = applicationsData.filter(
-        (app: any) => Number(app.careerID) === careerID
+        (app: any) => Number(app.career_id) === careerID
       );
       if (apps.some((app: any) => app.isViewed)) return true;
-      const appIds = new Set(apps.map((a: any) => a.id));
+      const appIds = new Set(apps.map((a: any) => a.aplc_id));
       const interactionViewed = interactionsData.some(
         (interaction: any) =>
           appIds.has(interaction.applicationID) && interaction.isViewed === true
@@ -113,14 +114,12 @@ export const Career: React.FC = () => {
     if (section.id === "your-applications") {
        if (!applicationsData || applicationsData.length === 0) return [];
        // Get all career IDs the user has applied to
-       // Get all career IDs the user has applied to
-       // Get all career IDs the user has applied to
        // Handle both career_id (DB) and careerId (potential prop), compare as Strings
        const appliedSet = new Set(
-           applicationsData.map((app: any) => String(app.career_id || app.careerId))
+           applicationsData.map((app: any) => String(app.career_id))
        );
        
-       return filteredCareerData.filter((item: any) => appliedSet.has(String(item.id)));
+       return filteredCareerData.filter((item: any) => appliedSet.has(String(item.career_id)));
     }
 
     return filteredCareerData.filter(
