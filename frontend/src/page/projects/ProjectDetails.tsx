@@ -18,6 +18,7 @@ import { LoadingIcon } from "@/component/LoadingIcon";
 import { Button } from "@/component/shadcn/button";
 import { NotLoggedIn } from "@/component/NotLoggedIn";
 import { NotFound } from "@/component/NotFound";
+import { TableOfContents } from "@/component/RenderMD/TableOfContents";
 
 import { useGetMyProfile } from "@/api/profile/profileAPI";
 
@@ -105,6 +106,7 @@ export const ProjectDetails: React.FC = () => {
         submissionDialogOpen={submissionDialogOpen}
         setSubmissionDialogOpen={setSubmissionDialogOpen}
         isAdmin={isAdmin}
+        containsSubmissions={submissions.length > 0}
       />
 
       <InterModuleRelations
@@ -132,14 +134,16 @@ export const ProjectDetails: React.FC = () => {
           switch (displaySection) {
             case "description":
               return (
-                <div>
-                  <div className={`prose prose-invert max-w-none mt-4 text-white text-left ${commonMarkDownClass}`}>
+                <div className="flex gap-6">
+                  <div className={`prose prose-invert max-w-none text-white text-left flex-1 ${commonMarkDownClass} ml-0`}>
                     <RenderMD>
                       {project?.detailsFile || "No project details available."}
                     </RenderMD>
                   </div>
+                  <TableOfContents markdownContent={project?.detailsFile || ""} />
                 </div>
               );
+
 
             case "communitySubmissions":
               return (
@@ -191,7 +195,7 @@ export const ProjectDetails: React.FC = () => {
 
             case "mySubmissions":
               return (
-                <div>
+                <div className="grid grid-cols-1 gap-3.5">
                   { 
                     userId === null ? (
                       <NotLoggedIn />

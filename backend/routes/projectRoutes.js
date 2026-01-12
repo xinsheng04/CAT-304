@@ -2,7 +2,7 @@ import express from 'express';
 import { getAllBasicDetailsOnly, getByTitleComplete, getByIdComplete, getAllRelatedToUser } from '../controllers/projectControllers/projectsGet.js';
 import { createProject, putTrackingData, updateProject, deleteProject } from '../controllers/projectControllers/projectsCUD.js';
 import { getAllSubmissions, getAllSubmissionsByUser, getSubmissionById } from '../controllers/projectControllers/submissionsGet.js';
-import { submitProject, updateSubmission, deleteSubmission } from '../controllers/projectControllers/submissionsCUD.js';
+import { submitToProject, updateSubmission, deleteSubmission } from '../controllers/projectControllers/submissionsCUD.js';
 import { getAllRecommendations, addRecommendation, updateRecommendation, deleteRecommendation } from '../controllers/projectControllers/recommendations.js';
 
 const router = express.Router();
@@ -46,7 +46,7 @@ router.get('/projects/:projectId/submissions/getSubmissionById', getSubmissionBy
 router.get('/projects/:projectId/submissions/getSubmissionById/:submissionId', getSubmissionById);
 
 // Submit project with full details
-router.post('/projects/:projectId/submissions/submit', submitProject);
+router.post('/projects/:projectId/submissions/submit', submitToProject);
 // Update specific submission for a project (full details)
 router.patch('/projects/:projectId/submissions/:submissionId/update', updateSubmission);
 

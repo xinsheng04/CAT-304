@@ -13,17 +13,21 @@ Input:
 Output: None
 */
 
-export const submitProject = async (req, res) => {
+export const submitToProject = async (req, res) => {
   const { projectId } = req.params;
   const { creatorId, title, repoLink, rationaleFile } = req.body;
   const postedOn = new Date().toISOString();
   const lastUpdated = postedOn;
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("Submissions")
-    .insert([{ projectId, creatorId, title, postedOn, lastUpdated, repoLink, rationaleFile }]);
+    .insert([{ projectId, creatorId, title, postedOn, lastUpdated, repoLink, rationaleFile }])
+    .select()
+    .single();
 
   if (error) return res.status(500).json({ error: error.message });
-  return res.status(201).json({ message: "SUCCESS" });
+  console.log("Submission created:", data);
+  const submissionId = data.submissionId;
+  return res.status(201).json({ message: "SUCCESS", submissionId });
 }
 
 // Controller to update project submission

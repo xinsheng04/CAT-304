@@ -25,10 +25,11 @@ interface ProjectInteractiveProps {
   submissionDialogOpen: boolean;
   setSubmissionDialogOpen: (value: boolean) => void;
   isAdmin?: boolean;
+  containsSubmissions?: boolean;
 }
 
 export const ProjectInteractive: React.FC<ProjectInteractiveProps> = ({ userId, projectId, project,
-  submissionDialogOpen, setSubmissionDialogOpen, isAdmin = false }) => {
+  submissionDialogOpen, setSubmissionDialogOpen, isAdmin = false, containsSubmissions = false }) => {
   const navigate = useNavigate();
   const { mutateAsync: putTrackingData } = usePutTrackingData(userId, projectId);
   const { mutateAsync: deleteProject, isPending: isDeleting } = useDeleteProject(projectId);
@@ -53,6 +54,7 @@ export const ProjectInteractive: React.FC<ProjectInteractiveProps> = ({ userId, 
 
   async function handleTrackingToggle(aspect: "tracking" | "done") {
     let response;
+    console.log("Toggling:", aspect);
     if(aspect === "tracking"){
       setIsTracking(!isTracking);
       response = await putTrackingData({
@@ -66,6 +68,7 @@ export const ProjectInteractive: React.FC<ProjectInteractiveProps> = ({ userId, 
         isMarkedAsDone: !isMarkedAsDone,
       });
     }
+    console.log("Tracking toggle response:", response);
     if (response.message === "SUCCESS") {
       if(aspect === "tracking"){
         toast.success(`${!isTracking ? "Started" : "Stopped"} tracking this project.`);
@@ -121,14 +124,17 @@ export const ProjectInteractive: React.FC<ProjectInteractiveProps> = ({ userId, 
                 {
                   isDeleting ? <DialogDescription>Deleting project...</DialogDescription> : (
                     <DialogDescription>
-                      Are you sure you want to delete this project? This action cannot be undone.
+                      {
+                        containsSubmissions ? "This project cannot be deleted. This is because it has submissions associated with it." 
+                        : "Are you sure you want to delete this project? This action cannot be undone."
+                      }
                     </DialogDescription>
                   )
                 }
               </DialogHeader>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} className="text-black">Cancel</Button>
-                <Button variant="destructive" onClick={handleDeleteProject} disabled={isDeleting}>Delete</Button>
+                <Button variant="destructive" onClick={handleDeleteProject} disabled={isDeleting || containsSubmissions}>Delete</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -138,7 +144,7 @@ export const ProjectInteractive: React.FC<ProjectInteractiveProps> = ({ userId, 
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            className={`cursor-pointer rounded-none hover:bg-blue-600 hover:border-blue-600 hover:text-white ${!hasManagementAccess ? "rounded-l-2xl" : ""}`}
+            className={`cursor-pointer rounded-none hover:bg-blue-500 hover:border-blue-500 hover:text-white ${!hasManagementAccess ? "rounded-l-2xl" : ""}`}
           >+ Add a Submission</Button>
         </DialogTrigger>
         <DialogContent className={commonBackgroundClass}>
@@ -154,6 +160,7 @@ export const ProjectInteractive: React.FC<ProjectInteractiveProps> = ({ userId, 
               openAsCreateForm={true}
               initialData={project}
               projectId={projectId}
+              afterEffect = {() => handleTrackingToggle("done")}
             />
           </FieldGroup>
         </DialogContent>

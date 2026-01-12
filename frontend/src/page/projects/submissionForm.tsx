@@ -12,7 +12,7 @@ import { Form } from "@/component/form";
 import { useState, useRef } from "react";
 import { loadUserInfo } from "@/lib/utils";
 import { useCreateSubmission } from "@/api/projects/submissionsAPI";
-// import { uint8ToBase64, convertFileToUInt8 } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 import { trackNewActivity } from "@/component/activity/activity_tracker";
 import { useCallback } from "react";
 import { LoadingIcon } from "@/component/LoadingIcon";
@@ -21,10 +21,12 @@ type SubmissionFormProps = {
   openAsCreateForm?: boolean;
   initialData?: any;
   projectId: number;
+  afterEffect?: () => void;
 }
 
-export const SubmissionForm: React.FC<SubmissionFormProps> = ({ openAsCreateForm, close, initialData, projectId }) => {
+export const SubmissionForm: React.FC<SubmissionFormProps> = ({ openAsCreateForm, close, initialData, projectId, afterEffect }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
   const [fileInput, setFileInput] = useState<File | null>(null);
   const creatorId = loadUserInfo()?.userId || null;
   const { mutateAsync: createSubmission, status: createSubmissionStatus, error: createSubmissionError } = useCreateSubmission(creatorId, projectId);
@@ -37,6 +39,11 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({ openAsCreateForm
       ...Object.fromEntries(fd.entries()),
       creatorId
     };
+    if(payload.repoLink === "") {
+      // Do not allow submissions with empty repo link
+      toast.error("Please provide a repository link for your submission.");
+      return;
+    }
     const file = fd.get("rationaleFile");
     if (file instanceof File && file.size > 0) {
       const fileData = await file.text();
@@ -45,15 +52,22 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({ openAsCreateForm
       delete payload.rationaleFile;
     }
 
-    await createSubmission(payload);
+    const response = await createSubmission(payload);
+    if(response.message !== "SUCCESS") {
+      toast.error(`Failed to create submission. ${response.message}`);
+      return;
+    }
     toast.success("Your submission has been uploaded and shared with the wider community.");
-
+    if(afterEffect)
+      afterEffect();
+    
     //Profile usage
     if (openAsCreateForm && !submissionCounted.current) {
       trackNewActivity("submission", projectId);
       submissionCounted.current = true;
     }
     close();
+    navigate(`/project/${projectId}/submission/${response.submissionId}`);
   }, [createSubmission, creatorId, close, openAsCreateForm, projectId]);
 
   switch (createSubmissionStatus) {
