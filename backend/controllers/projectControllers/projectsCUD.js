@@ -14,7 +14,7 @@ Input:
     lastUpdated: string;
     startingRepoLink?: string;
     detailsFile?: Uint8Array | string;
-    recommendations: [ { targetId: number, targetType: string }, { targetId: number, targetType: string }, ... ];
+    recommendations: [ { recommendation1_details }, { recommendation2_details }, ... ];
   }
 
 Output: {
@@ -64,7 +64,7 @@ export const createProject = async (req, res) => {
     if (recError) return res.status(500).json({ error: recError.message || "Project created but failed to add recommendations" });
   }
 
-  return res.status(201).json({ message: "SUCCESS" });
+  return res.status(201).json({ message: "SUCCESS", projectId: newProject.projectId });
 };
 
 // Put tracking data (user level) for the project

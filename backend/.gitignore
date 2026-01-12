@@ -1,10 +1,12 @@
   # Node modules
   node_modules/
+  # Node modules
+  node_modules/
 
   # Environment files
-.env
-.env.*
-  
+  .env
+  .env.*
+
   # Logs
   logs/
   *.log
@@ -16,13 +18,24 @@
   # OS files
   .DS_Store
   Thumbs.db
+  # OS files
+  .DS_Store
+  Thumbs.db
 
   # Build / Cache
   dist/
   build/
   .tmp/
   .temp/
+  # Build / Cache
+  dist/
+  build/
+  .tmp/
+  .temp/
 
+  # Editor configs (optional but common)
+  .vscode/
+  .idea/
   # Editor configs (optional but common)
   .vscode/
   .idea/

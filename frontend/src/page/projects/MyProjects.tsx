@@ -44,7 +44,7 @@ export const MyProjects: React.FC = () => {
     isError: isErrorCreatedProjects, isSuccess: isSuccessCreatedProjects } = useGetAllBasicDetailsOnly(userId);
   const { data: submissions = [], isLoading: isLoadingSubmissions,
     isError: isErrorSubmissions, isSuccess: isSuccessSubmissions } = useGetAllSubmissionsByCreator(userId);
-
+    
   if(!userId){
     return <NotLoggedIn />;
   }
@@ -132,7 +132,7 @@ export const MyProjects: React.FC = () => {
           {submissionType === "submissions" ? (
             hasContentToShow ? (
               <div className="pt-5 flex flex-col gap-2">
-                {filteredProjects.map((submission: any) => {
+                {targetArr.map((submission: any) => {
                   const project = createdProjects.find((proj: ProjectType) => proj.projectId === submission.projectId);
                   if (!project) return null;
                   if (category !== "All" && project.category !== category) return null;

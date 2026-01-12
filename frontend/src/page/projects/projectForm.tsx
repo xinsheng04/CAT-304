@@ -15,6 +15,7 @@ import { Input } from "@/component/shadcn/input";
 import { Select, SelectTrigger, SelectValue, SelectItem, SelectContent } from "@/component/shadcn/select";
 import { Textarea } from "@/component/shadcn/textarea";
 import { Button } from "@/component/shadcn/button";
+import { useNavigate } from "react-router-dom";
 import { categoryList } from "@/lib/types";
 import { useCreateProject, useUpdateProject } from "@/api/projects/projectsAPI";
 import { useGetAllRecommendations } from "@/api/projects/recommendationsAPI";
@@ -32,6 +33,7 @@ type ProjectFormProps = {
 const requiredInputs = ["title", "difficulty", "category", "shortDescription"];
 
 export const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, projectId, close }) => {
+  const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const userId = loadUserInfo()?.userId || null;
   const { mutateAsync: createProject, status: formSubmissionStatus, error: formSubmissionError } = useCreateProject(userId);
@@ -39,9 +41,6 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, projectId
   const { data: allRecommendations = [], status: getAllRecStatus, error: getAllRecError } = useGetAllRecommendations(projectId || -1);
   const { data: roadmaps, isSuccess: isSuccessRoadmaps } = useGetRoadmaps();
   const { data: careers, isSuccess: isSuccessCareers } = useGetAllCareers();
-  if(isSuccessCareers){
-    console.log(careers);
-  }
 
   // Only deletable are those set by project side
   const roadmapsFetched = getAllRecStatus === "success"
@@ -58,7 +57,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, projectId
   const careersAsItems: ItemType[] = careersFetched.map((rec: any) => ({
     referenceId: rec.targetId,
     referenceType: "career",
-    title: rec.careerName,
+    title: rec.title,
   }));
 
   const [fileInput, setFileInput] = useState<File | null>(null);
@@ -116,6 +115,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, projectId
 
     if (response.message === "SUCCESS") {
       toast.success(`Project ${initialData ? "updated" : "created"} successfully!`);
+      navigate(`/project/${response.projectId}`);
       close();
     } else {
       toast.error(`Failed to ${initialData ? "update" : "create"} the project. ${response.message}`);
@@ -136,7 +136,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, projectId
 
   switch (lookAt) {
     case "pending":
-      return <LoadingIcon text={` ${initialData ? "Updating" : "Submitting"} Project...`} iconClass="flex-col" />;
+      return <LoadingIcon text={` ${initialData ? "Updating" : "Submitting"} Project...`} containerClass="flex-col" />;
     case "error":
       const errorMsg = (formError as any)?.response?.data?.error || "Unknown error occurred";
       return <div className="text-red-500 text-center mt-4">
@@ -145,7 +145,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, projectId
   }
 
   if (!isSuccessRoadmaps || !isSuccessCareers)
-    return <LoadingIcon text="Loading Data..." iconClass="flex-col" />;
+    return <LoadingIcon text="Loading Data..." containerClass="flex-col" />;
 
   return (
     <form id={"project-form"} className="w-full max-w-2xl mx-auto p-4 sm:p-6">
@@ -311,6 +311,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, projectId
                     }
                     renderItem={(career) => (
                       <div>
+                        <p className="font-medium text-white">{career.title}</p>
                         <p className="font-medium text-white">{career.title}</p>
                         <p className="text-sm text-gray-400">{career.description}</p>
                       </div>

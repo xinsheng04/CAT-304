@@ -2,7 +2,7 @@ import { Spinner } from "./shadcn/spinner";
 
 export const LoadingIcon: React.FC<{ 
   text?: string; 
-  containerClass?: string; // Renamed from iconClass for clarity
+  containerClass?: string;
   textClass?: string; 
 }> = ({ text, containerClass, textClass }) => {
   return (

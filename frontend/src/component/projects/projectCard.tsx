@@ -38,7 +38,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, className}) => {
       <CardFooter className="block px-0 text-gray-300/80 space-y-1 text-sm">
         <div className="text-left">
           <img src={people_icon} alt="" className={customIconStyles} />
-          {trackCount} Started
+          {trackCount + submissionCount} Started
         </div>
         <div className="text-left">
           <img src={submission_icon} alt="" className={customIconStyles} />
