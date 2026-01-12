@@ -74,19 +74,16 @@ const router = createBrowserRouter([
           { path: ":projectId/submission/:submissionId", element: <SubmissionDetails /> },
         ],
       },
-      //Admin
+
       {
-        path: "admin",
-        element: <AdminLayout />,
+        path: "profile",
         children: [
-          { index: true, element: <AdminDashboard /> },
-          { path: "users_admin", element: <Admin_Users /> },
-          { path: "roadmaps_admin", element: <Admin_Roadmaps /> },
-          { path: "projects_admin", element: <Admin_Projects /> },
+          { index: true, element: <All /> },
+          { path: ":userId", element: <All /> },
         ],
       },
+
       { path: "career", element: <Career /> },
-      { path: "profile", element: <All /> },
       { path: "signup", element: <Signup_Pg /> },
       { path: "request-verification", element:<VerifyRole /> },
       { path: "forgot-password", element: <ForgotPassword_Pg /> },
@@ -94,6 +91,19 @@ const router = createBrowserRouter([
       { path: "*", element: <NotFound /> },
     ],
   },
+
+   //Admin
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+    { index: true, element: <AdminDashboard /> },
+    { path: "users_admin", element: <Admin_Users /> },
+    { path: "roadmaps_admin", element: <Admin_Roadmaps /> },
+    { path: "projects_admin", element: <Admin_Projects /> },
+  ],
+},
+
 ]);
 
 function App() {

@@ -14,7 +14,7 @@ Input:
     lastUpdated: string;
     startingRepoLink?: string;
     detailsFile?: Uint8Array | string;
-    recommendations: [ { targetId: number, targetType: string }, { targetId: number, targetType: string }, ... ];
+    recommendations: [ { recommendation1_details }, { recommendation2_details }, ... ];
   }
 
 Output: {

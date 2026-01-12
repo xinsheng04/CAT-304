@@ -312,6 +312,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, projectId
                     renderItem={(career) => (
                       <div>
                         <p className="font-medium text-white">{career.title}</p>
+                        <p className="font-medium text-white">{career.title}</p>
                         <p className="text-sm text-gray-400">{career.description}</p>
                       </div>
                     )}
