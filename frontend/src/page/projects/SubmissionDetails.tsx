@@ -110,9 +110,9 @@ const SubmissionDetails: React.FC = () => {
             </DialogTrigger>
             <DialogContent className={commonBackgroundClass}>
               <DialogHeader>
-                <DialogTitle>Contribute your solution to this project</DialogTitle>
+                <DialogTitle>Edit Submission</DialogTitle>
                 <DialogDescription>
-                  Share your solution with others by filling out the form below.
+                  Modify the details of your submission below.
                 </DialogDescription>
               </DialogHeader>
               <FieldGroup className={commonBackgroundClass}>

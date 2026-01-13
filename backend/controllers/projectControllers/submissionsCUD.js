@@ -25,7 +25,6 @@ export const submitToProject = async (req, res) => {
     .single();
 
   if (error) return res.status(500).json({ error: error.message });
-  console.log("Submission created:", data);
   const submissionId = data.submissionId;
   return res.status(201).json({ message: "SUCCESS", submissionId });
 }
@@ -49,7 +48,7 @@ export const updateSubmission= async (req, res) => {
   const { error } = await supabase
     .from("Submissions")
     .update(updateData)
-    .eq("submissionId", submissionId);
+    .eq("submissionId", parseInt(submissionId));
   if (error) return res.status(500).json({ error });
   return res.status(200).json({ message: "SUCCESS" });
 }
