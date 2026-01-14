@@ -43,7 +43,7 @@ Output: None
 
 export const updateSubmission = async (req, res) => {
   const { submissionId } = req.params;
-  
+
   // Validate and convert
   const id = parseInt(submissionId, 10);
   if (isNaN(id)) {
@@ -52,11 +52,15 @@ export const updateSubmission = async (req, res) => {
 
   const updateData = req.body;
 
+  if (!updateData || Object.keys(updateData).length === 0) {
+    return res.status(400).json({ error: "No update data provided" });
+  }
+
   const { error } = await supabase
     .from("Submissions")
     .update(updateData)
     .eq("submissionId", id);
-    
+
   if (error) return res.status(500).json({ error });
   return res.status(200).json({ message: "SUCCESS" });
 }
@@ -71,7 +75,7 @@ Output: None
 
 export const deleteSubmission = async (req, res) => {
   const { submissionId } = req.params;
-  
+
   const id = parseInt(submissionId, 10);
   if (isNaN(id)) {
     return res.status(400).json({ error: "Invalid submissionId" });
@@ -81,7 +85,7 @@ export const deleteSubmission = async (req, res) => {
     .from("Submissions")
     .delete()
     .eq("submissionId", id);
-    
+
   if (error) return res.status(500).json({ error });
   return res.status(200).json({ message: "SUCCESS" });
 }
